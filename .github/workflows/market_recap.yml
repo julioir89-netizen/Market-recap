@@ -1,0 +1,61 @@
+name: Market Recap Automation
+
+on:
+  schedule:
+    # 5:00 AM PDT  = 12:00 UTC  (Pre-Market Morning)
+    - cron: '0 12 * * 1-5'
+    # 7:30 AM PDT  = 14:30 UTC  (Midday Update)
+    - cron: '30 14 * * 1-5'
+    # 4:00 PM PDT  = 23:00 UTC  (After-Market Close)
+    - cron: '0 23 * * 1-5'
+
+  # Also lets you run it manually from GitHub any time
+  workflow_dispatch:
+    inputs:
+      recap_type:
+        description: 'Which recap to run? (morning / midday / close)'
+        required: true
+        default: 'morning'
+
+jobs:
+  run-recap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Determine recap type (scheduled runs)
+        if: github.event_name == 'schedule'
+        run: |
+          HOUR=$(TZ="America/Los_Angeles" date +"%H")
+          MINUTE=$(TZ="America/Los_Angeles" date +"%M")
+          if [ "$HOUR" = "05" ]; then
+            echo "RECAP_TYPE=morning" >> $GITHUB_ENV
+          elif [ "$HOUR" = "07" ]; then
+            echo "RECAP_TYPE=midday" >> $GITHUB_ENV
+          elif [ "$HOUR" = "16" ]; then
+            echo "RECAP_TYPE=close" >> $GITHUB_ENV
+          else
+            echo "RECAP_TYPE=morning" >> $GITHUB_ENV
+          fi
+
+      - name: Set recap type (manual runs)
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "RECAP_TYPE=${{ github.event.inputs.recap_type }}" >> $GITHUB_ENV
+
+      - name: Run Market Recap
+        run: python recap_engine.py
+        env:
+          RECAP_TYPE: ${{ env.RECAP_TYPE }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
