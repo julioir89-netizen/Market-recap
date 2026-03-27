@@ -1,0 +1,45 @@
+name: Price Alert System
+
+on:
+  schedule:
+    # Runs every 30 minutes during market hours Mon-Fri
+    # Market hours: 6:30 AM - 1:00 PM PT = 13:30 - 20:00 UTC
+    - cron: '30 13 * * 1-5'
+    - cron: '0 14 * * 1-5'
+    - cron: '30 14 * * 1-5'
+    - cron: '0 15 * * 1-5'
+    - cron: '30 15 * * 1-5'
+    - cron: '0 16 * * 1-5'
+    - cron: '30 16 * * 1-5'
+    - cron: '0 17 * * 1-5'
+    - cron: '30 17 * * 1-5'
+    - cron: '0 18 * * 1-5'
+    - cron: '30 18 * * 1-5'
+    - cron: '0 19 * * 1-5'
+    - cron: '30 19 * * 1-5'
+    - cron: '0 20 * * 1-5'
+
+  # Run manually anytime to test
+  workflow_dispatch:
+
+jobs:
+  check-alerts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pytz
+
+      - name: Run Price Alert Check
+        run: python price_alerts.py
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
