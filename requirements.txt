@@ -1,2 +1,4 @@
-anthropic>=0.40.0
+yfinance>=0.2.36
+feedparser>=6.0.10
 pytz>=2024.1
+ 
