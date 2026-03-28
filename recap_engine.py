@@ -1,346 +1,478 @@
-import anthropic
+import yfinance as yf
 import smtplib
 import os
+import feedparser
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 import pytz
 
 # ============================================================
-# YOUR PORTFOLIO — DO NOT EDIT UNLESS YOUR HOLDINGS CHANGE
+# CONFIGURATION
 # ============================================================
-HOLDINGS = [
-    {"ticker": "SPY",  "name": "S&P 500 ETF",                  "avg_cost": 673.15,   "shares": 0.22775013},
-    {"ticker": "QQQ",  "name": "Invesco QQQ",                  "avg_cost": 597.57,   "shares": 0.14075326},
-    {"ticker": "SOXX", "name": "iShares Semiconductor ETF",    "avg_cost": 330.78,   "shares": 0.18441232},
-    {"ticker": "AAPL", "name": "Apple",                        "avg_cost": 257.30,   "shares": 0.35021052},
-    {"ticker": "NVDA", "name": "Nvidia",                       "avg_cost": 181.46,   "shares": 0.55107155},
-    {"ticker": "MU",   "name": "Micron Technology",            "avg_cost": 376.93,   "shares": 0.16183304},
-    {"ticker": "XLI",  "name": "Industrial Select Sector SPDR","avg_cost": 169.10,   "shares": 0.34299159},
-    {"ticker": "XLV",  "name": "Healthcare Select Sector SPDR","avg_cost": 156.27,   "shares": 0.25475002},
-    {"ticker": "IAU",  "name": "iShares Gold Trust",           "avg_cost": 93.76,    "shares": 0.30930709},
-    {"ticker": "KBWB", "name": "KBW Bank ETF",                 "avg_cost": 80.14,    "shares": 0.56149156},
-    {"ticker": "BTC",  "name": "Bitcoin",                      "avg_cost": 71896.01, "shares": 0.00084780},
-]
-
 RECIPIENT_EMAIL = "julioir89@gmail.com"
 TIMEZONE = "America/Los_Angeles"
 
-# ============================================================
-# DETERMINE WHICH RECAP TO RUN BASED ON CURRENT TIME
-# ============================================================
-def get_recap_type():
-    """Auto-detect which recap to run based on Pacific Time."""
-    forced = os.environ.get("RECAP_TYPE")
-    if forced:
-        return forced
+HOLDINGS = [
+    {"ticker": "SPY",     "name": "S&P 500 ETF",          "avg": 673.15, "shares": 0.22775, "s1": 645,   "s2": 635,   "r1": 668,   "r2": 680,   "role": "Market Base"},
+    {"ticker": "QQQ",     "name": "Invesco QQQ",           "avg": 597.57, "shares": 0.14075, "s1": 580,   "s2": 570,   "r1": 598,   "r2": 610,   "role": "Growth Engine"},
+    {"ticker": "SOXX",    "name": "Semiconductor ETF",     "avg": 330.78, "shares": 0.18441, "s1": 332,   "s2": 320,   "r1": 358,   "r2": 370,   "role": "Semi Leverage"},
+    {"ticker": "AAPL",    "name": "Apple",                 "avg": 257.30, "shares": 0.35021, "s1": 248,   "s2": 240,   "r1": 262,   "r2": 272,   "role": "Stability"},
+    {"ticker": "NVDA",    "name": "Nvidia",                "avg": 181.46, "shares": 0.55107, "s1": 172,   "s2": 162,   "r1": 190,   "r2": 200,   "role": "AI Leader"},
+    {"ticker": "MU",      "name": "Micron Technology",     "avg": 376.93, "shares": 0.16183, "s1": 370,   "s2": 358,   "r1": 395,   "r2": 408,   "role": "High Beta Semi"},
+    {"ticker": "XLI",     "name": "Industrials SPDR",      "avg": 169.10, "shares": 0.34299, "s1": 160,   "s2": 154,   "r1": 170,   "r2": 176,   "role": "Cyclical"},
+    {"ticker": "XLV",     "name": "Healthcare SPDR",       "avg": 156.27, "shares": 0.25475, "s1": 143,   "s2": 138,   "r1": 150,   "r2": 155,   "role": "Defensive"},
+    {"ticker": "IAU",     "name": "iShares Gold Trust",    "avg": 93.76,  "shares": 0.30930, "s1": 82,    "s2": 78,    "r1": 88,    "r2": 93,    "role": "Macro Hedge"},
+    {"ticker": "KBWB",    "name": "KBW Bank ETF",          "avg": 80.14,  "shares": 0.56149, "s1": 76,    "s2": 72,    "r1": 82,    "r2": 86,    "role": "Banking"},
+    {"ticker": "BTC-USD", "name": "Bitcoin",               "avg": 71896,  "shares": 0.00085, "s1": 65000, "s2": 60000, "r1": 76000, "r2": 82000, "role": "Risk Proxy"},
+]
 
+MACRO_TICKERS = {
+    "^VIX":   "VIX Fear Index",
+    "GC=F":   "Gold Futures",
+    "CL=F":   "Oil (WTI)",
+    "^TNX":   "10Y Treasury Yield",
+    "DX-Y.NYB": "US Dollar Index",
+}
+
+NEWS_FEEDS = [
+    "https://feeds.finance.yahoo.com/rss/2.0/headline?s=SPY,QQQ,NVDA,AAPL,MU&region=US&lang=en-US",
+    "https://feeds.reuters.com/reuters/businessNews",
+    "https://feeds.marketwatch.com/marketwatch/topstories/",
+    "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best",
+]
+
+# ============================================================
+# FETCH LIVE PRICES
+# ============================================================
+def fetch_prices():
+    tickers = [h["ticker"] for h in HOLDINGS]
+    prices = {}
+    try:
+        data = yf.download(tickers, period="2d", interval="1d", progress=False, auto_adjust=True)
+        for ticker in tickers:
+            try:
+                series = data["Close"][ticker].dropna()
+                prices[ticker] = {
+                    "current": round(float(series.iloc[-1]), 2),
+                    "prev":    round(float(series.iloc[-2]), 2) if len(series) > 1 else None,
+                }
+            except:
+                prices[ticker] = {"current": None, "prev": None}
+    except Exception as e:
+        print(f"Price fetch error: {e}")
+    return prices
+
+def fetch_macro():
+    macro = {}
+    try:
+        tickers = list(MACRO_TICKERS.keys())
+        data = yf.download(tickers, period="2d", interval="1d", progress=False, auto_adjust=True)
+        for ticker in tickers:
+            try:
+                series = data["Close"][ticker].dropna()
+                current = round(float(series.iloc[-1]), 2)
+                prev    = round(float(series.iloc[-2]), 2) if len(series) > 1 else current
+                change  = round(((current - prev) / prev) * 100, 2) if prev else 0
+                macro[ticker] = {"current": current, "prev": prev, "change": change, "name": MACRO_TICKERS[ticker]}
+            except:
+                macro[ticker] = {"current": None, "prev": None, "change": 0, "name": MACRO_TICKERS[ticker]}
+    except Exception as e:
+        print(f"Macro fetch error: {e}")
+    return macro
+
+# ============================================================
+# FETCH NEWS HEADLINES
+# ============================================================
+def fetch_news(max_items=8):
+    headlines = []
+    seen = set()
+    for url in NEWS_FEEDS:
+        try:
+            feed = feedparser.parse(url)
+            for entry in feed.entries[:4]:
+                title = entry.get("title", "").strip()
+                if title and title not in seen and len(title) > 20:
+                    seen.add(title)
+                    headlines.append({
+                        "title":  title,
+                        "source": feed.feed.get("title", "News"),
+                        "link":   entry.get("link", ""),
+                    })
+                if len(headlines) >= max_items:
+                    break
+        except Exception as e:
+            print(f"News feed error ({url}): {e}")
+        if len(headlines) >= max_items:
+            break
+    return headlines[:max_items]
+
+# ============================================================
+# ANALYSIS LOGIC
+# ============================================================
+def get_dca_status(price, s1, s2, r1):
+    if price is None:
+        return "N/A", "#888"
+    dist_s1 = ((price - s1) / price) * 100
+    if price <= s2:
+        return "💰 DEEP BUY", "#22c55e"
+    if dist_s1 <= 1.5:
+        return "✅ AT S1", "#22c55e"
+    if dist_s1 <= 4.0:
+        return "⚠️ NEAR S1", "#c9a84c"
+    if price >= r1:
+        return "🔵 AT R1", "#3b82f6"
+    return "❌ WAIT", "#888"
+
+def calc_market_score(prices):
+    score = 0
+    above_s1 = sum(1 for h in HOLDINGS if prices.get(h["ticker"], {}).get("current") and
+                   prices[h["ticker"]]["current"] > h["s1"])
+    score += round((above_s1 / len(HOLDINGS)) * 35)
+
+    spy_price = prices.get("SPY", {}).get("current")
+    if spy_price:
+        spy_pct = ((spy_price - 673.15) / 673.15) * 100
+        score += 25 if spy_pct > 0 else 18 if spy_pct > -3 else 10 if spy_pct > -6 else 4
+
+    qqq_above = prices.get("QQQ", {}).get("current", 0) > 580
+    soxx_above = prices.get("SOXX", {}).get("current", 0) > 332
+    score += 25 if (qqq_above and soxx_above) else 12
+
+    xlv_price = prices.get("XLV", {}).get("current")
+    score += 10 if xlv_price and xlv_price < 156.27 else 15
+
+    return min(100, score)
+
+def get_risk_dial(score):
+    if score >= 70: return "AGGRESSIVE", "▲▲▲"
+    if score >= 55: return "NEUTRAL",    "▲▲○"
+    if score >= 35: return "DEFENSIVE",  "▲○○"
+    return              "PROTECT",    "○○○"
+
+def get_sector_rotation(prices):
+    growth_up    = sum(1 for t in ["QQQ","SOXX","NVDA"] if prices.get(t,{}).get("current",0) > prices.get(t,{}).get("prev",0))
+    defensive_up = sum(1 for t in ["XLV","IAU"]         if prices.get(t,{}).get("current",0) > prices.get(t,{}).get("prev",0))
+    if growth_up >= 2 and defensive_up <= 1:   return "RISK-ON",       "Growth leading. Capital moving into tech/semis."
+    if defensive_up >= 2 and growth_up <= 1:   return "RISK-OFF",      "Defensives leading. Rotation out of growth."
+    return                                      "MIXED",         "No clear rotation. Selective market."
+
+def get_sentiment_score(prices, macro):
+    bullish, bearish = 0, 0
+    spy_chg = prices.get("SPY",{})
+    if spy_chg.get("current") and spy_chg.get("prev"):
+        if spy_chg["current"] > spy_chg["prev"]: bullish += 2
+        else: bearish += 2
+
+    vix = macro.get("^VIX",{}).get("current")
+    if vix:
+        if vix < 18: bullish += 1
+        elif vix > 25: bearish += 2
+        else: bearish += 1
+
+    oil = macro.get("CL=F",{}).get("change", 0)
+    if oil > 2:    bearish += 1
+    elif oil < -2: bullish += 1
+
+    yld = macro.get("^TNX",{}).get("change", 0)
+    if yld > 0.1:  bearish += 1
+    elif yld < -0.1: bullish += 1
+
+    btc = prices.get("BTC-USD",{})
+    if btc.get("current") and btc.get("prev"):
+        if btc["current"] > btc["prev"]: bullish += 1
+        else: bearish += 1
+
+    net = bullish - bearish
+    if net >= 3:    return bullish, bearish, "BULLISH",          "#22c55e"
+    if net >= 1:    return bullish, bearish, "SLIGHTLY BULLISH", "#86efac"
+    if net == 0:    return bullish, bearish, "NEUTRAL",          "#c9a84c"
+    if net >= -2:   return bullish, bearish, "SLIGHTLY BEARISH", "#f97316"
+    return              bullish, bearish, "BEARISH",          "#ef4444"
+
+# ============================================================
+# BUILD EMAIL BODY
+# ============================================================
+def build_recap(recap_type, prices, macro, news):
     la_tz = pytz.timezone(TIMEZONE)
     now = datetime.now(la_tz)
-    hour, minute = now.hour, now.minute
+    date_str = now.strftime("%A, %B %d, %Y · %I:%M %p PT")
 
-    if hour == 5:
-        return "morning"
-    elif hour == 7 and minute >= 25:
-        return "midday"
-    elif hour == 16:
-        return "close"
+    score = calc_market_score(prices)
+    dial_label, dial_bars = get_risk_dial(score)
+    rotation_label, rotation_desc = get_sector_rotation(prices)
+    bull, bear, sentiment_label, sent_color = get_sentiment_score(prices, macro)
+
+    titles = {
+        "morning": "🌅 MORNING MARKET BRIEFING — PRE-MARKET STRATEGY",
+        "midday":  "⏱️ MIDDAY MARKET UPDATE — REAL-TIME ADJUSTMENT",
+        "close":   "🌇 AFTER-MARKET RECAP — STRATEGIC REVIEW",
+    }
+    title = titles.get(recap_type, "📊 MARKET RECAP")
+
+    SEP = "━" * 52
+
+    lines = [
+        title,
+        date_str,
+        SEP,
+        "",
+
+        # ── (0) BREAKING NEWS ──────────────────────────
+        "(0) 🚨 BREAKING NEWS RADAR",
+        SEP,
+    ]
+
+    if news:
+        for i, item in enumerate(news[:6], 1):
+            lines.append(f"  {i}. {item['title']}")
+            lines.append(f"     Source: {item['source']}")
+            lines.append("")
     else:
-        # Default fallback
-        return "morning"
+        lines.append("  No headlines retrieved at this time.")
+        lines.append("")
+
+    # ── (1) MACRO DRIVERS ──────────────────────────────
+    lines += [
+        "(1) 🌍 MACRO DRIVERS",
+        SEP,
+    ]
+
+    macro_map = [
+        ("CL=F",      "🛢  Oil (WTI)"),
+        ("^TNX",      "📉 10Y Yield"),
+        ("DX-Y.NYB",  "💵 US Dollar"),
+        ("GC=F",      "🪙 Gold"),
+        ("^VIX",      "😨 VIX Fear"),
+    ]
+    for ticker, label in macro_map:
+        m = macro.get(ticker, {})
+        val = m.get("current")
+        chg = m.get("change", 0)
+        if val:
+            arrow = "▲" if chg >= 0 else "▼"
+            lines.append(f"  {label:<20} ${val:>8.2f}   {arrow} {abs(chg):.2f}%")
+        else:
+            lines.append(f"  {label:<20} N/A")
+
+    # Bitcoin macro read
+    btc = prices.get("BTC-USD", {})
+    if btc.get("current") and btc.get("prev"):
+        btc_chg = ((btc["current"] - btc["prev"]) / btc["prev"]) * 100
+        arrow = "▲" if btc_chg >= 0 else "▼"
+        lines.append(f"  {'₿  Bitcoin':<20} ${btc['current']:>8,.0f}   {arrow} {abs(btc_chg):.2f}%")
+
+    # Macro bias
+    vix_val = macro.get("^VIX", {}).get("current", 20)
+    if vix_val:
+        if vix_val < 18:   bias = "→ BIAS: Calm market. Risk appetite intact."
+        elif vix_val < 25: bias = "→ BIAS: Mild uncertainty. Stay selective."
+        else:              bias = "→ BIAS: Elevated fear. Defensive posture."
+        lines.append(f"\n  {bias}")
+    lines.append("")
+
+    # ── (2) SENTIMENT SCORE ────────────────────────────
+    lines += [
+        "(2) ⚖️  SENTIMENT SCORE",
+        SEP,
+        f"  Bullish signals:  {bull}",
+        f"  Bearish signals:  {bear}",
+        f"  Overall tone:     {sentiment_label}",
+        "",
+    ]
+
+    # ── (3) ECONOMIC CALENDAR ──────────────────────────
+    lines += [
+        "(3) 📅 ECONOMIC CALENDAR",
+        SEP,
+        "  Check today's schedule at: economiccalendar.com",
+        "  Key events to watch: Fed speakers · CPI · Jobs · Auctions",
+        "",
+    ]
+
+    # ── (4) SECTOR ROTATION ────────────────────────────
+    lines += [
+        "(4) 🔄 SECTOR ROTATION",
+        SEP,
+    ]
+
+    sectors = [
+        ("Growth (QQQ/SOXX/NVDA)", ["QQQ","SOXX","NVDA"]),
+        ("Defensive (XLV/IAU)",    ["XLV","IAU"]),
+        ("Cyclical (XLI/KBWB)",    ["XLI","KBWB"]),
+        ("Risk (MU/BTC)",          ["MU","BTC-USD"]),
+    ]
+    for sector_name, tickers in sectors:
+        ups = sum(1 for t in tickers if prices.get(t,{}).get("current",0) > prices.get(t,{}).get("prev",1))
+        icon = "🟢" if ups == len(tickers) else "🔴" if ups == 0 else "🟡"
+        lines.append(f"  {icon} {sector_name}")
+
+    lines += [f"  → {rotation_label}: {rotation_desc}", ""]
+
+    # ── (5) HOLDINGS GAME PLAN ─────────────────────────
+    lines += [
+        "(5) 📊 HOLDINGS GAME PLAN",
+        SEP,
+    ]
+
+    total_value = 0
+    for h in HOLDINGS:
+        p = prices.get(h["ticker"], {})
+        current = p.get("current")
+        prev    = p.get("prev")
+        if not current:
+            lines.append(f"  {h['ticker']:<6} — Price unavailable")
+            lines.append("")
+            continue
+
+        display_ticker = "BTC" if h["ticker"] == "BTC-USD" else h["ticker"]
+        pct_avg = ((current - h["avg"]) / h["avg"]) * 100
+        pct_day = ((current - prev) / prev * 100) if prev else 0
+        dca_label, _ = get_dca_status(current, h["s1"], h["s2"], h["r1"])
+        value = current * h["shares"]
+        total_value += value
+
+        arrow_avg = "▲" if pct_avg >= 0 else "▼"
+        arrow_day = "▲" if pct_day >= 0 else "▼"
+
+        fmt_price = f"${current:,.2f}" if h["ticker"] == "BTC-USD" else f"${current:.2f}"
+        fmt_avg   = f"${h['avg']:,.2f}" if h["ticker"] == "BTC-USD" else f"${h['avg']:.2f}"
+        fmt_s1    = f"${h['s1']:,.0f}"  if h["ticker"] == "BTC-USD" else f"${h['s1']}"
+        fmt_s2    = f"${h['s2']:,.0f}"  if h["ticker"] == "BTC-USD" else f"${h['s2']}"
+        fmt_r1    = f"${h['r1']:,.0f}"  if h["ticker"] == "BTC-USD" else f"${h['r1']}"
+
+        lines += [
+            f"  {display_ticker} — {h['role']}",
+            f"  Price: {fmt_price}  {arrow_day} {abs(pct_day):.2f}% today  |  Avg Cost: {fmt_avg}  {arrow_avg} {abs(pct_avg):.2f}%",
+            f"  S2: {fmt_s2}  ·  S1: {fmt_s1}  ·  R1: {fmt_r1}",
+            f"  Status: {dca_label}",
+            "",
+        ]
+
+    lines += [
+        f"  PORTFOLIO VALUE: ${total_value:,.2f}",
+        "",
+    ]
+
+    # ── (6) OPTIONS FLOW NOTE ──────────────────────────
+    lines += [
+        "(6) 🧾 OPTIONS FLOW",
+        SEP,
+        "  Check live options flow at: unusualwhales.com or finviz.com",
+        f"  VIX at {macro.get('^VIX',{}).get('current','N/A')} → " +
+        ("Low hedging. Institutions comfortable." if vix_val and vix_val < 20
+         else "Active hedging. Institutions cautious." if vix_val and vix_val < 28
+         else "Heavy hedging. Smart money defensive."),
+        "",
+    ]
+
+    # ── (7) RISK DIAL ──────────────────────────────────
+    lines += [
+        "(7) 🎯 RISK DIAL",
+        SEP,
+        f"  Market Score:  {score}/100",
+        f"  Posture:       {dial_label}  {dial_bars}",
+        f"  Sentiment:     {sentiment_label}",
+        f"  Rotation:      {rotation_label}",
+        "",
+    ]
+
+    # ── (8) ACTION PLAN ────────────────────────────────
+    lines += [
+        "(8) ✅ ACTION PLAN",
+        SEP,
+    ]
+
+    # Dynamic action plan based on score
+    near_s1 = [h for h in HOLDINGS if prices.get(h["ticker"],{}).get("current") and
+               ((prices[h["ticker"]]["current"] - h["s1"]) / prices[h["ticker"]]["current"]) * 100 <= 2.5]
+    at_danger = [h for h in HOLDINGS if prices.get(h["ticker"],{}).get("current") and
+                 prices[h["ticker"]]["current"] < h["s2"]]
+
+    if score >= 70:
+        lines.append("  → Market confirmed strength. Scale into positions near S1.")
+        lines.append("  → DCA targets today if near support:")
+    elif score >= 50:
+        lines.append("  → Controlled buying only. Buy near S1, not at current prices.")
+        lines.append("  → Potential DCA targets:")
+    elif score >= 35:
+        lines.append("  → WAIT mode. Let levels come to you. No chasing.")
+        lines.append("  → Watch these levels:")
+    else:
+        lines.append("  → PROTECT capital. Reduce exposure. No new entries.")
+        lines.append("  → Danger zones:")
+
+    if near_s1:
+        for h in near_s1[:3]:
+            display = "BTC" if h["ticker"] == "BTC-USD" else h["ticker"]
+            current = prices[h["ticker"]]["current"]
+            fmt = f"${current:,.0f}" if h["ticker"] == "BTC-USD" else f"${current:.2f}"
+            lines.append(f"     • {display} at {fmt} — near S1 ${h['s1']:,}")
+    else:
+        lines.append("     • No holdings currently at S1 buy zones")
+
+    if at_danger:
+        lines.append("\n  ⚠️  DANGER — These broke below S2:")
+        for h in at_danger:
+            display = "BTC" if h["ticker"] == "BTC-USD" else h["ticker"]
+            lines.append(f"     🔴 {display} — DO NOT ADD")
+
+    lines += [
+        "",
+        SEP,
+        "Automated Market Recap · Julio's Portfolio System",
+        "Data: Yahoo Finance · Reuters RSS · MarketWatch RSS",
+        "Cost: $0.00 · Runs free forever",
+        SEP,
+    ]
+
+    return "\n".join(lines)
 
 # ============================================================
-# RECAP PROMPTS — FULL STRUCTURED FORMAT
+# BUILD HTML EMAIL
 # ============================================================
-def build_prompt(recap_type):
-    la_tz = pytz.timezone(TIMEZONE)
-    now = datetime.now(la_tz)
-    date_str = now.strftime("%A, %B %d, %Y")
+def build_html(plain_text, recap_type, score):
+    colors = {"morning": "#c9a84c", "midday": "#3b82f6", "close": "#8b5cf6"}
+    accent = colors.get(recap_type, "#c9a84c")
 
-    holdings_text = "\n".join([
-        f"  - {h['ticker']} ({h['name']}): avg cost ${h['avg_cost']:,.2f} | {h['shares']} shares"
-        for h in HOLDINGS
-    ])
+    score_color = "#22c55e" if score >= 70 else "#c9a84c" if score >= 50 else "#f97316" if score >= 35 else "#ef4444"
 
-    base_context = f"""You are a professional portfolio analyst delivering a market recap to a retail investor.
-
-TODAY'S DATE: {date_str} (Pacific Time)
-
-INVESTOR'S PORTFOLIO (11 holdings):
-{holdings_text}
-
-IMPORTANT NOTES:
-- Most positions are currently below average cost — flag DCA opportunities based on actual entry prices
-- Research EVERY holding individually using web search
-- Be specific, data-driven, and actionable
-- Use Pacific Time for all event times
-- Format cleanly for email reading on mobile"""
-
-    if recap_type == "morning":
-        return base_context + """
-
-TASK: Generate a complete PRE-MARKET MORNING RECAP.
-Search for: overnight futures, international markets, breaking news, macro data, anything moving these holdings.
-
-OUTPUT FORMAT — follow this structure exactly:
-
-🌅 MORNING MARKET BRIEFING — PRE-MARKET STRATEGY
-📅 {date}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(0) 🚨 BREAKING NEWS RADAR
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-List 4-6 breaking stories. For each:
-- Headline | Source | Time
-- Which holdings are affected and how (bullish/bearish/neutral)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(1) 🌍 OVERNIGHT MACRO DRIVERS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- 🛢 Oil: [price + direction + implication]
-- 📉 Treasury Yields: [2Y and 10Y + tech implication]
-- 💵 USD: [direction + global liquidity impact]
-- 🪙 Gold: [price + fear/confidence read]
-- ₿ Bitcoin: [price + risk appetite signal]
-→ OVERALL BIAS BEFORE OPEN: [Bullish / Neutral / Bearish]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(2) ⚖️ SENTIMENT SCORE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Bullish headlines: [N]
-Bearish headlines: [N]
-Weighted Score: [+X / -X / Neutral]
-→ Translation: [one sentence plain English]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(3) 📅 ECONOMIC CALENDAR (PACIFIC TIME)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TODAY:
-- [Time PT] — [Event] — [Importance: HIGH/MED/LOW]
-REST OF WEEK:
-- [Key events]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(4) 🔄 SECTOR ROTATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🟢 Leading: [sectors]
-🔴 Lagging: [sectors]
-🟡 Mixed: [sectors]
-→ Interpretation: [rotation type — bull/bear/defensive]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(5) 📊 HOLDINGS GAME PLAN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-For EACH of the 11 holdings:
-
-[TICKER] — [Current Price] | Avg Cost: $X | [+/-% from avg]
-  S1: $X (-X% away)
-  S2: $X (-X% away)
-  DCA Readiness: ✅ Near support / ❌ Not yet / ⚠️ Wait
-  → [1-line action note]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(6) 🧾 OPTIONS FLOW
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- Put/Call ratio: [X]
-- Institutional positioning: [hedging / neutral / aggressive]
-→ Smart money read: [one line]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(7) 🎯 RISK DIAL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ DEFENSIVE ] / [ NEUTRAL ] / [ AGGRESSIVE ]
-Reasons for: [2-3 bullet points]
-Reasons against going more aggressive: [1-2 bullets]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(8) 🧠 INTELLIGENT INVESTOR SUMMARY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[3-4 sentences in plain English. What's really happening and why it matters to this portfolio.]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ TODAY'S ACTION PLAN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. First 30-60 min: [instruction]
-2. Only buy if: [specific condition + ticker]
-3. Avoid: [specific tickers + reason]
-4. Key trigger to watch: [specific level or event]"""
-
-    elif recap_type == "midday":
-        return base_context + """
-
-TASK: Generate a MIDDAY MARKET UPDATE.
-Search for: what has moved since open, breaking news since 6:30 AM PT, current prices, intraday action.
-
-OUTPUT FORMAT — follow this structure exactly:
-
-⏱️ MIDDAY MARKET UPDATE — REAL-TIME ADJUSTMENT
-📅 {date}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(0) 🚨 BREAKING NEWS SINCE OPEN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-New headlines that changed the picture since 6:30 AM PT
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(1) 📊 WHAT MOVED MARKETS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- Oil: [change since open]
-- Yields: [direction since open]
-- Dollar, Gold, Bitcoin: [moves]
-→ Real driver of price action today: [plain English]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(2) ⚖️ UPDATED SENTIMENT SCORE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-vs Morning: [improving / worsening / same]
-Current score: [+X / -X]
-→ [One line — is market stronger or weaker than expected?]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(3) 🔄 INTRADAY ROTATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Growth vs Defensive — who's winning?
-→ Real move or fake move? [reasoning]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(4) 📊 HOLDINGS CHECK — LIVE EXECUTION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-For EACH holding:
-[TICKER]: $[current] | [+/-% today] | Distance to S1: X% | Action: BUY / WAIT / AVOID
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(5) 🎯 RISK DIAL UPDATE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ DEFENSIVE ] / [ NEUTRAL ] / [ AGGRESSIVE ]
-Change from morning? [Yes/No + reason]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(6) ⚠️ IMMEDIATE CATALYSTS AHEAD TODAY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Any Fed speakers, auctions, or surprises still coming today
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(7) 🧾 OPTIONS FLOW — INTRADAY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-→ Smart money buying or hedging right now?
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ MIDDAY DECISION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-→ [BUY / WAIT / AVOID] — specific tickers and triggers
-→ One key thing to watch into the close"""
-
-    else:  # close
-        return base_context + """
-
-TASK: Generate the AFTER-MARKET CLOSE RECAP.
-Search for: today's closing prices, full day performance, what drove the day, after-hours news, tomorrow's calendar.
-
-OUTPUT FORMAT — follow this structure exactly:
-
-🌇 AFTER-MARKET RECAP — STRATEGIC REVIEW
-📅 {date}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(0) 🚨 FULL-DAY NEWS SUMMARY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-What actually mattered today — top 4-5 stories and their market impact
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(1) 📊 WHAT MOVED MARKETS — CAUSE & EFFECT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[Event] → [Market reaction] → [Portfolio implication]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(2) ⚖️ FINAL SENTIMENT SCORE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Today's overall tone: [Bullish / Neutral / Bearish]
-Score: [+X / -X]
-→ [One line summary of the day]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(3) 🔄 SECTOR ROTATION — CONFIRMED
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Who led, who lagged
-→ Where is capital moving next?
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(4) 📊 HOLDINGS — CLOSING REPORT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-For EACH holding:
-[TICKER]: Close $X | Avg Cost $X | [+/-% from avg] | [+/-% today]
-  Support levels: S1 $X | S2 $X
-  DCA Readiness: ✅/❌/⚠️
-  → [Updated positioning note]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(5) 🎯 RISK DIAL — END OF DAY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Tomorrow's posture: [ DEFENSIVE ] / [ NEUTRAL ] / [ AGGRESSIVE ]
-Reasoning: [2-3 bullets]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(6) 🧠 KEY INDICATORS CHECKLIST
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-- SPY behavior today: [summary]
-- Growth vs Defensives: [who won]
-- SOXX strength: [read]
-- VIX: [level + fear/complacency signal]
-- Bitcoin: [risk appetite read]
-→ Market health: [HEALTHY / CAUTIOUS / STRESSED]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(7) 🧾 OPTIONS FLOW RECAP
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-→ How did institutional positioning close?
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(8) 📅 TOMORROW'S CALENDAR
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Key events tomorrow (Pacific Time):
-- [Time] — [Event] — [Impact level]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ TOMORROW'S GAME PLAN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. What changed today that affects tomorrow
-2. Key levels to watch at open
-3. Best DCA setups if market dips
-4. What would change the risk dial"""
-
+    html = f"""
+<html>
+<body style="font-family:'Courier New',monospace; background:#080b10;
+             color:#e0e0e0; padding:20px; max-width:660px; margin:0 auto;">
+  <div style="border:1px solid {accent}; border-radius:8px;
+              padding:16px; margin-bottom:16px; background:#0d1117;">
+    <div style="color:{accent}; font-size:10px; letter-spacing:3px; margin-bottom:4px;">
+      JULIO'S PORTFOLIO SYSTEM
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-size:16px; font-weight:bold; color:#fff;">
+        {'🌅 MORNING BRIEFING' if recap_type == 'morning' else '⏱️ MIDDAY UPDATE' if recap_type == 'midday' else '🌇 CLOSE RECAP'}
+      </div>
+      <div style="background:{score_color}20; border:1px solid {score_color};
+                  border-radius:6px; padding:4px 12px; text-align:center;">
+        <div style="font-size:18px; font-weight:bold; color:{score_color};">{score}</div>
+        <div style="font-size:8px; color:{score_color}; letter-spacing:1px;">SCORE</div>
+      </div>
+    </div>
+  </div>
+  <div style="border:1px solid #1a1f2e; border-radius:8px; padding:18px; background:#0a0d12;">
+    <pre style="white-space:pre-wrap; font-size:12px; line-height:1.8;
+                color:#e0e0e0; margin:0; overflow-x:auto;">{plain_text}</pre>
+  </div>
+  <div style="text-align:center; font-size:10px; color:#333; padding:12px; margin-top:8px;">
+    Free automated system · Yahoo Finance + RSS · $0/month
+  </div>
+</body>
+</html>"""
+    return html
 
 # ============================================================
-# CALL CLAUDE API WITH WEB SEARCH
+# SEND EMAIL
 # ============================================================
-def run_recap(recap_type):
-    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-
-    prompt = build_prompt(recap_type)
-
-    print(f"🔍 Running {recap_type.upper()} recap with live web research...")
-
-    response = client.messages.create(
-        model="claude-opus-4-5",
-        max_tokens=4000,
-        tools=[{"type": "web_search_20250305", "name": "web_search"}],
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    # Extract all text blocks from response
-    recap_text = ""
-    for block in response.content:
-        if hasattr(block, "type") and block.type == "text":
-            recap_text += block.text
-
-    return recap_text
-
-
-# ============================================================
-# SEND EMAIL VIA GMAIL
-# ============================================================
-def send_email(recap_text, recap_type):
-    sender = os.environ.get("GMAIL_ADDRESS")
+def send_email(recap_type, body_text, html_body):
+    sender   = os.environ.get("GMAIL_ADDRESS")
     password = os.environ.get("GMAIL_APP_PASSWORD")
 
     subjects = {
@@ -348,29 +480,14 @@ def send_email(recap_text, recap_type):
         "midday":  "⏱️ Midday Market Update — Real-Time Adjustment",
         "close":   "🌇 After-Market Recap — Strategic Review",
     }
-
     subject = subjects.get(recap_type, "📊 Market Recap")
-
-    html_body = f"""
-<html>
-<body style="font-family: 'Courier New', monospace; background-color: #080b10;
-             color: #e0e0e0; padding: 24px; max-width: 680px; margin: 0 auto;">
-  <div style="border: 1px solid #c9a84c; border-radius: 8px; padding: 20px;">
-    <pre style="white-space: pre-wrap; font-size: 13px; line-height: 1.7;
-                color: #e0e0e0; margin: 0;">{recap_text}</pre>
-  </div>
-  <p style="color: #555; font-size: 11px; text-align: center; margin-top: 16px;">
-    Automated Market Recap System — Powered by Claude AI
-  </p>
-</body>
-</html>"""
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"] = f"Market Recap <{sender}>"
-    msg["To"] = RECIPIENT_EMAIL
+    msg["From"]    = f"Market Recap <{sender}>"
+    msg["To"]      = RECIPIENT_EMAIL
 
-    msg.attach(MIMEText(recap_text, "plain"))
+    msg.attach(MIMEText(body_text, "plain"))
     msg.attach(MIMEText(html_body, "html"))
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
@@ -379,13 +496,46 @@ def send_email(recap_text, recap_type):
 
     print(f"✅ {recap_type.upper()} recap sent to {RECIPIENT_EMAIL}")
 
+# ============================================================
+# DETERMINE RECAP TYPE
+# ============================================================
+def get_recap_type():
+    forced = os.environ.get("RECAP_TYPE")
+    if forced:
+        return forced
+    la_tz = pytz.timezone(TIMEZONE)
+    now   = datetime.now(la_tz)
+    hour, minute = now.hour, now.minute
+    if hour == 5:                        return "morning"
+    if hour == 7 and minute >= 25:       return "midday"
+    if hour == 16:                       return "close"
+    return "morning"
 
 # ============================================================
 # MAIN
 # ============================================================
 if __name__ == "__main__":
     recap_type = get_recap_type()
-    print(f"📊 Recap type: {recap_type.upper()}")
+    print(f"📊 Running {recap_type.upper()} recap...")
 
-    recap_content = run_recap(recap_type)
-    send_email(recap_content, recap_type)
+    print("📡 Fetching prices...")
+    prices = fetch_prices()
+
+    print("🌍 Fetching macro data...")
+    macro = fetch_macro()
+
+    print("📰 Fetching news headlines...")
+    news = fetch_news()
+
+    score = calc_market_score(prices)
+    print(f"🧠 Market Score: {score}/100")
+
+    print("✍️  Building recap...")
+    body = build_recap(recap_type, prices, macro, news)
+
+    html = build_html(body, recap_type, score)
+
+    print("📧 Sending email...")
+    send_email(recap_type, body, html)
+
+    print("✅ Done.")
