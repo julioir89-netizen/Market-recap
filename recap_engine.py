@@ -151,8 +151,8 @@ def get_risk_dial(score):
     return              "PROTECT",    "○○○"
 
 def get_sector_rotation(prices):
-    growth_up    = sum(1 for t in ["QQQ","SOXX","NVDA"] if prices.get(t,{}).get("current",0) > prices.get(t,{}).get("prev",0))
-    defensive_up = sum(1 for t in ["XLV","IAU"]         if prices.get(t,{}).get("current",0) > prices.get(t,{}).get("prev",0))
+    growth_up    = sum(1 for t in ["QQQ","SOXX","NVDA"] if (prices.get(t,{}).get("current") or 0) > (prices.get(t,{}).get("prev") or 0))
+    defensive_up = sum(1 for t in ["XLV","IAU"]         if (prices.get(t,{}).get("current") or 0) > (prices.get(t,{}).get("prev") or 0))
     if growth_up >= 2 and defensive_up <= 1:   return "RISK-ON",       "Growth leading. Capital moving into tech/semis."
     if defensive_up >= 2 and growth_up <= 1:   return "RISK-OFF",      "Defensives leading. Rotation out of growth."
     return                                      "MIXED",         "No clear rotation. Selective market."
@@ -161,7 +161,7 @@ def get_sentiment_score(prices, macro):
     bullish, bearish = 0, 0
     spy_chg = prices.get("SPY",{})
     if spy_chg.get("current") and spy_chg.get("prev"):
-        if spy_chg["current"] > spy_chg["prev"]: bullish += 2
+        if (spy_chg["current"] or 0) > (spy_chg["prev"] or 0): bullish += 2
         else: bearish += 2
 
     vix = macro.get("^VIX",{}).get("current")
@@ -180,7 +180,7 @@ def get_sentiment_score(prices, macro):
 
     btc = prices.get("BTC-USD",{})
     if btc.get("current") and btc.get("prev"):
-        if btc["current"] > btc["prev"]: bullish += 1
+        if (btc["current"] or 0) > (btc["prev"] or 0): bullish += 1
         else: bearish += 1
 
     net = bullish - bearish
@@ -303,7 +303,7 @@ def build_recap(recap_type, prices, macro, news):
         ("Risk (MU/BTC)",          ["MU","BTC-USD"]),
     ]
     for sector_name, tickers in sectors:
-        ups = sum(1 for t in tickers if prices.get(t,{}).get("current",0) > prices.get(t,{}).get("prev",1))
+        ups = sum(1 for t in tickers if (prices.get(t,{}).get("current") or 0) > (prices.get(t,{}).get("prev") or 0))
         icon = "🟢" if ups == len(tickers) else "🔴" if ups == 0 else "🟡"
         lines.append(f"  {icon} {sector_name}")
 
