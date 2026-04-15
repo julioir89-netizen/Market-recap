@@ -1,0 +1,31 @@
+name: Daily Stock Analysis
+
+on:
+  schedule:
+    # 4:30 PM PDT = 23:30 UTC — runs 30 min after market close Mon-Fri
+    - cron: '30 23 * * 1-5'
+
+  # Run manually anytime
+  workflow_dispatch:
+
+jobs:
+  run-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pytz
+
+      - name: Run Daily Analysis
+        run: python daily_analysis.py
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
