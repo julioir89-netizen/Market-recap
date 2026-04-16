@@ -1,4 +1,4 @@
 yfinance>=0.2.36
 feedparser>=6.0.10
 pytz>=2024.1
- 
+numpy>=1.26.0
