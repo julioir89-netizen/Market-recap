@@ -2,8 +2,8 @@ name: Options Bot — Daily Regime Engine
 
 on:
   schedule:
-    - cron: '0 15 * * 1-5'  # 8:00 AM Pacific (15:00 UTC), Mon–Fri
-  workflow_dispatch:          # lets you trigger it manually anytime
+    - cron: '0 15 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   run-regime-engine:
@@ -19,18 +19,14 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install requests yfinance
+        run: pip install requests yfinance
 
       - name: Run Regime Engine
         env:
-          - name: Run Regime Engine
-        env:
           TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
           TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
-          TT_SANDBOX_ACCOUNT:  ${{ secrets.TT_SANDBOX_ACCOUNT }}
-          EMAIL_TO:            ${{ secrets.EMAIL_TO }}
-          EMAIL_FROM:          ${{ secrets.GMAIL_ADDRESS }}
-          EMAIL_PASSWORD:      ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: |
-          python options_bot/phase1_regime.py
+          TT_SANDBOX_ACCOUNT: ${{ secrets.TT_SANDBOX_ACCOUNT }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python options_bot/phase1_regime.py
