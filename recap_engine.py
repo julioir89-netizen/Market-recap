@@ -236,6 +236,15 @@ def fetch_news(max_items=25):
             break
     return headlines[:max_items]
  
+def clean_source_name(source):
+    """Shorten verbose source names."""
+    if "Yahoo" in source:      return "Yahoo Finance"
+    if "Reuters" in source:    return "Reuters"
+    if "MarketWatch" in source: return "MarketWatch"
+    if "CNBC" in source:       return "CNBC"
+    if "Bloomberg" in source:  return "Bloomberg"
+    return source[:30]
+ 
 def tag_and_analyze_news(headlines):
     """Tag each headline to holdings AND determine impact."""
     results = {"portfolio": [], "general": [], "macro_themes": {}}
@@ -247,30 +256,46 @@ def tag_and_analyze_news(headlines):
         if count >= 1:
             results["macro_themes"][theme] = count
  
-    # Tag headlines to holdings
+    # Tag headlines to holdings — using STRICT matching
+    # Keywords must appear in title (not just summary) for ticker tagging
     for item in headlines:
-        text = (item["title"] + " " + item["summary"]).lower()
+        title_text   = item["title"].lower()
+        full_text    = (item["title"] + " " + item["summary"]).lower()
  
-        # Check which holdings are affected
+        # Clean source name
+        item["source"] = clean_source_name(item.get("source","News"))
+ 
+        # Check which holdings are affected — title match required for strict relevance
         affected = []
         for h in HOLDINGS:
             display = "BTC" if h["ticker"] == "BTC-USD" else h["ticker"]
-            for kw in h["keywords"]:
-                if kw.lower() in text:
-                    affected.append(display)
-                    break
+            # Primary keywords must match in title for high-confidence tag
+            primary_kws = h["keywords"][:4]  # First 4 keywords are most specific
+            all_kws     = h["keywords"]
+            title_match = any(kw.lower() in title_text for kw in primary_kws)
+            full_match  = any(kw.lower() in full_text  for kw in all_kws)
+            if title_match or (full_match and len(h["keywords"]) > 0 and any(kw.lower() in title_text for kw in all_kws[:6])):
+                affected.append(display)
  
-        # Determine sentiment
-        bullish_words = ["surge","rally","rise","gain","jump","beat","record","strong","growth","recover","upgrade","buy","positive","boost","soar","outperform","top","beat","profit"]
-        bearish_words = ["fall","drop","decline","crash","miss","weak","recession","cut","layoff","loss","downgrade","sell","negative","risk","war","fear","inflation","tariff","ban","restrict","sanction"]
-        bull = sum(1 for w in bullish_words if w in text)
-        bear = sum(1 for w in bearish_words if w in text)
-        sentiment = "BULLISH" if bull > bear else "BEARISH" if bear > bull else "NEUTRAL"
-        sent_color = "🟢" if sentiment=="BULLISH" else "🔴" if sentiment=="BEARISH" else "🟡"
+        # Sentiment — improved: check title specifically, weight stronger words higher
+        title_lower = item["title"].lower()
+        strong_bull = ["fantastic","record","surge","soar","beat","outperform","upgrade","breakthrough","rally","boom","profits","raises target","strong buy"]
+        strong_bear = ["crash","collapse","bankruptcy","layoff","miss","downgrade","cut","ban","sanction","plunge","disaster","loss","falling","decline"]
+        mild_bull   = ["rise","gain","growth","positive","up","higher","strong","recover","buy"]
+        mild_bear   = ["fall","drop","weak","negative","risk","fear","tariff","inflation","restrict"]
  
-        item["affected"] = list(set(affected))
+        bull_score = sum(3 for w in strong_bull if w in title_lower) + sum(1 for w in mild_bull if w in title_lower)
+        bear_score = sum(3 for w in strong_bear if w in title_lower) + sum(1 for w in mild_bear if w in title_lower)
+ 
+        if bull_score > bear_score + 1:   sentiment = "BULLISH"
+        elif bear_score > bull_score + 1: sentiment = "BEARISH"
+        else:                             sentiment = "NEUTRAL"
+ 
+        sent_icon = "🟢" if sentiment=="BULLISH" else "🔴" if sentiment=="BEARISH" else "🟡"
+ 
+        item["affected"]  = list(set(affected))
         item["sentiment"] = sentiment
-        item["sent_icon"] = sent_color
+        item["sent_icon"] = sent_icon
  
         if affected:
             results["portfolio"].append(item)
