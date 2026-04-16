@@ -1,0 +1,34 @@
+name: Options Bot — Daily Regime Engine
+
+on:
+  schedule:
+    - cron: '0 15 * * 1-5'  # 8:00 AM Pacific (15:00 UTC), Mon–Fri
+  workflow_dispatch:          # lets you trigger it manually anytime
+
+jobs:
+  run-regime-engine:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests yfinance
+
+      - name: Run Regime Engine
+        env:
+          TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
+          TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
+          TT_SANDBOX_ACCOUNT:  ${{ secrets.TT_SANDBOX_ACCOUNT }}
+          EMAIL_TO:            ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM:          ${{ secrets.EMAIL_FROM }}
+          EMAIL_PASSWORD:      ${{ secrets.EMAIL_PASSWORD }}
+        run: |
+          python options_bot/phase1_regime.py
