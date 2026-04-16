@@ -24,11 +24,13 @@ jobs:
 
       - name: Run Regime Engine
         env:
+          - name: Run Regime Engine
+        env:
           TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
           TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
           TT_SANDBOX_ACCOUNT:  ${{ secrets.TT_SANDBOX_ACCOUNT }}
           EMAIL_TO:            ${{ secrets.EMAIL_TO }}
-          EMAIL_FROM:          ${{ secrets.EMAIL_FROM }}
-          EMAIL_PASSWORD:      ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_FROM:          ${{ secrets.GMAIL_ADDRESS }}
+          EMAIL_PASSWORD:      ${{ secrets.GMAIL_APP_PASSWORD }}
         run: |
           python options_bot/phase1_regime.py
