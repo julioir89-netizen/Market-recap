@@ -104,7 +104,7 @@ def calc_score(prices, macro, levels):
     return min(100, score)
  
 def update_gist(content_str):
-    token = os.environ.get("GITHUB_TOKEN")
+    token = os.environ.get("GIST_TOKEN")
     if not token:
         print("⚠️  No GITHUB_TOKEN found — skipping Gist update")
         return False
