@@ -37,10 +37,10 @@ jobs:
       - name: Install dependencies
         run: pip install yfinance pytz numpy pandas
 
-      - name: Update prices.json
-        run: python prices_updater.py
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       - name: Update prices.json
+         run: python prices_updater.py
+         env:
+          GITHUB_TOKEN: ${{ secrets.GIST_TOKEN }}
 
       - name: Commit prices.json
         run: |
