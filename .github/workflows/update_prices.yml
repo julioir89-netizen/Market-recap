@@ -36,7 +36,7 @@ jobs:
       - name: Update prices.json
         run: python prices_updater.py
         env:
-          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+          GIST_TOKEN: ${{ secrets.GISTTOKEN }}
 
       - name: Commit prices.json
         run: |
