@@ -1,0 +1,37 @@
+{
+  "name": "Portfolio Command Center",
+  "short_name": "Portfolio",
+  "description": "Julio's Personal Fund Strategy Dashboard",
+  "start_url": "/Market-recap/",
+  "display": "standalone",
+  "background_color": "#070a0f",
+  "theme_color": "#070a0f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Live Alerts",
+      "url": "/Market-recap/#alerts",
+      "description": "View active portfolio alerts"
+    },
+    {
+      "name": "Holdings",
+      "url": "/Market-recap/#holdings",
+      "description": "View all holdings"
+    }
+  ]
+}

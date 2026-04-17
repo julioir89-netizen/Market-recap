@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Portfolio">
+<meta name="theme-color" content="#070a0f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Portfolio Command</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: #070a0f; color: #e2e8f0; font-family: 'Courier New', monospace; overflow: hidden; }
+
+  /* HEADER */
+  .header {
+    background: #0d1117;
+    border-bottom: 1px solid #1e2a3a;
+    padding: 12px 16px 10px;
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: center; }
+  .header-title { font-size: 9px; color: #c9a84c; letter-spacing: 3px; margin-bottom: 2px; }
+  .header-name { font-size: 16px; font-weight: bold; color: #fff; }
+  .score-badge { text-align: center; background: #0d1117; border: 1px solid #1e2a3a; border-radius: 6px; padding: 4px 12px; min-width: 60px; }
+  .score-val { font-size: 20px; font-weight: bold; }
+  .score-lbl { font-size: 8px; letter-spacing: 1px; }
+  .score-bar { margin-top: 8px; background: #1e2a3a; border-radius: 2px; height: 3px; }
+  .score-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+  .last-update { font-size: 9px; color: #334155; margin-top: 4px; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: #0a0d14;
+    border-bottom: 1px solid #1e2a3a;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #475569;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    font-family: inherit;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .tab.active { color: #c9a84c; border-bottom-color: #c9a84c; }
+
+  /* CONTENT */
+  .content {
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+    padding: 12px 14px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  /* CARDS */
+  .card {
+    background: #0d1117;
+    border: 1px solid #1e2a3a;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+  .card-accent { border-left: 3px solid; }
+  .card-label { font-size: 8px; color: #475569; letter-spacing: 2px; margin-bottom: 6px; text-transform: uppercase; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .stat-card { background: #0d1117; border: 1px solid #1e2a3a; border-radius: 8px; padding: 10px; text-align: center; }
+  .stat-val { font-size: 15px; font-weight: bold; }
+  .stat-lbl { font-size: 8px; color: #475569; margin-top: 2px; letter-spacing: 1px; }
+
+  /* ALERTS */
+  .alert-item {
+    border-left: 4px solid;
+    border-radius: 0 6px 6px 0;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+  }
+  .alert-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .alert-urgency { font-size: 9px; font-weight: bold; padding: 2px 7px; border-radius: 3px; }
+  .alert-type { font-size: 9px; padding: 2px 6px; border-radius: 3px; }
+  .alert-headline { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 5px; }
+  .alert-action { font-size: 10px; line-height: 1.5; margin-bottom: 4px; }
+  .alert-role { font-size: 9px; color: #334155; }
+
+  /* HOLDINGS */
+  .holding-item {
+    background: #0d1117;
+    border: 1px solid #1e2a3a;
+    border-left: 3px solid;
+    border-radius: 8px;
+    padding: 11px 12px;
+    margin-bottom: 7px;
+    cursor: pointer;
+  }
+  .holding-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+  .holding-ticker { font-size: 13px; font-weight: bold; color: #fff; }
+  .holding-sector { font-size: 8px; padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
+  .holding-price { font-size: 13px; font-weight: bold; color: #fff; text-align: right; }
+  .holding-chg { font-size: 10px; text-align: right; }
+  .holding-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .holding-levels { font-size: 9px; color: #475569; }
+  .holding-dca { font-size: 9px; font-weight: bold; }
+  .holding-detail { border-top: 1px solid #1e2a3a; margin-top: 8px; padding-top: 8px; display: none; }
+  .holding-detail.open { display: block; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+  .detail-cell { background: #0a0d12; border-radius: 4px; padding: 5px; text-align: center; }
+  .detail-cell-lbl { font-size: 8px; color: #475569; }
+  .detail-cell-val { font-size: 11px; color: #fff; margin-top: 1px; }
+
+  /* SCAN */
+  .scan-item { border-left: 3px solid; border-radius: 0 6px 6px 0; padding: 10px 12px; margin-bottom: 8px; background: #0d1117; border: 1px solid #1e2a3a; border-left-width: 3px; border-radius: 8px; }
+  .scan-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .scan-title { font-size: 11px; font-weight: bold; color: #fff; }
+  .scan-val { font-size: 11px; font-weight: bold; }
+  .scan-bars { display: flex; gap: 3px; margin-bottom: 6px; }
+  .scan-bar { height: 4px; flex: 1; border-radius: 2px; }
+  .scan-signal { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-top: 1px solid #1e2a3a; }
+  .scan-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .scan-signal-txt { font-size: 10px; }
+  .scan-signal-chk { margin-left: auto; font-size: 9px; }
+
+  /* MACRO */
+  .macro-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #1e2a3a; }
+  .macro-label { font-size: 11px; color: #94a3b8; }
+  .macro-right { text-align: right; }
+  .macro-val { font-size: 12px; font-weight: bold; color: #fff; }
+  .macro-chg { font-size: 9px; }
+
+  /* REFRESH BTN */
+  .refresh-btn {
+    width: 100%;
+    padding: 12px;
+    background: #c9a84c20;
+    border: 1px solid #c9a84c;
+    color: #c9a84c;
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .refresh-btn:active { opacity: 0.7; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 40px 20px; color: #475569; font-size: 12px; }
+  .loading-dot { display: inline-block; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* INSTALL BANNER */
+  .install-banner {
+    background: #0d1117;
+    border: 1px solid #c9a84c40;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .install-text { font-size: 10px; color: #94a3b8; }
+  .install-close { background: none; border: none; color: #475569; font-size: 16px; cursor: pointer; padding: 0 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-title">PERSONAL FUND STRATEGY</div>
+      <div class="header-name">Portfolio Command</div>
+    </div>
+    <div class="score-badge" id="score-badge">
+      <div class="score-val" id="score-val" style="color:#c9a84c">--</div>
+      <div class="score-lbl" id="score-lbl" style="color:#c9a84c">SCORE</div>
+    </div>
+  </div>
+  <div class="score-bar"><div class="score-fill" id="score-fill" style="width:0%;background:#c9a84c"></div></div>
+  <div class="last-update" id="last-update">Loading live data...</div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="switchTab('alerts')">🚨 Alerts</button>
+  <button class="tab" onclick="switchTab('holdings')">📊 Holdings</button>
+  <button class="tab" onclick="switchTab('scan')">🧠 Scan</button>
+  <button class="tab" onclick="switchTab('macro')">🌍 Macro</button>
+  <button class="tab" onclick="switchTab('overview')">📋 Overview</button>
+</div>
+
+<div class="content" id="content">
+  <div class="loading"><span class="loading-dot">●</span> Loading prices...</div>
+</div>
+
+<script>
+// ─── PORTFOLIO CONFIG ──────────────────────────────────────
+const HOLDINGS_META = [
+  { t:"SPY",  n:"S&P 500 ETF",        avg:673.15, sh:0.22775, role:"anchor",    color:"#6b7280", sector:"Market Base"   },
+  { t:"QQQ",  n:"Invesco QQQ",         avg:597.57, sh:0.14075, role:"growth",    color:"#3b82f6", sector:"Growth Engine" },
+  { t:"SOXX", n:"Semiconductor ETF",   avg:330.78, sh:0.18441, role:"growth",    color:"#3b82f6", sector:"Semi"          },
+  { t:"AAPL", n:"Apple",               avg:257.30, sh:0.35021, role:"anchor",    color:"#6b7280", sector:"Stability"     },
+  { t:"NVDA", n:"Nvidia",              avg:181.46, sh:0.55107, role:"growth",    color:"#3b82f6", sector:"AI Leader"     },
+  { t:"MU",   n:"Micron Technology",   avg:376.93, sh:0.16183, role:"risk",      color:"#ef4444", sector:"High Beta"     },
+  { t:"XLI",  n:"Industrials SPDR",    avg:169.10, sh:0.34299, role:"cyclical",  color:"#f97316", sector:"Cyclical"      },
+  { t:"XLV",  n:"Healthcare SPDR",     avg:156.27, sh:0.25475, role:"defensive", color:"#22c55e", sector:"Defensive"     },
+  { t:"IAU",  n:"Gold Trust",          avg:93.76,  sh:0.30930, role:"hedge",     color:"#c9a84c", sector:"Hedge"         },
+  { t:"KBWB", n:"KBW Bank ETF",        avg:80.14,  sh:0.56149, role:"cyclical",  color:"#f97316", sector:"Banking"       },
+  { t:"BTC",  n:"Bitcoin",             avg:71896,  sh:0.00085, role:"risk",      color:"#ef4444", sector:"Risk Proxy"    },
+];
+
+// GitHub raw URL for prices.json — update this with your actual username
+const PRICES_URL = "https://raw.githubusercontent.com/julioir89-netizen/Market-recap/main/prices.json";
+
+let STATE = { prices: {}, macro: {}, score: 0, levels: {}, lastUpdate: null };
+let activeTab = "alerts";
+let openHolding = null;
+let installPrompt = null;
+
+// ─── PWA INSTALL ──────────────────────────────────────────
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  installPrompt = e;
+});
+
+// ─── FETCH PRICES ─────────────────────────────────────────
+async function fetchPrices() {
+  try {
+    const res = await fetch(PRICES_URL + "?t=" + Date.now());
+    if (!res.ok) throw new Error("fetch failed");
+    const data = await res.json();
+    STATE.prices = data.prices || {};
+    STATE.macro  = data.macro  || {};
+    STATE.score  = data.score  || 0;
+    STATE.levels = data.levels || {};
+    STATE.lastUpdate = data.updated || null;
+    renderAll();
+  } catch(e) {
+    // Fallback to demo prices if fetch fails
+    console.error("Price fetch failed:", e);
+    setFallbackPrices();
+    renderAll();
+  }
+}
+
+function setFallbackPrices() {
+  STATE.prices = {
+    SPY:{price:701.66,change:0.25,prev:700},QQQ:{price:640.47,change:0.48,prev:637},
+    SOXX:{price:405.95,change:1.02,prev:402},AAPL:{price:263.40,change:-1.14,prev:266},
+    NVDA:{price:198.35,change:-0.26,prev:199},MU:{price:457.23,change:0.22,prev:456},
+    XLI:{price:170.33,change:-0.50,prev:171},XLV:{price:146.61,change:-0.79,prev:148},
+    IAU:{price:90.16,change:-0.09,prev:90},KBWB:{price:85.66,change:-0.46,prev:86},
+    BTC:{price:75119,change:0.35,prev:74857}
+  };
+  STATE.macro = {VIX:17.94,OIL:90.08,GOLD:4816,YIELD:4.31,USD:98.18};
+  STATE.score = 78;
+  STATE.levels = {};
+  STATE.lastUpdate = "Demo mode — GitHub prices.json not yet available";
+}
+
+// ─── SCORE HELPERS ────────────────────────────────────────
+function scoreColor(s) {
+  if(s>=70) return "#22c55e";
+  if(s>=55) return "#c9a84c";
+  if(s>=35) return "#f97316";
+  return "#ef4444";
+}
+function scoreDial(s) {
+  if(s>=70) return "AGGRESSIVE";
+  if(s>=55) return "NEUTRAL";
+  if(s>=35) return "DEFENSIVE";
+  return "PROTECT";
+}
+
+function getDCA(ticker, price) {
+  const lvl = STATE.levels[ticker] || {};
+  const s1 = lvl.s1, s2 = lvl.s2, r1 = lvl.r1;
+  if(!price) return {label:"N/A",color:"#6b7280",icon:"○"};
+  if(s2 && price<=s2)                               return {label:"DEEP BUY",     color:"#22c55e", icon:"💰"};
+  if(s1 && ((price-s1)/price)*100<=1.5)             return {label:"AT S1 — BUY", color:"#22c55e", icon:"🟢"};
+  if(s1 && ((price-s1)/price)*100<=3.5)             return {label:"NEAR S1",     color:"#c9a84c", icon:"⚠️"};
+  if(r1 && price>=r1*0.99)                          return {label:"AT R1 — TRIM",color:"#3b82f6", icon:"🔵"};
+  return                                                    {label:"WAIT",        color:"#6b7280", icon:"⏳"};
+}
+
+// ─── GENERATE ALERTS ──────────────────────────────────────
+function generateAlerts() {
+  const alerts = [];
+  const s = STATE.score;
+
+  HOLDINGS_META.forEach(h => {
+    const pd = STATE.prices[h.t];
+    if(!pd || !pd.price) return;
+    const price = pd.price;
+    const lvl   = STATE.levels[h.t] || {};
+    const s1=lvl.s1, s2=lvl.s2, r1=lvl.r1;
+    const pctAvg = ((price-h.avg)/h.avg)*100;
+    const distS1 = s1 ? ((price-s1)/price)*100 : 999;
+    const isBtc  = h.t === "BTC";
+    const fmt    = v => isBtc ? "$"+Math.round(v).toLocaleString() : "$"+v.toFixed(2);
+
+    if(s1 && distS1<=1.5 && s>=45 && (!s2||price>s2)) {
+      alerts.push({urgency:"HIGH",type:"BUY",color:"#22c55e",ticker:h.t,
+        headline:`${h.t} at S1 — DCA entry ready`,
+        action:`Price ${fmt(price)} within 1.5% of S1 ${fmt(s1)}. Market score ${s} supports entry.`,
+        role:"Portfolio Mgr + Technical Analyst"});
+    }
+    if(s1 && distS1>1.5 && distS1<=3.5 && (!s2||price>s2)) {
+      alerts.push({urgency:"MEDIUM",type:"PREPARE",color:"#c9a84c",ticker:h.t,
+        headline:`${h.t} approaching S1 — prepare capital`,
+        action:`${h.t} is ${distS1.toFixed(1)}% from S1 ${s1?fmt(s1):""}. Ready DCA capital now.`,
+        role:"Technical Analyst"});
+    }
+    if(r1 && price>=r1*0.99) {
+      alerts.push({urgency:"MEDIUM",type:"TRIM",color:"#3b82f6",ticker:h.t,
+        headline:`${h.t} at R1 resistance`,
+        action:`Hit R1 ${fmt(r1)}. Consider partial trim if overweight. Don't chase.`,
+        role:"Portfolio Mgr"});
+    }
+    if(s2 && price<s2) {
+      alerts.push({urgency:"CRITICAL",type:"DANGER",color:"#ef4444",ticker:h.t,
+        headline:`${h.t} BROKE S2 — do not add`,
+        action:`Below S2 ${fmt(s2)}. Capital preservation rule applies. No entries until recovery above S1.`,
+        role:"Risk Manager"});
+    }
+    if(pctAvg < -12) {
+      alerts.push({urgency:"HIGH",type:"MONITOR",color:"#f97316",ticker:h.t,
+        headline:`${h.t} down ${Math.abs(pctAvg).toFixed(1)}% from avg cost`,
+        action:`Only add if near S1 AND score >50. No knife-catching.`,
+        role:"Risk Manager"});
+    }
+  });
+
+  if(s>=70) {
+    alerts.push({urgency:"HIGH",type:"OPPORTUNITY",color:"#22c55e",ticker:"MARKET",
+      headline:"Market confirmed strength — go aggressive",
+      action:`Score ${s}/100. Scale into S1 positions with confidence. This is a confirmed DCA window.`,
+      role:"Portfolio Manager"});
+  }
+
+  const order = {CRITICAL:0,HIGH:1,MEDIUM:2};
+  return alerts.sort((a,b)=>(order[a.urgency]||3)-(order[b.urgency]||3));
+}
+
+// ─── RENDER FUNCTIONS ─────────────────────────────────────
+function renderAll() {
+  const sc = STATE.score;
+  const scColor = scoreColor(sc);
+  document.getElementById("score-val").textContent = sc;
+  document.getElementById("score-val").style.color = scColor;
+  document.getElementById("score-lbl").style.color = scColor;
+  document.getElementById("score-fill").style.width = sc+"%";
+  document.getElementById("score-fill").style.background = scColor;
+
+  const upd = STATE.lastUpdate;
+  if(upd) {
+    const d = new Date(upd);
+    const timeStr = isNaN(d) ? upd : d.toLocaleTimeString("en-US",{timeZone:"America/Los_Angeles",hour:"2-digit",minute:"2-digit"})+" PT";
+    document.getElementById("last-update").textContent = "Updated: "+timeStr;
+  }
+
+  renderTab(activeTab);
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  event.target.classList.add("active");
+  renderTab(tab);
+}
+
+function renderTab(tab) {
+  const content = document.getElementById("content");
+  if(tab==="alerts")   content.innerHTML = renderAlerts();
+  if(tab==="holdings") content.innerHTML = renderHoldings();
+  if(tab==="scan")     content.innerHTML = renderScan();
+  if(tab==="macro")    content.innerHTML = renderMacro();
+  if(tab==="overview") content.innerHTML = renderOverview();
+}
+
+function renderAlerts() {
+  const alerts = generateAlerts();
+  const sc = STATE.score;
+  const scColor = scoreColor(sc);
+
+  let html = `
+  <button class="refresh-btn" onclick="fetchPrices()">↻ REFRESH PRICES</button>
+  <div class="card-label">LIVE ALERTS — ${alerts.length} ACTIVE</div>`;
+
+  if(!alerts.length) {
+    html += `<div class="card" style="text-align:center;padding:20px;">
+      <div style="color:#22c55e;font-size:14px;margin-bottom:4px;">All Clear</div>
+      <div style="font-size:11px;color:#475569;">No immediate actions. Portfolio stable.</div>
+    </div>`;
+  } else {
+    alerts.forEach(a => {
+      html += `<div class="alert-item" style="background:${a.color}12;border-color:${a.color};border:1px solid ${a.color}40;border-left:4px solid ${a.color};">
+        <div class="alert-header">
+          <span class="alert-urgency" style="color:${a.color};background:${a.color}20;">${a.urgency}</span>
+          <span style="font-size:9px;color:#475569;">${a.ticker}</span>
+          <span class="alert-type" style="color:${a.color};background:${a.color}20;">${a.type}</span>
+        </div>
+        <div class="alert-headline">${a.headline}</div>
+        <div class="alert-action" style="color:${a.color};">→ ${a.action}</div>
+        <div class="alert-role">Role: ${a.role}</div>
+      </div>`;
+    });
+  }
+
+  // Risk dial summary
+  html += `<div class="card" style="margin-top:4px;">
+    <div class="card-label">RISK DIAL</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:16px;font-weight:bold;color:${scColor};">${scoreDial(sc)}</div>
+      <div style="font-size:22px;font-weight:bold;color:${scColor};">${sc}/100</div>
+    </div>
+    <div style="display:flex;gap:4px;margin-top:8px;">
+      ${["PROTECT","DEFENSIVE","NEUTRAL","AGGRESSIVE"].map((l,i)=>`
+        <div style="flex:1;padding:5px 2px;border-radius:4px;text-align:center;font-size:8px;
+          background:${sc>=[0,35,55,70][i]&&sc<[35,55,70,101][i]?scColor+'30':'#1e2a3a'};
+          color:${sc>=[0,35,55,70][i]&&sc<[35,55,70,101][i]?scColor:'#334155'};">${l}</div>`).join("")}
+    </div>
+  </div>`;
+
+  return html;
+}
+
+function renderHoldings() {
+  let totalVal = 0;
+  HOLDINGS_META.forEach(h => {
+    const pd = STATE.prices[h.t];
+    if(pd && pd.price) totalVal += pd.price * h.sh;
+  });
+
+  let html = `
+  <div class="grid-3" style="margin-bottom:10px;">
+    <div class="stat-card">
+      <div class="stat-val" style="color:#fff;">$${totalVal.toFixed(0)}</div>
+      <div class="stat-lbl">TOTAL VALUE</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:${scoreColor(STATE.score)};">${STATE.score}</div>
+      <div class="stat-lbl">MKT SCORE</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#22c55e;">${HOLDINGS_META.filter(h=>{const p=STATE.prices[h.t];return p&&p.price>=h.avg;}).length}/11</div>
+      <div class="stat-lbl">ABOVE AVG</div>
+    </div>
+  </div>
+  <div class="card-label">TAP HOLDING FOR DETAILS</div>`;
+
+  HOLDINGS_META.forEach(h => {
+    const pd  = STATE.prices[h.t];
+    const lvl = STATE.levels[h.t] || {};
+    const isBtc = h.t === "BTC";
+    const fmt = v => isBtc ? "$"+Math.round(v).toLocaleString() : "$"+v.toFixed(2);
+
+    if(!pd || !pd.price) {
+      html += `<div class="holding-item" style="border-left-color:${h.color};opacity:0.4;">
+        <span style="font-size:13px;font-weight:bold;color:#fff;">${h.t}</span>
+        <span style="font-size:10px;color:#475569;margin-left:8px;">No data</span>
+      </div>`;
+      return;
+    }
+
+    const price  = pd.price;
+    const chg    = pd.change || 0;
+    const pctAvg = ((price-h.avg)/h.avg)*100;
+    const dca    = getDCA(h.t, price);
+    const isUp   = pctAvg >= 0;
+    const isOpen = openHolding === h.t;
+
+    html += `<div class="holding-item" style="border-left-color:${h.color};" onclick="toggleHolding('${h.t}')">
+      <div class="holding-top">
+        <div>
+          <span class="holding-ticker">${h.t}</span>
+          <span class="holding-sector" style="color:${h.color};background:${h.color}20;">${h.sector}</span>
+          <div style="font-size:9px;color:#475569;margin-top:1px;">${h.n}</div>
+        </div>
+        <div>
+          <div class="holding-price">${fmt(price)}</div>
+          <div class="holding-chg" style="color:${chg>=0?'#22c55e':'#ef4444'};">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}% today</div>
+        </div>
+      </div>
+      <div class="holding-bottom">
+        <div class="holding-levels">
+          ${lvl.s1?`S1 ${fmt(lvl.s1)}`:''}
+          ${lvl.r1?` · R1 ${fmt(lvl.r1)}`:''}
+        </div>
+        <div class="holding-dca" style="color:${dca.color};">${dca.icon} ${dca.label}</div>
+      </div>
+      <div class="holding-detail ${isOpen?'open':''}">
+        <div class="detail-grid">
+          ${[
+            {l:"Avg Cost", v:fmt(h.avg)},
+            {l:"P&L",      v:(isUp?'+':'')+pctAvg.toFixed(1)+'%', c:isUp?'#22c55e':'#ef4444'},
+            {l:"Value",    v:'$'+(price*h.sh).toFixed(2)},
+            {l:"S2",       v:lvl.s2?fmt(lvl.s2):'--'},
+            {l:"R1",       v:lvl.r1?fmt(lvl.r1):'--'},
+            {l:"R2",       v:lvl.r2?fmt(lvl.r2):'--'},
+          ].map(x=>`<div class="detail-cell">
+            <div class="detail-cell-lbl">${x.l}</div>
+            <div class="detail-cell-val" style="${x.c?'color:'+x.c:''}">${x.v}</div>
+          </div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+  });
+
+  return html;
+}
+
+function toggleHolding(ticker) {
+  openHolding = openHolding === ticker ? null : ticker;
+  renderTab("holdings");
+}
+
+function renderScan() {
+  const prices = STATE.prices;
+  const lvls   = STATE.levels;
+
+  const getP  = t => (prices[t]||{}).price || 0;
+  const getMA = (t,k) => (lvls[t]||{})[k] || getP(t);
+
+  const scans = [
+    {
+      title:"Institutional Accumulation",
+      color:"#22c55e",
+      signals:[
+        {label:"SOXX above MA50",      active:getP("SOXX")>getMA("SOXX","ma50")},
+        {label:"NVDA above MA50",      active:getP("NVDA")>getMA("NVDA","ma50")},
+        {label:"SPY above MA50",       active:getP("SPY") >getMA("SPY", "ma50")},
+        {label:"MU above MA50",        active:getP("MU")  >getMA("MU",  "ma50")},
+      ]
+    },
+    {
+      title:"Crash Probability",
+      color:"#ef4444",
+      signals:[
+        {label:"SPY below avg cost",   active:getP("SPY") <673.15, invert:true},
+        {label:"QQQ below avg cost",   active:getP("QQQ") <597.57, invert:true},
+        {label:"XLV above avg cost",   active:getP("XLV") >156.27, invert:true},
+        {label:"IAU above avg cost",   active:getP("IAU") >93.76,  invert:true},
+      ]
+    },
+    {
+      title:"Smart Money Signal",
+      color:"#c9a84c",
+      signals:[
+        {label:"SOXX risk-on",         active:getP("SOXX")>(lvls["SOXX"]||{}).s1||getP("SOXX")>320},
+        {label:"NVDA risk-on",         active:getP("NVDA")>(lvls["NVDA"]||{}).s1||getP("NVDA")>165},
+        {label:"BTC risk-on",          active:getP("BTC") >(lvls["BTC"] ||{}).s1||getP("BTC") >65000},
+        {label:"XLV defensive (risk-off)", active:getP("XLV")>156.27, invert:true},
+      ]
+    },
+    {
+      title:"Bottom Detection",
+      color:"#3b82f6",
+      signals:[
+        {label:"SPY above MA200",      active:getP("SPY")>getMA("SPY","ma200")},
+        {label:"Score recovering >45", active:STATE.score>45},
+        {label:"QQQ above MA50",       active:getP("QQQ")>getMA("QQQ","ma50")},
+        {label:"VIX below 25",         active:(STATE.macro.VIX||20)<25},
+      ]
+    },
+  ];
+
+  let html = `<div class="card-label">MARKET CONDITION SCAN</div>`;
+
+  scans.forEach(scan => {
+    const active = scan.signals.filter(s => s.active).length;
+    const total  = scan.signals.length;
+    const isBear = scan.title.includes("Crash");
+    const statusColor = isBear
+      ? (active>=3?"#ef4444":active>=2?"#f97316":"#22c55e")
+      : (active>=3?"#22c55e":active>=2?"#c9a84c":"#ef4444");
+    const statusLabel = isBear
+      ? (active>=3?"HIGH RISK":active>=2?"ELEVATED":"MINIMAL")
+      : (active>=3?"STRONG":active>=2?"MODERATE":"WEAK");
+
+    html += `<div class="scan-item" style="border-left-color:${statusColor};">
+      <div class="scan-header">
+        <span class="scan-title">${scan.title}</span>
+        <span class="scan-val" style="color:${statusColor};">${statusLabel}</span>
+      </div>
+      <div class="scan-bars">
+        ${Array.from({length:total}).map((_,i)=>`
+          <div class="scan-bar" style="background:${i<active?statusColor:'#1e2a3a'};"></div>`).join("")}
+      </div>
+      ${scan.signals.map(sig=>`
+        <div class="scan-signal">
+          <div class="scan-dot" style="background:${sig.active?statusColor:'#1e2a3a'};border:1px solid ${sig.active?statusColor:'#334155'};"></div>
+          <span class="scan-signal-txt" style="color:${sig.active?'#94a3b8':'#334155'};">${sig.label}</span>
+          <span class="scan-signal-chk" style="color:${sig.active?statusColor:'#334155'};">${sig.active?'✓':'○'}</span>
+        </div>`).join("")}
+    </div>`;
+  });
+
+  return html;
+}
+
+function renderMacro() {
+  const m = STATE.macro;
+  const macroRows = [
+    {label:"🛢 Oil (WTI)",       val:m.OIL,   unit:"$",   suffix:"",   impact:m.OIL>100?"→ Inflation pressure — bearish QQQ":m.OIL<80?"→ Relief — bullish growth":"→ Manageable range"},
+    {label:"📉 10Y Yield",       val:m.YIELD, unit:"",    suffix:"%",  impact:m.YIELD>4.5?"→ Pressure on growth stocks":m.YIELD<3.8?"→ Relief for QQQ/NVDA":"→ Neutral range"},
+    {label:"💵 US Dollar",       val:m.USD,   unit:"$",   suffix:"",   impact:m.USD>103?"→ Headwind for AAPL international":m.USD<97?"→ Tailwind for multinationals":"→ Neutral"},
+    {label:"🪙 Gold",            val:m.GOLD,  unit:"$",   suffix:"",   impact:m.GOLD>4000?"→ Macro stress — hold IAU":"→ Normal range"},
+    {label:"😨 VIX Fear",        val:m.VIX,   unit:"",    suffix:"",   impact:m.VIX>25?"→ High fear — WAIT":"→ Calm market — DCA ok"},
+  ];
+
+  let html = `<div class="card-label">MACRO DRIVERS</div>
+  <div class="card" style="margin-bottom:10px;">`;
+
+  macroRows.forEach(row => {
+    if(!row.val) return;
+    const fmt = row.val > 999 ? row.val.toLocaleString("en-US",{maximumFractionDigits:0}) : row.val.toFixed(2);
+    html += `<div class="macro-row">
+      <div>
+        <div class="macro-label">${row.label}</div>
+        <div style="font-size:9px;color:#475569;margin-top:2px;">${row.impact}</div>
+      </div>
+      <div class="macro-right">
+        <div class="macro-val">${row.unit}${fmt}${row.suffix}</div>
+      </div>
+    </div>`;
+  });
+
+  html += `</div>
+  <div class="card-label">SECTOR ROTATION</div>
+  <div class="card">`;
+
+  const getP = t => (STATE.prices[t]||{}).price||0;
+  const getMA = (t,k) => (STATE.levels[t]||{})[k]||getP(t);
+
+  const sectors = [
+    {name:"Growth (QQQ/SOXX/NVDA)", tickers:["QQQ","SOXX","NVDA"], color:"#3b82f6"},
+    {name:"Defensive (XLV/IAU)",    tickers:["XLV","IAU"],          color:"#22c55e"},
+    {name:"Cyclical (XLI/KBWB)",    tickers:["XLI","KBWB"],         color:"#f97316"},
+    {name:"Risk (MU/BTC)",          tickers:["MU","BTC"],            color:"#ef4444"},
+  ];
+
+  sectors.forEach(sec => {
+    const ups = sec.tickers.filter(t=>getP(t)>getMA(t,"ma50")).length;
+    const icon = ups===sec.tickers.length?"🟢":ups===0?"🔴":"🟡";
+    html += `<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #1e2a3a;">
+      <span style="font-size:11px;color:#94a3b8;">${icon} ${sec.name}</span>
+      <span style="font-size:9px;color:#475569;">${ups}/${sec.tickers.length} above MA</span>
+    </div>`;
+  });
+
+  html += `</div>`;
+  return html;
+}
+
+function renderOverview() {
+  const sc = STATE.score;
+  const scColor = scoreColor(sc);
+  const aboveAvg = HOLDINGS_META.filter(h=>{const p=STATE.prices[h.t];return p&&p.price>=h.avg;}).length;
+  let totalVal = 0;
+  HOLDINGS_META.forEach(h=>{const p=STATE.prices[h.t];if(p&&p.price)totalVal+=p.price*h.sh;});
+
+  const nearS1 = HOLDINGS_META.filter(h=>{
+    const p=STATE.prices[h.t],l=STATE.levels[h.t]||{};
+    if(!p||!p.price||!l.s1) return false;
+    const d=((p.price-l.s1)/p.price)*100;
+    return d>=0&&d<=3.5;
+  });
+
+  let html = `
+  <div class="grid-3">
+    <div class="stat-card"><div class="stat-val" style="color:#fff;">$${totalVal.toFixed(0)}</div><div class="stat-lbl">PORTFOLIO</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:${scColor};">${sc}/100</div><div class="stat-lbl">SCORE</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:${aboveAvg>=6?'#22c55e':'#ef4444'};">${aboveAvg}/11</div><div class="stat-lbl">ABOVE AVG</div></div>
+  </div>
+
+  <div class="card" style="background:${scColor}15;border-color:${scColor}40;border-left:4px solid ${scColor};">
+    <div style="font-size:8px;color:${scColor};letter-spacing:2px;margin-bottom:4px;">EXECUTIVE DECISION</div>
+    <div style="font-size:16px;font-weight:bold;color:${scColor};">
+      ${sc>=70?"GO AGGRESSIVE":sc>=55?"DCA SLOWLY":sc>=35?"WAIT":"PROTECT CAPITAL"}
+    </div>
+    <div style="font-size:10px;color:#94a3b8;margin-top:4px;">
+      ${sc>=70?"All systems aligned. Scale into S1 positions.":
+        sc>=55?"Controlled buying at S1 only. No chasing.":
+        sc>=35?"Hold cash. Let levels come to you.":
+        "Capital preservation. No new entries."}
+    </div>
+  </div>
+
+  <div class="card-label">NEAR S1 RIGHT NOW</div>`;
+
+  if(!nearS1.length) {
+    html += `<div class="card" style="text-align:center;padding:14px;font-size:11px;color:#475569;">No holdings currently near S1.</div>`;
+  } else {
+    nearS1.forEach(h=>{
+      const p=STATE.prices[h.t],l=STATE.levels[h.t]||{};
+      const isBtc=h.t==="BTC";
+      const fmt=v=>isBtc?"$"+Math.round(v).toLocaleString():"$"+v.toFixed(2);
+      const dist=((p.price-l.s1)/p.price*100).toFixed(1);
+      html+=`<div class="card" style="border-left:3px solid ${h.color};">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <span style="font-size:13px;font-weight:bold;color:#fff;">${h.t}</span>
+            <span style="font-size:9px;color:#475569;margin-left:6px;">${h.n}</span>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px;color:#fff;">${fmt(p.price)}</div>
+            <div style="font-size:9px;color:#c9a84c;">${dist}% from S1 ${fmt(l.s1)}</div>
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+
+  html += `
+  <div class="card-label" style="margin-top:4px;">4 ROLES — ACTIVE</div>
+  <div class="grid-2">
+    ${[
+      {r:"Portfolio Manager", i:"📊", c:"#3b82f6", s:`$${totalVal.toFixed(0)} deployed`},
+      {r:"Technical Analyst", i:"📉", c:"#22c55e", s:`${nearS1.length} near S1 today`},
+      {r:"Macro Analyst",     i:"🌍", c:"#c9a84c", s:`Score ${sc}/100`},
+      {r:"Risk Manager",      i:"🛡",  c:"#ef4444", s:`${scoreDial(sc)} posture`},
+    ].map(role=>`<div class="card" style="border-left:3px solid ${role.c};">
+      <div style="font-size:10px;font-weight:bold;color:${role.c};margin-bottom:2px;">${role.i} ${role.r}</div>
+      <div style="font-size:9px;color:#64748b;">${role.s}</div>
+    </div>`).join("")}
+  </div>`;
+
+  return html;
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+fetchPrices();
+
+// Auto-refresh every 15 minutes
+setInterval(fetchPrices, 15 * 60 * 1000);
+
+// Register service worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
