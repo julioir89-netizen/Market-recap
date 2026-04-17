@@ -4,7 +4,8 @@ import os
 import numpy as np
 from datetime import datetime
 import pytz
-
+GIST_ID = "011eb6e485727c90a1e0634861ff4357"
+GIST_TOKEN = os.environ.get("GITHUB_TOKEN")
 TIMEZONE = "America/Los_Angeles"
 
 HOLDINGS = [
@@ -190,7 +191,13 @@ def main():
     with open("prices.json","w") as f:
         json.dump(output, f, indent=2)
 
-    print(f"✅ prices.json updated — Score: {score}/100")
-
-if __name__ == "__main__":
-    main()
+    # Also push to public Gist
+    import urllib.request
+    gist_data = json.dumps({"files":{"prices.json":{"content":json.dumps(output)}}}).encode()
+    req = urllib.request.Request(
+        f"https://api.github.com/gists/{GIST_ID}",
+        data=gist_data, method="PATCH",
+        headers={"Authorization":f"token {GIST_TOKEN}","Content-Type":"application/json"}
+    )
+    urllib.request.urlopen(req)
+    print("✅ Gist updated")
