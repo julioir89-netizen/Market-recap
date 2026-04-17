@@ -106,7 +106,7 @@ def calc_score(prices, macro, levels):
 def update_gist(content_str):
     token = os.environ.get("GISTTOKEN")
     if not token:
-        print("⚠️  No GIST_TOKEN found — skipping Gist update")
+        print("⚠️  No GISTTOKEN found — skipping Gist update")
         return False
     payload = json.dumps({
         "files": {"prices.json": {"content": content_str}}
