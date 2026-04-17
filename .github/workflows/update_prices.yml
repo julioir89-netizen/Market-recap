@@ -39,6 +39,8 @@ jobs:
 
       - name: Update prices.json
         run: python prices_updater.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit prices.json
         run: |
