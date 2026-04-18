@@ -1,4 +1,4 @@
-const CACHE = "portfolio-v1";
+const CACHE = "portfolio-v3";
 const ASSETS = ["./", "./index.html", "./manifest.json"];
 
 self.addEventListener("install", e => {
@@ -14,13 +14,9 @@ self.addEventListener("activate", e => {
 });
 
 self.addEventListener("fetch", e => {
-  // Always fetch prices.json fresh from network
   if(e.request.url.includes("prices.json")) {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
-  // For everything else: cache first, then network
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
-  );
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
