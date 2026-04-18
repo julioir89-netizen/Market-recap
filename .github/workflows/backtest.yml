@@ -1,0 +1,32 @@
+name: Portfolio Backtest
+ 
+on:
+  # Run manually on demand
+  workflow_dispatch:
+ 
+  # Also run once a month on the 1st at 8 AM PT = 15:00 UTC
+  schedule:
+    - cron: '0 15 1 * *'
+ 
+jobs:
+  run-backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+ 
+      - name: Install dependencies
+        run: pip install yfinance pytz numpy pandas
+ 
+      - name: Run Backtest
+        run: python backtest.py
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
