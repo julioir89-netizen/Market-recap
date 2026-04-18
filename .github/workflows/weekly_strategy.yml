@@ -1,0 +1,31 @@
+name: Weekly Strategy Review
+ 
+on:
+  schedule:
+    # Every Sunday at 7:00 AM PT = 14:00 UTC
+    - cron: '0 14 * * 0'
+ 
+  # Run manually anytime
+  workflow_dispatch:
+ 
+jobs:
+  weekly-review:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+ 
+      - name: Install dependencies
+        run: pip install yfinance feedparser pytz numpy pandas
+ 
+      - name: Run Weekly Strategy Review
+        run: python weekly_strategy.py
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
