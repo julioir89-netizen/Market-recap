@@ -29,7 +29,7 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; overflow: hidden; }
-
+ 
 /* LAYOUT */
 .app { display: flex; flex-direction: column; height: 100vh; }
 .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 10px 14px; padding-top: max(10px, var(--safe-top)); flex-shrink: 0; }
@@ -37,7 +37,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .inner-tabs::-webkit-scrollbar { display: none; }
 .content { flex: 1; overflow-y: auto; padding: 12px 14px; padding-bottom: max(12px, var(--safe-bot)); }
 .bottom-nav { background: var(--bg2); border-top: 1px solid var(--border); display: flex; flex-shrink: 0; padding-bottom: max(0px, var(--safe-bot)); }
-
+ 
 /* HEADER */
 .hdr-row { display: flex; justify-content: space-between; align-items: center; }
 .hdr-title { font-size: 9px; color: var(--gold); letter-spacing: 3px; margin-bottom: 2px; }
@@ -48,27 +48,27 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .score-badge { text-align: center; border-radius: 8px; padding: 5px 12px; min-width: 58px; }
 .score-num { font-size: 22px; font-weight: bold; }
 .score-lbl { font-size: 8px; letter-spacing: 1px; }
-
+ 
 /* MINI STATS */
 .mini-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; margin-top: 8px; }
 .mini-stat { background: var(--bg3); border-radius: 5px; padding: 5px; text-align: center; }
 .mini-val { font-size: 10px; font-weight: bold; }
 .mini-lbl { font-size: 7px; color: var(--dim); margin-top: 1px; }
-
+ 
 /* INNER TABS */
 .itab { flex-shrink: 0; padding: 8px 12px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-size: 8px; letter-spacing: 1px; cursor: pointer; font-family: inherit; text-transform: uppercase; white-space: nowrap; }
 .itab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
+ 
 /* BOTTOM NAV */
 .bnav-btn { flex: 1; padding: 10px 4px 8px; background: none; border: none; cursor: pointer; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .bnav-icon { font-size: 18px; }
 .bnav-lbl { font-size: 8px; letter-spacing: 0.5px; }
-
+ 
 /* CARDS */
 .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
 .card-lbl { font-size: 8px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
 .card-accent { border-left: 3px solid; }
-
+ 
 /* GRIDS */
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
@@ -76,14 +76,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; }
 .stat-v { font-size: 15px; font-weight: bold; }
 .stat-l { font-size: 8px; color: var(--muted); margin-top: 2px; letter-spacing: 1px; }
-
+ 
 /* ALERT */
 .alert { border-left: 4px solid; border-radius: 8px; padding: 11px 12px; margin-bottom: 8px; }
 .alert-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
 .badge { font-size: 9px; font-weight: bold; padding: 2px 7px; border-radius: 3px; }
 .alert-title { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 4px; }
 .alert-body { font-size: 10px; line-height: 1.4; }
-
+ 
 /* HOLDING */
 .holding { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid; border-radius: 8px; padding: 11px 12px; margin-bottom: 7px; }
 .holding-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
@@ -92,46 +92,46 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .detail-cell { background: #0a0d12; border-radius: 4px; padding: 5px; text-align: center; }
 .detail-lbl { font-size: 8px; color: var(--muted); }
 .detail-val { font-size: 11px; margin-top: 1px; }
-
+ 
 /* SCAN */
 .scan-bar-row { display: flex; gap: 3px; margin-bottom: 8px; }
 .scan-bar { height: 4px; flex: 1; border-radius: 2px; }
 .scan-sig { display: flex; gap: 8px; padding: 4px 0; border-top: 1px solid var(--border); align-items: center; }
 .scan-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-
+ 
 /* LEVELS */
 .level-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; margin-bottom: 5px; }
 .lvl-cell { background: #0a0d12; border-radius: 4px; padding: 5px; text-align: center; }
 .lvl-lbl { font-size: 8px; }
 .lvl-val { font-size: 9px; color: #fff; margin-top: 1px; }
-
+ 
 /* CHECKLIST */
 .check-item { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid; border-radius: 8px; padding: 11px 12px; margin-bottom: 6px; cursor: pointer; }
 .check-box { width: 18px; height: 18px; border-radius: 4px; border: 1px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
+ 
 /* TRACKER */
 .entry-item { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
-
+ 
 /* ANALYSIS */
 .step-nav { display: flex; gap: 4px; margin-bottom: 14px; overflow-x: auto; }
 .step-btn { flex-shrink: 0; min-width: 38px; padding: 7px 4px; border-radius: 6px; border: 1px solid; cursor: pointer; font-family: inherit; font-size: 8px; text-align: center; }
-
+ 
 /* BUTTONS */
 .btn { padding: 11px; font-size: 11px; cursor: pointer; border-radius: 6px; font-family: inherit; width: 100%; letter-spacing: 0.5px; }
 .btn-gold { background: rgba(201,168,76,0.15); border: 1px solid var(--gold); color: var(--gold); }
 .btn-muted { background: transparent; border: 1px solid var(--border); color: var(--muted); }
 .btn-row { display: flex; gap: 8px; margin-top: 10px; }
-
+ 
 /* FORMS */
 input, select { width: 100%; font-size: 11px; padding: 7px 8px; background: #0a0d12; border: 1px solid var(--border); color: #fff; border-radius: 5px; font-family: inherit; margin-bottom: 0; }
 .field { margin-bottom: 10px; }
 .field-lbl { font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-bottom: 5px; }
-
+ 
 /* PLAYBOOK */
 .playbook-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 10px; }
 .pb-title { font-size: 12px; font-weight: bold; margin-bottom: 8px; }
 .pb-rule { display: flex; gap: 8px; padding: 5px 0; border-top: 1px solid var(--border); font-size: 10px; color: #64748b; }
-
+ 
 /* MISC */
 .sep { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
 .green { color: var(--green); }
@@ -157,13 +157,13 @@ input, select { width: 100%; font-size: 11px; padding: 7px 8px; background: #0a0
   <div class="content" id="content"></div>
   <div class="bottom-nav" id="bottomNav"></div>
 </div>
-
+ 
 <script>
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
 const GIST_URL = "https://gist.githubusercontent.com/julioir89-netizen/011eb6e485727c90a1e0634861ff4357/raw/prices.json";
-
+ 
 const HB = [
   {t:"SPY", n:"S&P 500 ETF",       avg:673.15,sh:0.22775,role:"anchor",   color:"#6b7280",tgt:20},
   {t:"QQQ", n:"Invesco QQQ",        avg:597.57,sh:0.14075,role:"growth",   color:"#3b82f6",tgt:12},
@@ -177,10 +177,100 @@ const HB = [
   {t:"KBWB",n:"KBW Bank ETF",       avg:80.14, sh:0.56149,role:"cyclical", color:"#f97316",tgt:4 },
   {t:"BTC", n:"Bitcoin",            avg:71896, sh:0.00085,role:"risk",     color:"#ef4444",tgt:4 },
 ];
-
+ 
 const FB_P = {SPY:710.14,QQQ:648.85,SOXX:415.71,AAPL:270.23,NVDA:201.68,MU:455.07,XLI:173.51,XLV:148.80,IAU:91.34,KBWB:86.89,BTC:77533};
 const FB_L = {SPY:{s1:675,s2:665,r1:735,r2:775},QQQ:{s1:600,s2:555,r1:670,r2:705},SOXX:{s1:355,s2:305,r1:425,r2:450},AAPL:{s1:260,s2:250,r1:275,r2:290},NVDA:{s1:185,s2:165,r1:210,r2:220},MU:{s1:405,s2:310,r1:465,r2:490},XLI:{s1:165,s2:155,r1:175,r2:180},XLV:{s1:145,s2:135,r1:150,r2:160},IAU:{s1:87,s2:82,r1:98,r2:103},KBWB:{s1:82,s2:79,r1:90,r2:94},BTC:{s1:70000,s2:65000,r1:79000,r2:83000}};
-
+ 
+// ═══════════════════════════════════════════════════════════
+// HISTORICAL BACKTEST DATA (3-Year backtest, Apr 2026)
+// Entry rule: price within 3% above MA50, above MA200
+// ═══════════════════════════════════════════════════════════
+const HIST = {
+  SPY:  {wr90:72.7, avg90:5.1,  entries:22, tier:"SOLID",    tierC:"#22c55e",
+         ma50_rec:"Standard DCA. Score ≥45 + above MA200. Full position.",
+         s2_rec:"Strong opportunity. SPY at deep support — add aggressively.",
+         avoid:"Do not buy below MA200.",
+         plan:"At MA50: 50% of capital. Below MA50 but above MA200: 30%. At S2: remaining 20%."},
+  QQQ:  {wr90:81.8, avg90:6.5,  entries:22, tier:"ELITE",   tierC:"#22c55e",
+         ma50_rec:"HIGH CONVICTION. QQQ at MA50 has 81.8% win rate historically. Full DCA.",
+         s2_rec:"Maximum opportunity. QQQ rarely visits S2 — deploy full remaining capital.",
+         avoid:"Never buy QQQ when below MA200. Wait for full recovery.",
+         plan:"At MA50: full size. At S2: add remaining. Above MA50 by >5%: wait."},
+  SOXX: {wr90:58.3, avg90:5.7,  entries:12, tier:"MODERATE", tierC:"#c9a84c",
+         ma50_rec:"MODERATE conviction. 58% win rate. Half size only. Needs NVDA confirmation.",
+         s2_rec:"Better entry than MA50 historically. Half-to-full size with NVDA confirming.",
+         avoid:"Never buy SOXX alone — requires NVDA above its MA50 as confirmation.",
+         plan:"At MA50: 50% size IF NVDA is also above its MA50. At S2: add other 50%."},
+  AAPL: {wr90:41.7, avg90:-0.4, entries:12, tier:"WEAK",     tierC:"#ef4444",
+         ma50_rec:"⚠️ WEAK ZONE. AAPL at MA50 has only 41.7% win rate. SKIP or tiny size.",
+         s2_rec:"BETTER ENTRY. S2 is historically stronger for AAPL. Start position here.",
+         avoid:"Do not buy AAPL at MA50. Wait for S2 or confirmed breakout above R1.",
+         plan:"SKIP MA50 entry. At S2: initiate 30% of position. Add in thirds as price recovers. Full size only above MA50 with RSI < 60."},
+  NVDA: {wr90:75.0, avg90:24.2, entries:16, tier:"SOLID",    tierC:"#22c55e",
+         ma50_rec:"HIGH CONVICTION. 75% win rate + avg +24% return. Full DCA at MA50.",
+         s2_rec:"MAXIMUM OPPORTUNITY. NVDA at S2 is rare — maximum allocation justified.",
+         avoid:"Do not buy NVDA when MA50 is below MA200 (death cross).",
+         plan:"At MA50: full position. At S2: double down if score ≥45. Hold minimum 90 days."},
+  MU:   {wr90:71.4, avg90:56.8, entries:7,  tier:"SOLID",    tierC:"#22c55e",
+         ma50_rec:"HIGH RETURN POTENTIAL. 71% WR + avg +56.8% in 90d. Full DCA at MA50.",
+         s2_rec:"Exceptional opportunity. MU at deep support with SOXX confirming = rare setup.",
+         avoid:"Requires SOXX confirmation. Do not buy MU if SOXX is in downtrend.",
+         plan:"At MA50: full position WITH SOXX above its MA50. Without SOXX: skip. Hold 90+ days."},
+  XLI:  {wr90:86.4, avg90:7.0,  entries:22, tier:"ELITE",   tierC:"#22c55e",
+         ma50_rec:"ELITE ZONE. XLI at MA50 has 86.4% win rate. Full conviction DCA.",
+         s2_rec:"Extremely rare. XLI at S2 is a maximum opportunity — full allocation.",
+         avoid:"Reduce XLI exposure during trade war escalation (tariff headlines).",
+         plan:"At MA50: full position. One of the most reliable signals in the system."},
+  XLV:  {wr90:58.8, avg90:2.2,  entries:17, tier:"MODERATE", tierC:"#c9a84c",
+         ma50_rec:"MODERATE. 58.8% WR but low +2.2% avg. Defensive hedge only — half size.",
+         s2_rec:"Better entry. XLV at S2 = strong defensive signal. Buy as portfolio hedge.",
+         avoid:"XLV rising while market falls = risk-off signal. Do not add growth during this.",
+         plan:"At MA50: 50% of target size. XLV is a hedge — prioritize when crash prob >40%."},
+  IAU:  {wr90:100.0,avg90:17.1, entries:21, tier:"ELITE",   tierC:"#22c55e",
+         ma50_rec:"🏆 MAXIMUM CONVICTION. IAU at MA50 = 100% win rate over 21 entries, 3 years. FULL DCA.",
+         s2_rec:"Exceptionally rare. IAU at S2 has NEVER occurred in 3yr data. Maximum allocation.",
+         avoid:"Do not reduce IAU during geopolitical stress — it's your most reliable signal.",
+         plan:"At MA50: deploy FULL planned capital immediately. 100% historical win rate. Hold 90+ days."},
+  KBWB: {wr90:88.9, avg90:12.4, entries:18, tier:"ELITE",   tierC:"#22c55e",
+         ma50_rec:"ELITE ZONE. KBWB at MA50 has 88.9% win rate. Full conviction DCA.",
+         s2_rec:"Rare strong opportunity. Banks at deep support + rising rates = maximum entry.",
+         avoid:"Avoid adding KBWB when 10Y yield is falling rapidly (bad for bank margins).",
+         plan:"At MA50: full position. Watch 10Y yield direction as confirmation. Hold 90+ days."},
+  BTC:  {wr90:36.8, avg90:2.6,  entries:19, tier:"WEAK",     tierC:"#ef4444",
+         ma50_rec:"⚠️ SKIP. BTC at MA50 has only 36.8% win rate. Do NOT DCA here.",
+         s2_rec:"Better entry. BTC at S2 ($65K) is the historically superior entry zone.",
+         avoid:"Never buy BTC at MA50. The signal is historically unreliable for crypto.",
+         plan:"SKIP MA50. At S2: initiate 50% position. Only add second 50% if score ≥55 AND BTC holds S2 for 5+ days."},
+};
+ 
+// Tier definitions
+const TIERS = {
+  ELITE:    {label:"🏆 ELITE",    color:"#22c55e", desc:"≥80% historical win rate at MA50"},
+  SOLID:    {label:"✅ SOLID",    color:"#22c55e", desc:"65-79% historical win rate"},
+  MODERATE: {label:"⚠️ MODERATE", color:"#c9a84c", desc:"50-64% — half size only"},
+  WEAK:     {label:"🔴 WEAK",     color:"#ef4444", desc:"<50% — skip MA50, wait for S2"},
+};
+ 
+function getHistRec(ticker, h) {
+  const hist = HIST[ticker];
+  if(!hist) return null;
+  const btc = ticker==="BTC";
+  const ma50 = h.ma50;
+  const price = h.price;
+  if(!ma50||!price) return null;
+  const distMa50 = ((price-ma50)/ma50)*100;
+  const distS1   = ((price-h.s1)/price)*100;
+  const distS2   = h.s2?((price-h.s2)/price)*100:999;
+ 
+  // Determine current zone
+  if(price < h.s2)           return {zone:"BELOW_S2",  urgency:"CRITICAL", rec:hist.s2_rec,  color:"#ef4444"};
+  if(distS2 <= 3)            return {zone:"NEAR_S2",   urgency:"HIGH",     rec:hist.s2_rec,  color:"#22c55e"};
+  if(distMa50 >= 0 && distMa50 <= 3) return {zone:"AT_MA50",   urgency:"HIGH",     rec:hist.ma50_rec,color:hist.tierC};
+  if(distMa50 > 3 && distMa50 <= 8)  return {zone:"NEAR_MA50", urgency:"MEDIUM",   rec:`Approaching MA50 zone (${distMa50.toFixed(1)}% above). ${hist.ma50_rec}`, color:hist.tierC};
+  if(distS1 <= 3.5)          return {zone:"NEAR_S1",   urgency:"MEDIUM",   rec:hist.ma50_rec,color:hist.tierC};
+  return {zone:"ABOVE",      urgency:"LOW",      rec:`${ticker} is ${distMa50.toFixed(0)}% above MA50. ${hist.tier==="WEAK"?"No action until S2.":"Wait for pullback to MA50 zone."}`, color:"#475569"};
+}
+ 
 // ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
@@ -207,7 +297,7 @@ let S = {
   playbookTab: "identity",
   pbSection: null,
 };
-
+ 
 // ═══════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════
@@ -216,7 +306,7 @@ const sc = score => score>=70?"#22c55e":score>=55?"#c9a84c":score>=35?"#f97316":
 const dial = score => score>=70?"AGGRESSIVE":score>=55?"NEUTRAL":score>=35?"DEFENSIVE":"PROTECT";
 const pctFmt = v => (v>=0?"+":"")+v.toFixed(1)+"%";
 const getWeek = () => Math.min(Math.ceil(new Date().getDate()/7),4);
-
+ 
 function buildHoldings(liveData) {
   return HB.map(h => {
     const pd = liveData?.prices?.[h.t] || {};
@@ -236,7 +326,7 @@ function buildHoldings(liveData) {
     };
   });
 }
-
+ 
 function calcScore(H) {
   let s = 0;
   s += Math.round((H.filter(h=>h.price>h.s1).length/H.length)*35);
@@ -246,7 +336,7 @@ function calcScore(H) {
   s += H[7].price<H[7].avg?10:15;
   return Math.min(100,s);
 }
-
+ 
 function dcaStatus(h) {
   const dist = ((h.price-h.s1)/h.price)*100;
   if(h.price<h.s2) return {label:"DANGER",color:"#ef4444",icon:"🚨"};
@@ -255,14 +345,14 @@ function dcaStatus(h) {
   if(h.price>=h.r1*0.99) return {label:"AT R1",color:"#3b82f6",icon:"🔵"};
   return                  {label:"WAIT",color:"#6b7280",icon:"⏳"};
 }
-
+ 
 function getEntryPnL(e) {
   const cur = e.status==="closed"&&e.exitPrice ? e.exitPrice : (S.holdings.find(h=>h.t===e.ticker)?.price || FB_P[e.ticker] || e.entryPrice);
   const pnl = (cur-e.entryPrice)*e.shares;
   const pct = ((cur-e.entryPrice)/e.entryPrice)*100;
   return {pnl,pct,current:cur};
 }
-
+ 
 function h(tag, attrs, ...children) {
   const el = document.createElement(tag);
   if(attrs) {
@@ -281,10 +371,10 @@ function h(tag, attrs, ...children) {
   });
   return el;
 }
-
+ 
 function div(cls, ...children) { return h("div",{class:cls},...children); }
 function span(cls, txt, style) { const s=h("span",{class:cls||""},txt); if(style)s.style.cssText=style; return s; }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // FETCH
 // ═══════════════════════════════════════════════════════════
@@ -306,7 +396,7 @@ async function fetchData() {
   S.score = calcScore(S.holdings);
   render();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // LOAD/SAVE
 // ═══════════════════════════════════════════════════════════
@@ -315,11 +405,11 @@ function loadState() {
   try { const c=localStorage.getItem("pf_checks"); if(c) S.checks=JSON.parse(c); } catch{}
   try { const a=localStorage.getItem("pf_analyses"); if(a) S.savedAnalyses=JSON.parse(a); } catch{}
 }
-
+ 
 function saveEntries() { try { localStorage.setItem("pf_entries",JSON.stringify(S.entries)); } catch{} }
 function saveChecks()  { try { localStorage.setItem("pf_checks",JSON.stringify(S.checks)); } catch{} }
 function saveAnalyses(){ try { localStorage.setItem("pf_analyses",JSON.stringify(S.savedAnalyses)); } catch{} }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // INDICATORS
 // ═══════════════════════════════════════════════════════════
@@ -342,7 +432,7 @@ function getSmart(H) {
   const off=[H[7].price>H[7].avg,H[8].price>H[8].avg].filter(Boolean).length;
   return {on,off,label:on>=3&&off<=1?"RISK-ON":off>=2&&on<=1?"RISK-OFF":"MIXED",color:on>=3&&off<=1?"#22c55e":off>=2&&on<=1?"#ef4444":"#c9a84c"};
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // RENDER ENGINE
 // ═══════════════════════════════════════════════════════════
@@ -354,7 +444,7 @@ function render() {
   const crash = getCrash(H);
   const smart = getSmart(H);
   const totalValue = H.reduce((s,h)=>s+h.price*h.sh,0);
-
+ 
   // HEADER
   const hdrEl = document.getElementById("header");
   hdrEl.innerHTML = `
@@ -379,7 +469,7 @@ function render() {
       <div class="mini-stat"><div class="mini-val" style="color:${crash.color}">${crash.pct}%</div><div class="mini-lbl">CRASH</div></div>
       <div class="mini-stat"><div class="mini-val" style="color:${smart.color}">${smart.label}</div><div class="mini-lbl">SMART$</div></div>
     </div>`;
-
+ 
   // BOTTOM NAV
   const navEl = document.getElementById("bottomNav");
   navEl.innerHTML = SECTIONS.map(s => `
@@ -387,7 +477,7 @@ function render() {
       <div class="bnav-icon">${s.icon}</div>
       <div class="bnav-lbl">${s.label}</div>
     </button>`).join("");
-
+ 
   // INNER TABS + CONTENT
   const section = S.section;
   if(section==="dashboard")  renderDashboard(H, score, inst, crash, smart);
@@ -396,7 +486,7 @@ function render() {
   if(section==="analysis")   renderAnalysis(H);
   if(section==="playbook")   renderPlaybook();
 }
-
+ 
 const SECTION_NAMES = {dashboard:"Portfolio Command",rebalance:"Monthly Rebalance",tracker:"Performance Tracker",analysis:"Stock Analysis",playbook:"Portfolio Playbook"};
 const SECTIONS = [
   {id:"dashboard", icon:"🚨", label:"Command"},
@@ -405,15 +495,15 @@ const SECTIONS = [
   {id:"analysis",  icon:"🔍", label:"Analysis"},
   {id:"playbook",  icon:"📋", label:"Playbook"},
 ];
-
+ 
 function setSection(id) { S.section=id; const tabs={dashboard:"alerts",rebalance:"overview",tracker:"dashboard",analysis:"analyze",playbook:"identity"}; S.tab=tabs[id]||""; render(); }
 function setTab(t) { S.tab=t; render(); }
-
+ 
 function renderInnerTabs(tabs) {
   document.getElementById("innerTabs").innerHTML = tabs.map(t=>
     `<button class="itab${S.tab===t.id?" active":""}" onclick="setTab('${t.id}')">${t.label}</button>`).join("");
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════════════════
@@ -421,7 +511,7 @@ function renderDashboard(H, score, inst, crash, smart) {
   renderInnerTabs([{id:"alerts",label:"🚨 Alerts"},{id:"holdings",label:"📊 Holdings"},{id:"scan",label:"🧠 Scan"},{id:"macro",label:"🌍 Macro"},{id:"checklist",label:"✅ Week"}]);
   const t = S.tab;
   let html = '<button class="refresh-btn" onclick="fetchData()">↻ REFRESH PRICES</button>';
-
+ 
   if(t==="alerts") {
     const alerts = genAlerts(H, score, inst);
     html += `<div class="card-lbl">LIVE ALERTS — ${alerts.length} ACTIVE</div>`;
@@ -450,7 +540,7 @@ function renderDashboard(H, score, inst, crash, smart) {
         }).join("")}
       </div></div>`;
   }
-
+ 
   if(t==="holdings") {
     const aboveAvg = H.filter(h=>h.price>=h.avg).length;
     const totalV = H.reduce((s,h)=>s+h.price*h.sh,0);
@@ -463,11 +553,14 @@ function renderDashboard(H, score, inst, crash, smart) {
       const btc=h.t==="BTC";
       const pctAvg=((h.price-h.avg)/h.avg)*100;
       const dca=dcaStatus(h);
+      const hist=HIST[h.t];
+      const hrec=getHistRec(h.t, h);
       html += `<div class="holding" style="border-left-color:${h.color}">
         <div class="holding-top">
           <div>
             <span class="holding-ticker">${h.t}</span>
             <span class="holding-sector" style="color:${h.color};background:${h.color}20">${h.role}</span>
+            ${hist?`<span style="font-size:8px;color:${hist.tierC};background:${hist.tierC}20;padding:2px 5px;border-radius:3px;margin-left:4px;">${hist.tier} ${hist.wr90}%WR</span>`:""}
           </div>
           <div style="text-align:right">
             <div style="font-size:13px;font-weight:bold;color:#fff">${fmt(h.price,btc)}</div>
@@ -479,15 +572,17 @@ function renderDashboard(H, score, inst, crash, smart) {
           <div class="detail-cell"><div class="detail-lbl">P&L</div><div class="detail-val" style="color:${pctAvg>=0?"#22c55e":"#ef4444"}">${pctFmt(pctAvg)}</div></div>
           <div class="detail-cell"><div class="detail-lbl">Value</div><div class="detail-val">$${(h.price*h.sh).toFixed(2)}</div></div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;margin-bottom:${hrec?"5px":"0"}">
           <span style="color:#334155">S1:${fmt(h.s1,btc)} · R1:${fmt(h.r1,btc)}</span>
           <span style="font-weight:bold;color:${dca.color}">${dca.icon} ${dca.label}</span>
         </div>
-        ${h.trend?`<div style="font-size:9px;color:#475569;margin-top:3px">${h.trend==="UPTREND"?"▲":h.trend==="DOWNTREND"?"▼":"→"} ${h.trend}${h.rsi?" · RSI "+h.rsi:""}</div>`:""}
+        ${hrec&&hrec.zone!=="ABOVE"?`<div style="background:${hrec.color}15;border:1px solid ${hrec.color}40;border-radius:5px;padding:7px 9px;font-size:9px;color:${hrec.color};line-height:1.5">📊 ${hrec.rec}</div>`:""}
+        ${hrec&&hrec.zone==="ABOVE"&&hist?`<div style="font-size:9px;color:#334155;margin-top:3px">📊 ${hrec.rec}</div>`:""}
+        ${h.trend?`<div style="font-size:9px;color:#475569;margin-top:3px">${h.trend==="UPTREND"?"▲":h.trend==="DOWNTREND"?"▼":"→"} ${h.trend}${h.rsi?" · RSI "+h.rsi:""}${h.ma50?" · MA50 "+fmt(h.ma50,btc):""}</div>`:""}
       </div>`;
     });
   }
-
+ 
   if(t==="scan") {
     const scans=[
       {title:"Institutional Accum.",color:"#22c55e",signals:[["SOXX above S1",H[2].price>H[2].s1],["NVDA above S1",H[4].price>H[4].s1],["SPY above S1",H[0].price>H[0].s1],["MU above S1",H[5].price>H[5].s1]]},
@@ -510,7 +605,7 @@ function renderDashboard(H, score, inst, crash, smart) {
       </div>`;
     });
   }
-
+ 
   if(t==="macro") {
     const m=S.liveData?.macro||{};
     html += `<div class="card-lbl">MACRO DRIVERS</div><div class="card">
@@ -531,7 +626,7 @@ function renderDashboard(H, score, inst, crash, smart) {
       }).join("")}
     </div>`;
   }
-
+ 
   if(t==="checklist") {
     const week=getWeek();
     const tasks={
@@ -556,32 +651,70 @@ function renderDashboard(H, score, inst, crash, smart) {
     const done2=(tasks[week]||[]).filter(t=>S.checks[t.id]).length;
     html += `<div class="card center"><div style="font-size:11px;color:#22c55e">${done2}/${(tasks[week]||[]).length} completed this week</div></div>`;
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 function toggleCheck(id) { S.checks[id]=!S.checks[id]; saveChecks(); render(); }
-
+ 
 function genAlerts(H, score, inst) {
   const alerts = [];
   const totalV = H.reduce((s,h)=>s+h.price*h.sh,0);
+ 
   H.forEach(h => {
     const btc=h.t==="BTC";
     const dist=((h.price-h.s1)/h.price)*100;
     const drift=(h.price*h.sh/totalV)*100-h.tgt;
-    if(dist<=1.5&&h.price>h.s2&&score>=45)
-      alerts.push({urgency:"HIGH",type:"BUY",c:"#22c55e",ticker:h.t,headline:`${h.t} at S1 — DCA ready`,action:`${fmt(h.price,btc)} within 1.5% of S1 ${fmt(h.s1,btc)}`});
-    if(dist>1.5&&dist<=3.5&&h.price>h.s2)
-      alerts.push({urgency:"MEDIUM",type:"PREPARE",c:"#c9a84c",ticker:h.t,headline:`${h.t} approaching S1`,action:`${dist.toFixed(1)}% from S1 ${fmt(h.s1,btc)} — prepare capital`});
-    if(h.price>=h.r1*0.99&&drift>2)
-      alerts.push({urgency:"MEDIUM",type:"TRIM",c:"#3b82f6",ticker:h.t,headline:`${h.t} at R1 + overweight`,action:`At R1 ${fmt(h.r1,btc)} — consider partial trim`});
+    const hist=HIST[h.t];
+    const hrec=getHistRec(h.t, h);
+ 
+    // DANGER — below S2
     if(h.price<h.s2)
-      alerts.push({urgency:"CRITICAL",type:"DANGER",c:"#ef4444",ticker:h.t,headline:`${h.t} below S2 — DANGER`,action:`Below S2 ${fmt(h.s2,btc)} — no new entries`});
+      alerts.push({urgency:"CRITICAL",type:"DANGER",c:"#ef4444",ticker:h.t,
+        headline:`${h.t} below S2 — DANGER`,
+        action:`Below S2 ${fmt(h.s2,btc)} — no new entries. ${hist?.avoid||""}`});
+ 
+    // HISTORICAL ZONE ALERT — price at MA50 (best historical entry)
+    if(hrec && hrec.zone==="AT_MA50" && h.price>h.s2) {
+      const tierLabel = hist?`[${hist.tier} · ${hist.wr90}% WR · Avg +${hist.avg90}%]`:"";
+      alerts.push({urgency:"HIGH",type:"HIST ZONE",c:hrec.color,ticker:h.t,
+        headline:`${h.t} at MA50 — Historical Best Entry Zone ${tierLabel}`,
+        action:hrec.rec});
+    }
+ 
+    // NEAR MA50 — approaching the zone
+    if(hrec && hrec.zone==="NEAR_MA50" && h.price>h.s2 && hist?.tier!=="WEAK") {
+      alerts.push({urgency:"MEDIUM",type:"APPROACHING",c:hist.tierC,ticker:h.t,
+        headline:`${h.t} approaching MA50 historical zone`,
+        action:`${hrec.rec} Plan: ${hist?.plan||""}`});
+    }
+ 
+    // AT S1 — standard DCA zone
+    if(dist<=1.5&&h.price>h.s2&&score>=45&&(!hrec||hrec.zone!=="AT_MA50"))
+      alerts.push({urgency:"HIGH",type:"BUY",c:"#22c55e",ticker:h.t,
+        headline:`${h.t} at S1 — DCA ready`,
+        action:`${fmt(h.price,btc)} within 1.5% of S1 ${fmt(h.s1,btc)}. ${hist?.tier==="WEAK"?"⚠️ Historical win rate weak here — consider waiting for S2.":""}`});
+ 
+    // NEAR S1
+    if(dist>1.5&&dist<=3.5&&h.price>h.s2&&(!hrec||!["AT_MA50","NEAR_MA50"].includes(hrec.zone)))
+      alerts.push({urgency:"MEDIUM",type:"PREPARE",c:"#c9a84c",ticker:h.t,
+        headline:`${h.t} approaching S1`,
+        action:`${dist.toFixed(1)}% from S1 ${fmt(h.s1,btc)}. ${hist?`Historical: ${hist.wr90}% WR at MA50.`:""} Prepare capital.`});
+ 
+    // AT R1 + overweight
+    if(h.price>=h.r1*0.99&&drift>2)
+      alerts.push({urgency:"MEDIUM",type:"TRIM",c:"#3b82f6",ticker:h.t,
+        headline:`${h.t} at R1 + overweight`,
+        action:`At R1 ${fmt(h.r1,btc)} — consider partial trim.`});
   });
-  if(inst.sig>=3&&score>=65) alerts.push({urgency:"HIGH",type:"OPPORTUNITY",c:"#22c55e",ticker:"MARKET",headline:"Institutions accumulating — go aggressive",action:`Score ${score}/100. Scale into S1 positions.`});
+ 
+  if(inst.sig>=3&&score>=65) alerts.push({urgency:"HIGH",type:"OPPORTUNITY",c:"#22c55e",ticker:"MARKET",
+    headline:"Institutions accumulating — go aggressive",
+    action:`Score ${score}/100. Scale into historical zones.`});
+ 
   return alerts.sort((a,b)=>({CRITICAL:0,HIGH:1,MEDIUM:2}[a.urgency]||3)-({CRITICAL:0,HIGH:1,MEDIUM:2}[b.urgency]||3));
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // REBALANCE
 // ═══════════════════════════════════════════════════════════
@@ -602,7 +735,7 @@ function renderRebalance(H, totalValue) {
   const trims=withDrift.filter(h=>h.action==="TRIM"||h.action==="OVERWEIGHT");
   const month=new Date().toLocaleString("en-US",{month:"long",year:"numeric"});
   let html="";
-
+ 
   if(t==="overview") {
     html += `<div class="g2">
       <div class="stat"><div class="stat-v" style="color:#fff">$${totalValue.toFixed(2)}</div><div class="stat-l">PORTFOLIO VALUE</div></div>
@@ -631,7 +764,7 @@ function renderRebalance(H, totalValue) {
       </div>`;
     });
   }
-
+ 
   if(t==="positions") {
     html += `<div class="card-lbl">POSITION WEIGHTS — TARGET VS ACTUAL</div>`;
     withDrift.forEach(h=>{
@@ -651,7 +784,7 @@ function renderRebalance(H, totalValue) {
       </div>`;
     });
   }
-
+ 
   if(t==="actions") {
     if(adds.length) {
       html += `<div class="card-lbl" style="color:#22c55e">➕ ADD — UNDERWEIGHT</div>`;
@@ -677,7 +810,7 @@ function renderRebalance(H, totalValue) {
     }
     if(!adds.length&&!trims.length) html+=`<div class="empty">✓ Portfolio Balanced — No rebalance needed</div>`;
   }
-
+ 
   if(t==="checklist2") {
     const items=[
       {id:"r1",w:1,l:"Review total portfolio value — is it growing?"},
@@ -707,10 +840,10 @@ function renderRebalance(H, totalValue) {
       });
     }
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // TRACKER
 // ═══════════════════════════════════════════════════════════
@@ -722,7 +855,7 @@ function renderTracker(H) {
   const wr=S.entries.length?(wins/S.entries.length)*100:0;
   const avgRet=S.entries.length?S.entries.reduce((s,e)=>s+getEntryPnL(e).pct,0)/S.entries.length:0;
   let html="";
-
+ 
   if(t==="dashboard") {
     html += `<div class="g2">
       <div class="stat"><div class="stat-v" style="color:${wr>=60?"#22c55e":wr>=45?"#c9a84c":"#ef4444"}">${wr.toFixed(0)}%</div><div class="stat-l">WIN RATE ${wins}W·${S.entries.length-wins}L</div></div>
@@ -745,7 +878,7 @@ function renderTracker(H) {
       });
     } else html += `<div class="empty">No entries yet. Tap + Add to log your first DCA.</div>`;
   }
-
+ 
   if(t==="entries") {
     const tickers=["ALL",...HB.map(h=>h.t)];
     html += `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
@@ -784,7 +917,7 @@ function renderTracker(H) {
       </div>`;
     });
   }
-
+ 
   if(t==="by-asset") {
     html += `<div class="card-lbl">PERFORMANCE BY ASSET</div>`;
     let any=false;
@@ -811,7 +944,7 @@ function renderTracker(H) {
     });
     if(!any) html+=`<div class="empty">No entries logged yet.</div>`;
   }
-
+ 
   if(t==="add-entry") {
     const ne=S.newEntry;
     const curP=S.holdings.find(h=>h.t===ne.ticker)?.price||FB_P[ne.ticker]||0;
@@ -833,10 +966,10 @@ function renderTracker(H) {
       <button class="btn btn-gold" onclick="addEntry()">LOG ENTRY</button>
     </div>`;
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 function setFilter(t) { S.trackerFilter=t; render(); }
 function setNewTicker(t) { S.newEntry.ticker=t; render(); }
 function startClose(id) { S.closingEntry=id; S.exitInput=""; render(); }
@@ -855,7 +988,7 @@ function addEntry() {
   S.newEntry={ticker:"SPY",date:"",entryPrice:"",shares:"",type:"DCA",notes:""};
   S.tab="entries"; render();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // ANALYSIS
 // ═══════════════════════════════════════════════════════════
@@ -863,7 +996,7 @@ function renderAnalysis(H) {
   renderInnerTabs([{id:"analyze",label:"Analyze"},{id:"history",label:"History"},{id:"rules",label:"Rules"}]);
   const t=S.tab;
   let html="";
-
+ 
   if(t==="analyze") {
     const a=S.analysis,step=S.analysisStep;
     let ascore=0;
@@ -878,11 +1011,11 @@ function renderAnalysis(H) {
     const verdict=a.aboveMa200===false&&a.higherHighs===false?"AVOID":ascore>=65?"BUY":ascore>=40?"WAIT":"AVOID";
     const vc=verdict==="BUY"?"#22c55e":verdict==="WAIT"?"#c9a84c":"#ef4444";
     const sc2=ascore>=65?"#22c55e":ascore>=40?"#c9a84c":"#ef4444";
-
+ 
     // Step nav
     const steps=[{n:1,l:"Setup",i:"⚙"},{n:2,l:"Trend",i:"📈"},{n:3,l:"Structure",i:"🏗"},{n:4,l:"Momentum",i:"⚡"},{n:5,l:"Cycle",i:"🔄"},{n:6,l:"Strength",i:"💪"},{n:7,l:"Verdict",i:"🎯"}];
     html += `<div class="step-nav">${steps.map(s=>`<button class="step-btn" onclick="S.analysisStep=${s.n};render()" style="border-color:${step===s.n?"#c9a84c":"#1e2a3a"};background:${step===s.n?"rgba(201,168,76,0.15)":"transparent"};color:${step===s.n?"#c9a84c":"#334155"}"><div style="font-size:12px">${s.i}</div><div>${s.l}</div></button>`).join("")}</div>`;
-
+ 
     if(step===1) {
       const isPortfolio=["SPY","QQQ","SOXX","AAPL","NVDA","MU","XLI","XLV","IAU","KBWB","BTC"].includes(a.ticker)&&S.isLive;
       html += `<div class="card">
@@ -902,7 +1035,7 @@ function renderAnalysis(H) {
         <button class="btn btn-gold" onclick="S.analysisStep=2;render()">Next → Trend</button>
       </div>`;
     }
-
+ 
     if(step===2) {
       html += `<div class="card">
         ${S.isLive&&a.aboveMa50!==null?`<div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:10px;color:#22c55e">✓ Auto-filled from live data — review and confirm</div>`:""}
@@ -913,7 +1046,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=1;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=3;render()">Next → Structure</button></div>
       </div>`;
     }
-
+ 
     if(step===3) {
       html += `<div class="card">
         ${aField("Making Higher Highs + Higher Lows?","higherHighs","Uptrend = HH and HL")}
@@ -922,7 +1055,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=2;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=4;render()">Next → Momentum</button></div>
       </div>`;
     }
-
+ 
     if(step===4) {
       html += `<div class="card">
         ${S.isLive&&a.rsiCondition?`<div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:10px;color:#22c55e">✓ RSI auto-filled from live data</div>`:""}
@@ -933,7 +1066,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=3;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=5;render()">Next → Cycle</button></div>
       </div>`;
     }
-
+ 
     if(step===5) {
       html += `<div class="card">
         <div class="field"><div class="field-lbl">CYCLE PHASE</div>${aOpts("cyclePhase",["Early Uptrend","Late Uptrend","Distribution","Markdown","Accumulation","Unknown"],{"Early Uptrend":"#22c55e","Late Uptrend":"#c9a84c",Distribution:"#f97316",Markdown:"#ef4444",Accumulation:"#3b82f6",Unknown:"#475569"})}</div>
@@ -941,7 +1074,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=4;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=6;render()">Next → Strength</button></div>
       </div>`;
     }
-
+ 
     if(step===6) {
       html += `<div class="card">
         <div class="field"><div class="field-lbl">VS QQQ PERFORMANCE</div>${aOpts("vsQQQ",["STRONGER","IN LINE","WEAKER"],{STRONGER:"#22c55e","IN LINE":"#c9a84c",WEAKER:"#ef4444"})}</div>
@@ -951,7 +1084,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=5;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=7;render()">Next → Verdict</button></div>
       </div>`;
     }
-
+ 
     if(step===7) {
       html += `<div class="card" style="background:${sc2}12;border-color:${sc2}40;margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:#fff;font-weight:bold">${a.ticker||"?"} Score</span><span style="font-size:20px;font-weight:bold;color:${sc2}">${ascore}/100</span></div>
@@ -975,7 +1108,7 @@ function renderAnalysis(H) {
       </div>`;
     }
   }
-
+ 
   if(t==="history") {
     html += `<div class="card-lbl">ANALYSIS HISTORY — ${S.savedAnalyses.length} SAVED</div>`;
     if(!S.savedAnalyses.length) html+=`<div class="empty">No analyses saved yet.</div>`;
@@ -992,7 +1125,7 @@ function renderAnalysis(H) {
       </div>`;
     });
   }
-
+ 
   if(t==="rules") {
     [
       {step:"1. Trend",color:"#3b82f6",rules:["Must be above MA50 for standard DCA","MA200 above = long-term bullish","Never buy in confirmed downtrend"]},
@@ -1008,10 +1141,10 @@ function renderAnalysis(H) {
       </div>`;
     });
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 function aField(label, field, note) {
   const a=S.analysis,v=a[field];
   return `<div class="field"><div class="field-lbl">${label}</div>${note?`<div style="font-size:9px;color:#334155;margin-bottom:5px">${note}</div>`:""}
@@ -1021,12 +1154,12 @@ function aField(label, field, note) {
     </div>
   </div>`;
 }
-
+ 
 function aOpts(field, options, colorMap) {
   const a=S.analysis,v=a[field];
   return `<div class="opts">${options.map(opt=>{const c=colorMap?.[opt]||"#c9a84c";return`<button class="opt-btn" onclick="S.analysis.${field}='${opt}';render()" style="background:${v===opt?c+"30":"transparent"};border:1px solid ${v===opt?c:"#1e2a3a"};color:${v===opt?c:"#475569"}">${opt}</button>`;}).join("")}</div>`;
 }
-
+ 
 function selectAnalysisTicker(ticker) {
   const h=S.holdings.find(x=>x.t===ticker)||{};
   const tech=S.liveData?.technicals?.[ticker]||{};
@@ -1046,7 +1179,7 @@ function selectAnalysisTicker(ticker) {
   };
   render();
 }
-
+ 
 function saveAnalysis(score, autoVerdict) {
   if(!S.analysis.ticker)return;
   const saved={...S.analysis,score,verdict:S.analysis.verdict||autoVerdict,id:Date.now()};
@@ -1055,15 +1188,15 @@ function saveAnalysis(score, autoVerdict) {
   S.analysis={ticker:"",name:"",date:new Date().toISOString().split("T")[0],currentPrice:"",sector:"",aboveMa50:null,aboveMa200:null,trendDirection:null,higherHighs:null,aboveKeySupport:null,rsiLevel:"",rsiCondition:null,volumeConfirm:null,macdSignal:null,cyclePhase:null,relativeToQQQ:null,vsQQQ:null,vsSector:null,macroSupport:null,institutionalBias:null,s1:"",s2:"",r1:"",r2:"",verdict:null,dcaPrice:"",notes:""};
   S.analysisStep=1; S.tab="history"; render();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // PLAYBOOK
 // ═══════════════════════════════════════════════════════════
 function renderPlaybook() {
-  renderInnerTabs([{id:"identity",label:"Identity"},{id:"portfolio",label:"Portfolio"},{id:"rules",label:"Rules"},{id:"systems",label:"Systems"},{id:"roadmap",label:"Roadmap"}]);
+  renderInnerTabs([{id:"identity",label:"Identity"},{id:"portfolio",label:"Portfolio"},{id:"rules",label:"Rules"},{id:"backtest",label:"📊 Historical"},{id:"systems",label:"Systems"},{id:"roadmap",label:"Roadmap"}]);
   const t=S.tab;
   let html="";
-
+ 
   if(t==="identity") {
     html += `<div class="card" style="background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.3)">
       <div style="font-size:9px;color:#c9a84c;letter-spacing:3px;margin-bottom:8px">WHO YOU ARE</div>
@@ -1076,7 +1209,7 @@ function renderPlaybook() {
       ${[["Rules over emotions","Every decision is governed by a predefined rule. When you feel the urge to deviate, the rule wins.","#3b82f6"],["Levels over news","News explains why markets move. Levels tell you when to act.","#22c55e"],["Patience is an edge","Waiting for S1 is a systematic advantage over retail impulsiveness.","#c9a84c"],["Risk first, returns second","A 50% loss requires 100% gain to recover. Protect capital first.","#ef4444"],["Process over outcomes","A correct process with a bad short-term result is still correct. Trust the system.","#8b5cf6"]].map(([p,d,c])=>`<div style="padding:8px 0;border-bottom:1px solid #1e2a3a"><div style="font-size:11px;font-weight:bold;color:${c};margin-bottom:2px">${p}</div><div style="font-size:10px;color:#64748b;line-height:1.4">${d}</div></div>`).join("")}
     </div>`;
   }
-
+ 
   if(t==="portfolio") {
     html += `<div class="card">
       <div class="card-lbl">11-HOLDING STRUCTURE</div>
@@ -1086,17 +1219,23 @@ function renderPlaybook() {
     </div>`;
     HB.forEach(h=>{
       const pct=((S.holdings.find(x=>x.t===h.t)?.price||h.avg)-h.avg)/h.avg*100;
+      const hist=HIST[h.t];
       html += `<div class="holding" style="border-left-color:${h.color}">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-          <div><span style="font-size:13px;font-weight:bold;color:#fff">${h.t}</span><span style="font-size:8px;color:${h.color};background:${h.color}20;padding:2px 6px;border-radius:3px;margin-left:6px">${h.role}</span></div>
+          <div>
+            <span style="font-size:13px;font-weight:bold;color:#fff">${h.t}</span>
+            <span style="font-size:8px;color:${h.color};background:${h.color}20;padding:2px 6px;border-radius:3px;margin-left:6px">${h.role}</span>
+            ${hist?`<span style="font-size:8px;color:${hist.tierC};background:${hist.tierC}20;padding:2px 5px;border-radius:3px;margin-left:4px">${hist.tier}</span>`:""}
+          </div>
           <span style="font-size:10px;color:#c9a84c">${h.tgt}% target</span>
         </div>
         <div style="font-size:9px;color:#475569">${h.n} · Avg cost: $${h.avg.toLocaleString()}</div>
         <div style="font-size:10px;color:${pct>=0?"#22c55e":"#ef4444"};margin-top:3px">${pct>=0?"+":""}${pct.toFixed(1)}% from avg cost</div>
+        ${hist?`<div style="font-size:9px;color:#475569;margin-top:2px">Historical: ${hist.wr90}% WR · Avg +${hist.avg90}% (90d)</div>`:""}
       </div>`;
     });
   }
-
+ 
   if(t==="rules") {
     const ruleSets=[
       {cat:"Entry Rules",c:"#22c55e",rules:["Never buy above S1 — wait for levels","Market score must be ≥45 before any new entry","Never add to a position that broke below S2","MU requires SOXX confirmation before entry","No entries during crash probability >60%"]},
@@ -1104,6 +1243,18 @@ function renderPlaybook() {
       {cat:"Risk Rules",c:"#ef4444",rules:["Never catch a falling knife — no buying below S2","No chasing green candles — discipline over FOMO","Crash probability >60% = zero new entries","Never let a single position exceed 25% of total portfolio"]},
       {cat:"Rebalance Rules",c:"#c9a84c",rules:["Rebalance once per month — not reactively","Never rebalance during elevated crash probability (>60%)","Add to underweight positions only at S1","Trim overweight positions at R1, not at random"]},
       {cat:"Behavioral Rules",c:"#f97316",rules:["Check the dashboard before making any decision","If you feel urgency to buy immediately — wait 1 hour and reassess","News alone is never a reason to buy — price levels decide","When in doubt, the answer is always WAIT"]},
+      {cat:"Backtest-Derived Rules",c:"#8b5cf6",rules:[
+        "IAU at MA50 = MAXIMUM CONVICTION — 100% win rate over 3 years. Deploy full capital immediately.",
+        "KBWB + XLI + QQQ at MA50 = ELITE tier (≥80% WR). Full DCA. No hesitation.",
+        "NVDA at MA50 = 75% WR + avg +24% return. Full position. Hold 90+ days.",
+        "MU at MA50 = 71% WR + avg +56% return. Full position ONLY with SOXX above its MA50.",
+        "SOXX at MA50 = MODERATE (58% WR). Half size only. Requires NVDA confirmation.",
+        "XLV at MA50 = MODERATE (58% WR). Half size only. Used as portfolio hedge.",
+        "AAPL at MA50 = WEAK (41% WR). SKIP. Wait for S2 before initiating any position.",
+        "BTC at MA50 = WEAK (36% WR). SKIP. Only enter at S2 ($65K zone).",
+        "All holdings: longer holds (90d) consistently outperform shorter holds (30d). Minimum 90-day hold.",
+        "Tier system overrides general DCA rules — ELITE gets full capital, WEAK gets skipped entirely.",
+      ]},
     ];
     ruleSets.forEach(rs=>{
       const open=S.pbSection===rs.cat;
@@ -1116,19 +1267,73 @@ function renderPlaybook() {
       </div>`;
     });
   }
-
+ 
+  if(t==="backtest") {
+    // Summary banner
+    html += `<div class="card" style="background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.3);text-align:center;margin-bottom:10px">
+      <div style="font-size:9px;color:#8b5cf6;letter-spacing:2px;margin-bottom:4px">3-YEAR BACKTEST RESULTS</div>
+      <div style="font-size:22px;font-weight:bold;color:#22c55e;">72.3%</div>
+      <div style="font-size:10px;color:#475569;">Overall win rate · 188 entries · Jan 2023 – Apr 2026</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px;">Entry rule: price within 3% above MA50 · above MA200</div>
+    </div>`;
+ 
+    // Tier legend
+    html += `<div class="card" style="margin-bottom:10px">
+      <div class="card-lbl">TIER SYSTEM — CONVICTION BY HISTORICAL WIN RATE</div>
+      ${Object.entries(TIERS).map(([k,v])=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid #1e2a3a">
+          <span style="font-size:11px;font-weight:bold;color:${v.color}">${v.label}</span>
+          <span style="font-size:9px;color:#475569">${v.desc}</span>
+        </div>`).join("")}
+    </div>`;
+ 
+    // Per-ticker backtest card
+    const ranked=[...Object.entries(HIST)].sort((a,b)=>b[1].wr90-a[1].wr90);
+    ranked.forEach(([ticker,hist])=>{
+      const h=S.holdings.find(x=>x.t===ticker)||{};
+      const hrec=getHistRec(ticker,h);
+      const btc=ticker==="BTC";
+      html += `<div class="card card-accent" style="border-left-color:${hist.tierC};margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <div>
+            <span style="font-size:14px;font-weight:bold;color:#fff">${ticker}</span>
+            <span style="font-size:9px;color:${hist.tierC};background:${hist.tierC}20;padding:2px 7px;border-radius:3px;margin-left:6px">${hist.tier}</span>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:14px;font-weight:bold;color:${hist.tierC}">${hist.wr90}% WR</div>
+            <div style="font-size:9px;color:#475569">${hist.entries} entries</div>
+          </div>
+        </div>
+        <div class="g3" style="margin-bottom:8px">
+          <div class="detail-cell"><div class="detail-lbl">Avg 90d Ret</div><div class="detail-val" style="color:#22c55e">+${hist.avg90}%</div></div>
+          <div class="detail-cell"><div class="detail-lbl">Current Zone</div><div class="detail-val" style="color:${hrec?.color||"#475569"};font-size:9px">${hrec?.zone||"N/A"}</div></div>
+          <div class="detail-cell"><div class="detail-lbl">Price</div><div class="detail-val">${h.price?fmt(h.price,btc):"—"}</div></div>
+        </div>
+        <div style="background:#1e2a3a;border-radius:3px;height:4px;margin-bottom:8px"><div style="height:100%;width:${hist.wr90}%;background:${hist.tierC};border-radius:3px"></div></div>
+        <div style="font-size:9px;color:#475569;margin-bottom:5px;font-weight:bold;color:#94a3b8">AT MA50 ZONE:</div>
+        <div style="font-size:10px;color:${hist.tierC};line-height:1.5;margin-bottom:5px">${hist.ma50_rec}</div>
+        <div style="font-size:9px;color:#475569;font-weight:bold;color:#94a3b8;margin-top:4px">EXECUTION PLAN:</div>
+        <div style="font-size:10px;color:#64748b;line-height:1.5;margin-bottom:5px">${hist.plan}</div>
+        <div style="font-size:9px;color:#ef4444;margin-top:4px">⚠️ AVOID: ${hist.avoid}</div>
+        ${hrec&&hrec.zone!=="ABOVE"?`<div style="margin-top:8px;background:${hrec.color}15;border:1px solid ${hrec.color}40;border-radius:5px;padding:7px;font-size:9px;color:${hrec.color}">📍 NOW — ${hrec.zone}: ${hrec.rec}</div>`:""}
+      </div>`;
+    });
+  }
+ 
   if(t==="systems") {
     html += `<div class="card" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.3);text-align:center;margin-bottom:12px">
       <div style="font-size:9px;color:#22c55e;letter-spacing:2px;margin-bottom:4px">TOTAL MONTHLY COST</div>
       <div style="font-size:28px;font-weight:bold;color:#22c55e">$0.00</div>
-      <div style="font-size:10px;color:#475569;margin-top:2px">5 automated systems · Every trading day · Forever free</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px">6 automated systems · Every trading day · Forever free</div>
     </div>`;
     [
       {name:"Morning Recap",time:"5:00 AM PT",desc:"Pre-market game plan. Live prices, macro, DCA readiness.",c:"#c9a84c"},
       {name:"Midday Update",time:"7:30 AM PT",desc:"Real-time adjustment after economic data hits.",c:"#3b82f6"},
       {name:"Close Recap",time:"4:00 PM PT",desc:"Full day review + tomorrow's setup.",c:"#8b5cf6"},
-      {name:"Price Alerts",time:"Every 30 min",desc:"Instant BUY/DANGER alerts when S1/S2/R1 are triggered.",c:"#22c55e"},
-      {name:"Daily Analysis",time:"4:30 PM PT",desc:"6-step tech analysis on all 11 holdings. Score + verdict changes.",c:"#ef4444"},
+      {name:"Price Alerts",time:"Every 30 min",desc:"Instant BUY/DANGER alerts when S1/S2/R1 triggered.",c:"#22c55e"},
+      {name:"Daily Analysis",time:"4:30 PM PT",desc:"6-step tech analysis on all 11 holdings.",c:"#ef4444"},
+      {name:"Weekly Strategy Review",time:"Sunday 7:00 AM PT",desc:"7-day outlook, DCA targets, macro scorecard.",c:"#f97316"},
+      {name:"Monthly Backtest",time:"1st of month",desc:"Reruns 3-year backtest. Win rate + tier validation.",c:"#8b5cf6"},
     ].forEach(sys=>{
       html += `<div class="card card-accent" style="border-left-color:${sys.c}">
         <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;font-weight:bold;color:${sys.c}">${sys.name}</span><span style="font-size:9px;color:#22c55e;background:rgba(34,197,94,0.15);padding:2px 8px;border-radius:3px">FREE</span></div>
@@ -1137,11 +1342,11 @@ function renderPlaybook() {
       </div>`;
     });
   }
-
+ 
   if(t==="roadmap") {
     [
-      {stage:"NOW — Systematic Retail PM",status:"ACTIVE",c:"#22c55e",items:["11-holding diversified portfolio with role per asset","Rule-based DCA entries at S1/S2 levels","5 automated daily systems running free","6-step stock analysis process","Unified PWA on phone home screen — this app"]},
-      {stage:"NEXT — Quant + Discretionary Hybrid",status:"BUILDING",c:"#c9a84c",items:["Backtesting — test DCA rules on historical data","Weekly Strategy Review email (Sunday 7-day outlook)","Options layer — protective puts on top positions","Sector rotation model — systematic signals"]},
+      {stage:"NOW — Systematic Retail PM",status:"ACTIVE",c:"#22c55e",items:["11-holding diversified portfolio with role per asset","Rule-based DCA entries at S1/MA50 levels","6 automated daily systems running free","3-year backtest validated at 72.3% win rate","Historical tier system — ELITE/SOLID/MODERATE/WEAK","Unified PWA on phone home screen — this app"]},
+      {stage:"NEXT — Quant + Discretionary Hybrid",status:"BUILDING",c:"#c9a84c",items:["Options layer — protective puts on top positions","Sector rotation model — systematic signals","Options income on ELITE holdings at R1"]},
       {stage:"GOAL — Personal Fund Strategy",status:"VISION",c:"#3b82f6",items:["Fully documented investment policy statement","Auditable track record with verified performance","Systematic rules covering 100% of decision scenarios","Risk-adjusted returns consistently above SPY"]},
     ].forEach(stage=>{
       html += `<div class="card card-accent" style="border-left-color:${stage.c}">
@@ -1156,10 +1361,10 @@ function renderPlaybook() {
       <div style="font-size:10px;color:#94a3b8;line-height:1.8;font-style:italic">"Most people buy randomly and react emotionally.<br>You operate with rules, levels, and systems.<br><strong style="color:#c9a84c">That is your edge.</strong>"</div>
     </div>`;
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
@@ -1169,7 +1374,7 @@ S.score = calcScore(S.holdings);
 render();
 fetchData();
 setInterval(fetchData, 15 * 60 * 1000);
-
+ 
 if('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
