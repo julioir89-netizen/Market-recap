@@ -1,4 +1,4 @@
-name: Options Bot — Daily Regime Engine
+ame: Options Bot — Daily Regime Engine
 
 on:
   schedule:
@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -29,7 +29,7 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: python options_bot/combined_run.py
+        run: cd options_bot && python combined_run.py
 
       - name: Commit trade log
         run: |
