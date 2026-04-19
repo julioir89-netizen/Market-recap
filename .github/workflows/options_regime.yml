@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests yfinance
 
-      - name: Run Regime Engine
+      - name: Run Options Bot
         env:
           TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
           TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
@@ -29,4 +29,12 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: python options_bot/phase1_regime.py
+        run: python options_bot/combined_run.py
+
+      - name: Commit trade log
+        run: |
+          git config user.name "options-bot"
+          git config user.email "bot@github.com"
+          git add options_bot/trade_log.csv
+          git diff --staged --quiet || git commit -m "Trade log update $(date +%Y-%m-%d)"
+          git push
