@@ -17,8 +17,15 @@ on:
         default: 'morning'
 
 jobs:
-  morning-recap:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.recap_type == 'morning' || (github.event_name == 'schedule' && startsWith(github.event.schedule, '30 11'))
+  name: Morning Recap
+
+on:
+  schedule:
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  morning:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,8 +39,15 @@ jobs:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
 
-  midday-recap:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.recap_type == 'midday' || (github.event_name == 'schedule' && startsWith(github.event.schedule, '0 14'))
+name: Midday Recap
+
+on:
+  schedule:
+    - cron: '30 14 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  midday:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +61,15 @@ jobs:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
 
-  close-recap:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.recap_type == 'close' || (github.event_name == 'schedule' && startsWith(github.event.schedule, '30 22'))
+name: Close Recap
+
+on:
+  schedule:
+    - cron: '0 23 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  close:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
