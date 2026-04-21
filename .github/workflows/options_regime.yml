@@ -29,7 +29,7 @@ jobs:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: cd options_bot && python combined_run.py
+        run: python options_bot/combined_run.py
 
       - name: Commit trade log
         run: |
