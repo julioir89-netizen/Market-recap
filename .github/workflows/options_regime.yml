@@ -23,6 +23,7 @@ jobs:
 
       - name: Run Options Bot
         env:
+          PYTHONPATH: ${{ github.workspace }}/options_bot
           TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
           TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
           TT_SANDBOX_ACCOUNT: ${{ secrets.TT_SANDBOX_ACCOUNT }}
