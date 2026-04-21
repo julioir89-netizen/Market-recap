@@ -1,8 +1,8 @@
 import os
 import sys
 
-# ── Run Phase 1 to get regime data ──────────────────────────────────────────
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the options_bot directory to Python path so imports work
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from phase1_regime import (
     get_market_data, get_ivr, check_event_risk,
@@ -13,6 +13,7 @@ from phase3_scanner import (
     log_new_setups, get_performance_summary,
     build_full_email, send_email
 )
+from datetime import datetime, date
 from datetime import datetime, date
 
 def main():
