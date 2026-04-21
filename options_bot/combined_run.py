@@ -1,6 +1,3 @@
-The import approach keeps failing. The cleanest fix is to stop importing between files entirely and merge everything into one single script.
-Go to options_bot/combined_run.py → edit → select all and replace with this entire file:
-pythonimport os
 import csv
 import sys
 import json
