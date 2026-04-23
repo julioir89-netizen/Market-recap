@@ -792,17 +792,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-Now update options_regime.yml — add the two new Telegram secrets to the env: block:
-yaml      - name: Run Options Bot
-        env:
-          PYTHONPATH: ${{ github.workspace }}/options_bot
-          TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
-          TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
-          TT_SANDBOX_ACCOUNT: ${{ secrets.TT_SANDBOX_ACCOUNT }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-          EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
-          EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python options_bot/combined_run.py
