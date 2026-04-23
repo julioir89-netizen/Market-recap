@@ -460,6 +460,9 @@ def scan_all_tickers(token, regime, vix, event_color):
         if s:
             s["ivr_bias"] = ivr_bias
             setups.append(s)
+    print(f"  Total raw setups before grade filter: {len(setups)}")
+    for s in setups:
+        print(f"    {s['ticker']} {s['strategy']} score={s['score']}")
     setups.sort(key=lambda x: x["score"], reverse=True)
     return [s for s in setups if s["score"] >= 60]
 
