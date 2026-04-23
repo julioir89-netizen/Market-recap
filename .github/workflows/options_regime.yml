@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests yfinance
 
-- name: Run Options Bot
+      - name: Run Options Bot
         env:
           PYTHONPATH: ${{ github.workspace }}/options_bot
           TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
