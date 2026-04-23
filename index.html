@@ -296,6 +296,8 @@ let S = {
   rebalanceTab: "overview",
   playbookTab: "identity",
   pbSection: null,
+  holdingsOverride: {},  // user-edited avg costs and shares
+  editingHolding: null, // ticker currently being edited
 };
  
 // ═══════════════════════════════════════════════════════════
@@ -309,20 +311,25 @@ const getWeek = () => Math.min(Math.ceil(new Date().getDate()/7),4);
  
 function buildHoldings(liveData) {
   return HB.map(h => {
-    const pd = liveData?.prices?.[h.t] || {};
-    const lvl = liveData?.levels?.[h.t] || FB_L[h.t] || {};
-    const tech = liveData?.technicals?.[h.t] || {};
-    return {...h,
-      price: pd.price || FB_P[h.t] || h.avg,
+    const pd  = liveData?.prices?.[h.t] || {};
+    const lvl = liveData?.levels?.[h.t]  || FB_L[h.t] || {};
+    const tech= liveData?.technicals?.[h.t] || {};
+    // Apply user overrides for avg cost and shares
+    const ov  = S.holdingsOverride?.[h.t] || {};
+    const avg = ov.avg  ? parseFloat(ov.avg)  : h.avg;
+    const sh  = ov.sh   ? parseFloat(ov.sh)   : h.sh;
+    return {...h, avg, sh,
+      price: pd.price || FB_P[h.t] || avg,
       change: pd.change || 0,
-      s1: lvl.s1 || FB_L[h.t]?.s1 || h.avg*0.95,
-      s2: lvl.s2 || FB_L[h.t]?.s2 || h.avg*0.90,
-      r1: lvl.r1 || FB_L[h.t]?.r1 || h.avg*1.05,
-      r2: lvl.r2 || FB_L[h.t]?.r2 || h.avg*1.10,
-      trend: tech.trend || null,
-      rsi: tech.rsi || null,
-      ma50: tech.ma50 || null,
-      ma200: tech.ma200 || null,
+      s1: lvl.s1 || FB_L[h.t]?.s1 || avg*0.95,
+      s2: lvl.s2 || FB_L[h.t]?.s2 || avg*0.90,
+      r1: lvl.r1 || FB_L[h.t]?.r1 || avg*1.05,
+      r2: lvl.r2 || FB_L[h.t]?.r2 || avg*1.10,
+      trend:  tech.trend  || null,
+      rsi:    tech.rsi    || null,
+      ma50:   tech.ma50   || null,
+      ma200:  tech.ma200  || null,
+      edited: !!ov.avg,  // flag to show edited badge
     };
   });
 }
@@ -401,14 +408,16 @@ async function fetchData() {
 // LOAD/SAVE
 // ═══════════════════════════════════════════════════════════
 function loadState() {
-  try { const e=localStorage.getItem("pf_entries"); if(e) S.entries=JSON.parse(e); } catch{}
-  try { const c=localStorage.getItem("pf_checks"); if(c) S.checks=JSON.parse(c); } catch{}
-  try { const a=localStorage.getItem("pf_analyses"); if(a) S.savedAnalyses=JSON.parse(a); } catch{}
+  try { const e=localStorage.getItem("pf_entries");   if(e) S.entries=JSON.parse(e); } catch{}
+  try { const c=localStorage.getItem("pf_checks");    if(c) S.checks=JSON.parse(c); } catch{}
+  try { const a=localStorage.getItem("pf_analyses");  if(a) S.savedAnalyses=JSON.parse(a); } catch{}
+  try { const h=localStorage.getItem("pf_holdings");  if(h) S.holdingsOverride=JSON.parse(h); } catch{}
 }
  
-function saveEntries() { try { localStorage.setItem("pf_entries",JSON.stringify(S.entries)); } catch{} }
-function saveChecks()  { try { localStorage.setItem("pf_checks",JSON.stringify(S.checks)); } catch{} }
-function saveAnalyses(){ try { localStorage.setItem("pf_analyses",JSON.stringify(S.savedAnalyses)); } catch{} }
+function saveEntries()  { try { localStorage.setItem("pf_entries",  JSON.stringify(S.entries));          } catch{} }
+function saveChecks()   { try { localStorage.setItem("pf_checks",   JSON.stringify(S.checks));           } catch{} }
+function saveAnalyses() { try { localStorage.setItem("pf_analyses", JSON.stringify(S.savedAnalyses));    } catch{} }
+function saveHoldings() { try { localStorage.setItem("pf_holdings", JSON.stringify(S.holdingsOverride)); } catch{} }
  
 // ═══════════════════════════════════════════════════════════
 // INDICATORS
@@ -485,18 +494,20 @@ function render() {
   if(section==="tracker")    renderTracker(H);
   if(section==="analysis")   renderAnalysis(H);
   if(section==="playbook")   renderPlaybook();
+  if(section==="editor")     renderEditor();
 }
  
-const SECTION_NAMES = {dashboard:"Portfolio Command",rebalance:"Monthly Rebalance",tracker:"Performance Tracker",analysis:"Stock Analysis",playbook:"Portfolio Playbook"};
+const SECTION_NAMES = {dashboard:"Portfolio Command",rebalance:"Monthly Rebalance",tracker:"Performance Tracker",analysis:"Stock Analysis",playbook:"Portfolio Playbook",editor:"Holdings Editor"};
 const SECTIONS = [
   {id:"dashboard", icon:"🚨", label:"Command"},
   {id:"rebalance", icon:"🔄", label:"Rebalance"},
   {id:"tracker",   icon:"📈", label:"Tracker"},
   {id:"analysis",  icon:"🔍", label:"Analysis"},
   {id:"playbook",  icon:"📋", label:"Playbook"},
+  {id:"editor",    icon:"⚙️",  label:"Holdings"},
 ];
  
-function setSection(id) { S.section=id; const tabs={dashboard:"alerts",rebalance:"overview",tracker:"dashboard",analysis:"analyze",playbook:"identity"}; S.tab=tabs[id]||""; render(); }
+function setSection(id) { S.section=id; const tabs={dashboard:"alerts",rebalance:"overview",tracker:"dashboard",analysis:"analyze",playbook:"identity",editor:"edit"}; S.tab=tabs[id]||""; render(); }
 function setTab(t) { S.tab=t; render(); }
  
 function renderInnerTabs(tabs) {
@@ -1363,6 +1374,205 @@ function renderPlaybook() {
   }
  
   document.getElementById("content").innerHTML = html;
+}
+ 
+ 
+// ═══════════════════════════════════════════════════════════
+// HOLDINGS EDITOR
+// ═══════════════════════════════════════════════════════════
+function renderEditor() {
+  renderInnerTabs([{id:"edit",label:"✏️ Edit Holdings"},{id:"log",label:"📋 Change Log"}]);
+  const t = S.tab;
+  let html = "";
+ 
+  if(t==="edit") {
+    const totalValue = S.holdings.reduce((s,h)=>s+h.price*h.sh, 0);
+ 
+    html += `<div class="card" style="background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.3);margin-bottom:10px;">
+      <div style="font-size:9px;color:#c9a84c;letter-spacing:2px;margin-bottom:4px;">⚙️ HOLDINGS EDITOR</div>
+      <div style="font-size:10px;color:#94a3b8;line-height:1.6;">
+        Tap any holding to update your shares and avg cost after a real purchase.
+        Changes save instantly to your phone and update all calculations — alerts, P&L, rebalance drift — everywhere.
+      </div>
+    </div>`;
+ 
+    // Summary
+    const editedCount = Object.keys(S.holdingsOverride).length;
+    html += `<div class="g2" style="margin-bottom:10px;">
+      <div class="stat"><div class="stat-v" style="color:#fff;">$${totalValue.toFixed(2)}</div><div class="stat-l">TOTAL VALUE</div></div>
+      <div class="stat"><div class="stat-v" style="color:${editedCount>0?"#22c55e":"#475569"};">${editedCount}</div><div class="stat-l">EDITED HOLDINGS</div></div>
+    </div>`;
+ 
+    // Each holding
+    S.holdings.forEach(h => {
+      const btc = h.t === "BTC";
+      const isEditing = S.editingHolding === h.t;
+      const ov = S.holdingsOverride?.[h.t] || {};
+      const pctAvg = ((h.price - h.avg) / h.avg) * 100;
+      const value = h.price * h.sh;
+ 
+      html += `<div class="card card-accent" style="border-left-color:${h.color};margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${isEditing?"10px":"0"}">
+          <div>
+            <span style="font-size:14px;font-weight:bold;color:#fff;">${h.t}</span>
+            <span style="font-size:9px;color:${h.color};background:${h.color}20;padding:2px 6px;border-radius:3px;margin-left:6px;">${h.role}</span>
+            ${h.edited?`<span style="font-size:8px;color:#22c55e;background:#22c55e20;padding:2px 5px;border-radius:3px;margin-left:4px;">✓ EDITED</span>`:""}
+          </div>
+          <button onclick="S.editingHolding=S.editingHolding==='${h.t}'?null:'${h.t}';render()"
+            style="padding:5px 12px;font-size:9px;cursor:pointer;border-radius:4px;font-family:inherit;
+            background:${isEditing?"rgba(239,68,68,0.15)":"rgba(201,168,76,0.15)"};
+            border:1px solid ${isEditing?"#ef4444":"#c9a84c"};
+            color:${isEditing?"#ef4444":"#c9a84c"};">
+            ${isEditing?"Cancel":"Edit"}
+          </button>
+        </div>
+ 
+        ${!isEditing ? `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:6px;">
+          <div class="detail-cell"><div class="detail-lbl">Avg Cost</div><div class="detail-val">${fmt(h.avg,btc)}</div></div>
+          <div class="detail-cell"><div class="detail-lbl">Shares</div><div class="detail-val">${btc?h.sh.toFixed(5):h.sh.toFixed(4)}</div></div>
+          <div class="detail-cell"><div class="detail-lbl">Value</div><div class="detail-val">$${value.toFixed(2)}</div></div>
+        </div>
+        <div style="font-size:9px;color:${pctAvg>=0?"#22c55e":"#ef4444"};margin-top:5px;">${pctAvg>=0?"+":""}${pctAvg.toFixed(1)}% from avg cost · Current: ${fmt(h.price,btc)}</div>
+        ` : `
+        <div style="background:#0a0d12;border-radius:6px;padding:12px;border:1px solid #1e2a3a;">
+          <div style="font-size:9px;color:#c9a84c;letter-spacing:1px;margin-bottom:10px;">UPDATE ${h.t} POSITION</div>
+ 
+          <div style="font-size:9px;color:#475569;margin-bottom:8px;line-height:1.6;">
+            Current: ${fmt(h.avg,btc)} avg · ${btc?h.sh.toFixed(5):h.sh.toFixed(4)} shares · $${value.toFixed(2)} value
+          </div>
+ 
+          <div class="g2" style="margin-bottom:8px;">
+            <div class="field">
+              <div class="field-lbl">NEW AVG COST ($)</div>
+              <input type="number" id="edit_avg_${h.t}" value="${ov.avg||h.avg}" step="${btc?"100":"0.01"}"
+                style="font-size:12px;" placeholder="${fmt(h.avg,btc)}">
+            </div>
+            <div class="field">
+              <div class="field-lbl">NEW TOTAL SHARES</div>
+              <input type="number" id="edit_sh_${h.t}" value="${ov.sh||h.sh}" step="${btc?"0.00001":"0.0001"}"
+                style="font-size:12px;" placeholder="${h.sh}">
+            </div>
+          </div>
+ 
+          <div style="background:#070a0f;border-radius:5px;padding:8px;margin-bottom:10px;font-size:9px;color:#94a3b8;line-height:1.8;">
+            💡 <strong style="color:#c9a84c;">How to calculate new avg cost:</strong><br>
+            (Old shares × Old avg + New shares × Buy price) ÷ Total shares<br>
+            <span style="color:#475569;">Example: (${btc?h.sh.toFixed(5):h.sh.toFixed(4)} × ${fmt(h.avg,btc)} + new shares × buy price) ÷ new total</span>
+          </div>
+ 
+          <div style="display:flex;gap:8px;">
+            <button onclick="saveHoldingEdit('${h.t}')"
+              style="flex:2;padding:10px;font-size:11px;font-weight:bold;cursor:pointer;font-family:inherit;
+              background:rgba(34,197,94,0.2);border:1px solid #22c55e;color:#22c55e;border-radius:6px;">
+              ✓ SAVE CHANGES
+            </button>
+            ${ov.avg?`<button onclick="resetHolding('${h.t}')"
+              style="flex:1;padding:10px;font-size:10px;cursor:pointer;font-family:inherit;
+              background:transparent;border:1px solid #ef4444;color:#ef4444;border-radius:6px;">
+              Reset
+            </button>`:""}
+          </div>
+        </div>
+        `}
+      </div>`;
+    });
+ 
+    if(Object.keys(S.holdingsOverride).length > 0) {
+      html += `<button onclick="resetAllHoldings()"
+        style="width:100%;padding:11px;font-size:10px;cursor:pointer;font-family:inherit;
+        background:transparent;border:1px solid #334155;color:#475569;border-radius:6px;margin-top:4px;">
+        Reset All to Original Values
+      </button>`;
+    }
+  }
+ 
+  if(t==="log") {
+    html += `<div class="card-lbl">HOLDINGS CHANGE LOG</div>`;
+    const overrides = S.holdingsOverride || {};
+    const keys = Object.keys(overrides);
+    if(!keys.length) {
+      html += `<div class="empty">No edits made yet. Tap Edit Holdings to update your positions after a real purchase.</div>`;
+    } else {
+      keys.forEach(ticker => {
+        const ov = overrides[ticker];
+        const orig = HB.find(h=>h.t===ticker) || {};
+        const btc = ticker==="BTC";
+        const oldVal = orig.avg * orig.sh;
+        const newVal = parseFloat(ov.avg) * parseFloat(ov.sh);
+        const avgChg = ((parseFloat(ov.avg)-orig.avg)/orig.avg)*100;
+        const shChg  = parseFloat(ov.sh) - orig.sh;
+        html += `<div class="card card-accent" style="border-left-color:#22c55e;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:14px;font-weight:bold;color:#fff;">${ticker}</span>
+            <span style="font-size:9px;color:#22c55e;background:#22c55e20;padding:2px 8px;border-radius:3px;">EDITED</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:9px;">
+            <div style="background:#0a0d12;border-radius:4px;padding:6px;">
+              <div style="color:#475569;margin-bottom:2px;">ORIGINAL</div>
+              <div style="color:#94a3b8;">Avg: ${fmt(orig.avg,btc)}</div>
+              <div style="color:#94a3b8;">Shares: ${btc?orig.sh.toFixed(5):orig.sh.toFixed(4)}</div>
+              <div style="color:#94a3b8;">Value: $${oldVal.toFixed(2)}</div>
+            </div>
+            <div style="background:#0a0d12;border-radius:4px;padding:6px;">
+              <div style="color:#22c55e;margin-bottom:2px;">UPDATED</div>
+              <div style="color:#fff;">Avg: ${fmt(parseFloat(ov.avg),btc)}</div>
+              <div style="color:#fff;">Shares: ${btc?parseFloat(ov.sh).toFixed(5):parseFloat(ov.sh).toFixed(4)}</div>
+              <div style="color:#fff;">Value: $${newVal.toFixed(2)}</div>
+            </div>
+          </div>
+          <div style="font-size:9px;color:#475569;margin-top:6px;">
+            Avg cost ${avgChg>=0?"+":""}${avgChg.toFixed(2)}% · ${shChg>=0?"+":""}${shChg.toFixed(btc?5:4)} shares added
+          </div>
+          <div style="font-size:9px;color:#22c55e;margin-top:2px;">Last edited: ${ov.editedAt||"Unknown"}</div>
+        </div>`;
+      });
+    }
+  }
+ 
+  document.getElementById("content").innerHTML = html;
+}
+ 
+function saveHoldingEdit(ticker) {
+  const avgEl = document.getElementById("edit_avg_"+ticker);
+  const shEl  = document.getElementById("edit_sh_"+ticker);
+  if(!avgEl||!shEl) return;
+  const avg = parseFloat(avgEl.value);
+  const sh  = parseFloat(shEl.value);
+  if(isNaN(avg)||isNaN(sh)||avg<=0||sh<=0) {
+    alert("Please enter valid numbers for avg cost and shares.");
+    return;
+  }
+  if(!S.holdingsOverride) S.holdingsOverride = {};
+  S.holdingsOverride[ticker] = {
+    avg: avg.toString(),
+    sh:  sh.toString(),
+    editedAt: new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})
+  };
+  saveHoldings();
+  S.editingHolding = null;
+  // Rebuild holdings with new values
+  S.holdings = buildHoldings(S.liveData);
+  S.score = calcScore(S.holdings);
+  render();
+}
+ 
+function resetHolding(ticker) {
+  if(!confirm("Reset "+ticker+" to original values?")) return;
+  if(S.holdingsOverride) delete S.holdingsOverride[ticker];
+  saveHoldings();
+  S.holdings = buildHoldings(S.liveData);
+  S.score = calcScore(S.holdings);
+  render();
+}
+ 
+function resetAllHoldings() {
+  if(!confirm("Reset ALL holdings to original hardcoded values?")) return;
+  S.holdingsOverride = {};
+  saveHoldings();
+  S.holdings = buildHoldings(S.liveData);
+  S.score = calcScore(S.holdings);
+  render();
 }
  
 // ═══════════════════════════════════════════════════════════
