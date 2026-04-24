@@ -148,22 +148,53 @@ def main():
         d = h["display"]
         try:
             stock = yf.Ticker(t)
-            hist  = stock.history(period="1y", interval="1d")
+ 
+            # Step 1 — Get LIVE price using fast_info (real-time during market hours)
+            current = None
+            prev    = None
+            try:
+                fi = stock.fast_info
+                live = getattr(fi, "last_price", None) or getattr(fi, "regular_market_price", None)
+                prev_close = getattr(fi, "previous_close", None) or getattr(fi, "regular_market_previous_close", None)
+                if live and live > 0:
+                    current = round(float(live), 2)
+                if prev_close and prev_close > 0:
+                    prev = round(float(prev_close), 2)
+            except Exception as fe:
+                print(f"  {d}: fast_info error — {fe}")
+ 
+            # Step 2 — Fallback to 5-min intraday if fast_info failed
+            if not current:
+                try:
+                    intraday = stock.history(period="1d", interval="5m")
+                    if not intraday.empty:
+                        current = round(float(intraday["Close"].dropna().iloc[-1]), 2)
+                except:
+                    pass
+ 
+            # Step 3 — Fallback to daily close if both above failed
+            hist = stock.history(period="1y", interval="1d")
             if hist.empty:
                 print(f"  {d}: No data")
                 continue
-            closes  = hist["Close"].dropna()
-            current = round(float(closes.iloc[-1]),2)
-            prev    = round(float(closes.iloc[-2]),2) if len(closes)>1 else current
-            chg     = round(((current-prev)/prev)*100,2) if prev else 0
-            prices[d] = {"price":current,"prev":prev,"change":chg}
+            closes = hist["Close"].dropna()
+ 
+            if not current:
+                current = round(float(closes.iloc[-1]), 2)
+            if not prev:
+                prev = round(float(closes.iloc[-2]), 2) if len(closes) > 1 else current
+ 
+            chg = round(((current - prev) / prev) * 100, 2) if prev else 0
+            prices[d] = {"price": current, "prev": prev, "change": chg}
+ 
+            # Levels always use daily history for accuracy
             levels[d] = calc_levels(d, current, hist)
             rsi   = calc_rsi(closes.values)
-            ma50  = levels[d].get("ma50",current)
-            ma200 = levels[d].get("ma200",current)
-            trend = "UPTREND" if current>ma50>ma200 else "DOWNTREND" if current<ma50<ma200 else "SIDEWAYS"
-            technicals[d] = {"rsi":rsi,"trend":trend,"ma50":ma50,"ma200":ma200}
-            print(f"  {d}: ${current} ({chg:+.2f}%) — {trend}")
+            ma50  = levels[d].get("ma50", current)
+            ma200 = levels[d].get("ma200", current)
+            trend = "UPTREND" if current > ma50 > ma200 else "DOWNTREND" if current < ma50 < ma200 else "SIDEWAYS"
+            technicals[d] = {"rsi": rsi, "trend": trend, "ma50": ma50, "ma200": ma200}
+            print(f"  {d}: ${current} ({chg:+.2f}%) — {trend} [live]")
         except Exception as e:
             print(f"  {d}: Error — {e}")
  
