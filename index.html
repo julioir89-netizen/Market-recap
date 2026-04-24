@@ -314,37 +314,73 @@ const pctFmt = v => (v>=0?"+":"")+v.toFixed(1)+"%";
 const getWeek = () => Math.min(Math.ceil(new Date().getDate()/7),4);
  
 function buildHoldings(liveData) {
-  return HB.map(h => {
+  // Build core 11 holdings
+  const core = HB.map(h => {
     const pd  = liveData?.prices?.[h.t] || {};
     const lvl = liveData?.levels?.[h.t]  || FB_L[h.t] || {};
     const tech= liveData?.technicals?.[h.t] || {};
-    // Apply user overrides for avg cost and shares
     const ov  = S.holdingsOverride?.[h.t] || {};
-    const avg = ov.avg  ? parseFloat(ov.avg)  : h.avg;
-    const sh  = ov.sh   ? parseFloat(ov.sh)   : h.sh;
+    const avg = ov.avg ? parseFloat(ov.avg) : h.avg;
+    const sh  = ov.sh  ? parseFloat(ov.sh)  : h.sh;
     return {...h, avg, sh,
-      price: pd.price || FB_P[h.t] || avg,
-      change: pd.change || 0,
+      price:  pd.price   || FB_P[h.t] || avg,
+      change: pd.change  || 0,
       s1: lvl.s1 || FB_L[h.t]?.s1 || avg*0.95,
       s2: lvl.s2 || FB_L[h.t]?.s2 || avg*0.90,
       r1: lvl.r1 || FB_L[h.t]?.r1 || avg*1.05,
       r2: lvl.r2 || FB_L[h.t]?.r2 || avg*1.10,
-      trend:  tech.trend  || null,
-      rsi:    tech.rsi    || null,
-      ma50:   tech.ma50   || null,
-      ma200:  tech.ma200  || null,
-      edited: !!ov.avg,  // flag to show edited badge
+      trend:   tech.trend  || null,
+      rsi:     tech.rsi    || null,
+      ma50:    tech.ma50   || null,
+      ma200:   tech.ma200  || null,
+      edited:  !!ov.avg,
+      custom:  false,
     };
   });
+ 
+  // Merge custom holdings — treat them like any other holding
+  const custom = (S.customHoldings||[]).map(ch => {
+    const t   = ch.ticker;
+    const avg = parseFloat(ch.avg)    || 0;
+    const sh  = parseFloat(ch.shares) || 0;
+    const pd  = liveData?.prices?.[t] || {};
+    const tech= liveData?.technicals?.[t] || {};
+    // Use live price if available, else fall back to avg cost
+    const price = pd.price || avg;
+    return {
+      t, n: ch.name||t, avg, sh,
+      role:   ch.notes||"custom",
+      color:  "#8b5cf6",
+      tgt:    0,   // no target weight — excluded from drift calc
+      price,
+      change: pd.change || 0,
+      s1:     avg * 0.95,
+      s2:     avg * 0.90,
+      r1:     avg * 1.10,
+      r2:     avg * 1.15,
+      trend:  tech.trend || null,
+      rsi:    tech.rsi   || null,
+      ma50:   tech.ma50  || null,
+      ma200:  tech.ma200 || null,
+      edited: false,
+      custom: true,   // flag so we can handle differently in UI
+      addedDate: ch.date||"",
+    };
+  });
+ 
+  return [...core, ...custom];
 }
  
 function calcScore(H) {
+  // Only score using core 11 holdings (not custom)
+  const core = H.filter(h=>!h.custom);
+  if(!core.length) return 0;
   let s = 0;
-  s += Math.round((H.filter(h=>h.price>h.s1).length/H.length)*35);
-  const spyP = ((H[0].price-H[0].avg)/H[0].avg)*100;
+  s += Math.round((core.filter(h=>h.price>h.s1).length/core.length)*35);
+  const spyP = ((core[0].price-core[0].avg)/core[0].avg)*100;
   s += spyP>0?25:spyP>-3?18:spyP>-6?10:4;
-  s += (H[1].price>H[1].s1&&H[2].price>H[2].s1)?25:12;
-  s += H[7].price<H[7].avg?10:15;
+  s += (core[1].price>core[1].s1&&core[2].price>core[2].s1)?25:12;
+  s += core[7].price<core[7].avg?10:15;
   return Math.min(100,s);
 }
  
@@ -431,22 +467,25 @@ function saveTrimLog()   { try { localStorage.setItem("pf_trimlog",  JSON.string
 // INDICATORS
 // ═══════════════════════════════════════════════════════════
 function getInst(H) {
-  const sig=[H[2].price>H[2].s1,H[4].price>H[4].s1,H[0].price>H[0].s1,H[5].price>H[5].s1].filter(Boolean).length;
+  const C=H.filter(h=>!h.custom);
+  const sig=[C[2]?.price>C[2]?.s1,C[4]?.price>C[4]?.s1,C[0]?.price>C[0]?.s1,C[5]?.price>C[5]?.s1].filter(Boolean).length;
   return {sig,label:sig>=3?"ACCUM":sig===2?"NEUTRAL":"DIST",color:sig>=3?"#22c55e":sig===2?"#c9a84c":"#ef4444"};
 }
 function getCrash(H) {
+  const C=H.filter(h=>!h.custom);
   let r=0;
-  const sp=((H[0].price-H[0].avg)/H[0].avg)*100,qq=((H[1].price-H[1].avg)/H[1].avg)*100;
+  const sp=((C[0].price-C[0].avg)/C[0].avg)*100,qq=((C[1].price-C[1].avg)/C[1].avg)*100;
   if(sp<-5)r+=25;else if(sp<-2)r+=10;
   if(qq<-8)r+=20;else if(qq<-4)r+=10;
-  if(H[7].price>H[7].avg)r+=15; if(H[8].price>H[8].avg)r+=15;
-  if(H[0].price<H[0].s1)r+=15; if(H[1].price<H[1].s1)r+=10;
+  if(C[7]?.price>C[7]?.avg)r+=15; if(C[8]?.price>C[8]?.avg)r+=15;
+  if(C[0].price<C[0].s1)r+=15; if(C[1].price<C[1].s1)r+=10;
   r=Math.min(95,r);
   return {pct:r,label:r>=70?"HIGH":r>=40?"ELEV":r>=20?"LOW":"MIN",color:r>=70?"#ef4444":r>=40?"#f97316":r>=20?"#c9a84c":"#22c55e"};
 }
 function getSmart(H) {
-  const on=[H[2].price>H[2].s1,H[4].price>H[4].s1,H[5].price>H[5].s1,H[10].price>H[10].s1].filter(Boolean).length;
-  const off=[H[7].price>H[7].avg,H[8].price>H[8].avg].filter(Boolean).length;
+  const C=H.filter(h=>!h.custom);
+  const on=[C[2]?.price>C[2]?.s1,C[4]?.price>C[4]?.s1,C[5]?.price>C[5]?.s1,C[10]?.price>C[10]?.s1].filter(Boolean).length;
+  const off=[C[7]?.price>C[7]?.avg,C[8]?.price>C[8]?.avg].filter(Boolean).length;
   return {on,off,label:on>=3&&off<=1?"RISK-ON":off>=2&&on<=1?"RISK-OFF":"MIXED",color:on>=3&&off<=1?"#22c55e":off>=2&&on<=1?"#ef4444":"#c9a84c"};
 }
  
@@ -561,14 +600,21 @@ function renderDashboard(H, score, inst, crash, smart) {
   }
  
   if(t==="holdings") {
+    const coreH = H.filter(h=>!h.custom);
+    const customH = H.filter(h=>h.custom);
     const aboveAvg = H.filter(h=>h.price>=h.avg).length;
     const totalV = H.reduce((s,h)=>s+h.price*h.sh,0);
+    const coreV = coreH.reduce((s,h)=>s+h.price*h.sh,0);
+    const customV = customH.reduce((s,h)=>s+h.price*h.sh,0);
     html += `<div class="g3">
-      <div class="stat"><div class="stat-v" style="color:#fff">$${totalV.toFixed(0)}</div><div class="stat-l">TOTAL</div></div>
-      <div class="stat"><div class="stat-v" style="color:#22c55e">${aboveAvg}/11</div><div class="stat-l">ABOVE AVG</div></div>
+      <div class="stat"><div class="stat-v" style="color:#fff">$${totalV.toFixed(2)}</div><div class="stat-l">TOTAL VALUE</div></div>
+      <div class="stat"><div class="stat-v" style="color:#22c55e">${aboveAvg}/${H.length}</div><div class="stat-l">ABOVE AVG</div></div>
       <div class="stat"><div class="stat-v" style="color:${sc(score)}">${score}/100</div><div class="stat-l">SCORE</div></div>
     </div>`;
-    H.forEach(h => {
+    if(customH.length>0) html += `<div style="font-size:9px;color:#334155;margin-bottom:4px;">Core: $${coreV.toFixed(2)} · Custom: $${customV.toFixed(2)}</div>`;
+    // Core 11
+    html += \`<div class="card-lbl">CORE PORTFOLIO — 11 HOLDINGS</div>\`;
+    coreH.forEach(h => {
       const btc=h.t==="BTC";
       const pctAvg=((h.price-h.avg)/h.avg)*100;
       const dca=dcaStatus(h);
@@ -600,6 +646,44 @@ function renderDashboard(H, score, inst, crash, smart) {
         ${h.trend?`<div style="font-size:9px;color:#475569;margin-top:3px">${h.trend==="UPTREND"?"▲":h.trend==="DOWNTREND"?"▼":"→"} ${h.trend}${h.rsi?" · RSI "+h.rsi:""}${h.ma50?" · MA50 "+fmt(h.ma50,btc):""}</div>`:""}
       </div>`;
     });
+ 
+    // Custom holdings section
+    if(customH.length>0) {
+      html += `<div class="card-lbl" style="margin-top:10px;">CUSTOM HOLDINGS — ${customH.length} ADDED</div>`;
+      customH.forEach(h => {
+        const pctAvg=((h.price-h.avg)/h.avg)*100;
+        const value=h.price*h.sh;
+        const pnl=(h.price-h.avg)*h.sh;
+        const dca=dcaStatus(h);
+        html += `<div class="holding" style="border-left-color:#8b5cf6;">
+          <div class="holding-top">
+            <div>
+              <span class="holding-ticker">${h.t}</span>
+              <span class="holding-sector" style="color:#8b5cf6;background:#8b5cf620;">custom</span>
+              ${h.addedDate?`<span style="font-size:8px;color:#334155;margin-left:5px;">Added ${h.addedDate}</span>`:""}
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:13px;font-weight:bold;color:#fff;">$${h.price.toFixed(2)}</div>
+              <div style="font-size:9px;color:${h.change>=0?"#22c55e":"#ef4444"}">${h.change>=0?"▲":"▼"}${Math.abs(h.change).toFixed(2)}%</div>
+            </div>
+          </div>
+          <div class="g3" style="margin-bottom:6px;">
+            <div class="detail-cell"><div class="detail-lbl">Avg Cost</div><div class="detail-val">$${h.avg.toFixed(2)}</div></div>
+            <div class="detail-cell"><div class="detail-lbl">P&L</div><div class="detail-val" style="color:${pctAvg>=0?"#22c55e":"#ef4444"}">${pctAvg>=0?"+":""}${pctAvg.toFixed(1)}%</div></div>
+            <div class="detail-cell"><div class="detail-lbl">Value</div><div class="detail-val">$${value.toFixed(2)}</div></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;margin-bottom:3px;">
+            <span style="color:#334155;">S1:$${h.s1.toFixed(2)} · R1:$${h.r1.toFixed(2)} · Shares:${h.sh.toFixed(4)}</span>
+            <span style="font-weight:bold;color:${dca.color};">${dca.icon} ${dca.label}</span>
+          </div>
+          <div style="font-size:9px;color:${pnl>=0?"#22c55e":"#ef4444"};">Unrealized P&L: ${pnl>=0?"+":""}$${pnl.toFixed(2)} · ${h.n}</div>
+          ${h.trend?`<div style="font-size:9px;color:#475569;margin-top:3px;">${h.trend==="UPTREND"?"▲":h.trend==="DOWNTREND"?"▼":"→"} ${h.trend}${h.rsi?" · RSI "+h.rsi:""}</div>`:""}
+          <div style="font-size:9px;color:#475569;margin-top:3px;">⚙️ Edit in Holdings Editor → ➕ Add Stock tab</div>
+        </div>`;
+      });
+    } else if(S.customHoldings?.length===0||!S.customHoldings) {
+      html += `<div style="font-size:9px;color:#334155;text-align:center;padding:8px;">➕ Add custom stocks in ⚙️ Holdings → Add Stock tab</div>`;
+    }
   }
  
   if(t==="scan") {
