@@ -684,8 +684,23 @@ def scan_all_tickers(regime, vix, event_color):
     return [s for s in setups if s["score"] >= 60]
  
  
+def format_tt_symbol(yahoo_symbol):
+    import re
+    match = re.match(r'^([A-Z]+)(\d{6})([CP])(\d{8})$', yahoo_symbol)
+    if not match:
+        return yahoo_symbol
+    root, expdate, opt_type, strike = match.groups()
+    root_padded = root.ljust(6)
+    return f"{root_padded}{expdate}{opt_type}{strike}"
+ 
+ 
 def place_spread_order(token, setup):
     try:
+        long_sym  = format_tt_symbol(setup["long_symbol"])
+        short_sym = format_tt_symbol(setup["short_symbol"])
+        print(f"  Long symbol:  {long_sym}")
+        print(f"  Short symbol: {short_sym}")
+ 
         order_payload = {
             "time-in-force": "Day",
             "order-type":    "Limit",
@@ -694,13 +709,13 @@ def place_spread_order(token, setup):
             "legs": [
                 {
                     "instrument-type": "Equity Option",
-                    "symbol":          setup["long_symbol"],
+                    "symbol":          long_sym,
                     "quantity":        "1",
                     "action":          "Buy to Open",
                 },
                 {
                     "instrument-type": "Equity Option",
-                    "symbol":          setup["short_symbol"],
+                    "symbol":          short_sym,
                     "quantity":        "1",
                     "action":          "Sell to Open",
                 }
@@ -715,7 +730,7 @@ def place_spread_order(token, setup):
             order_id = r.json().get("data",{}).get("order",{}).get("id","N/A")
             return True, f"Order placed - ID: {order_id}"
         else:
-            return False, f"Order failed: {r.status_code} - {r.text[:200]}"
+            return False, f"Order failed: {r.status_code} - {r.text[:300]}"
     except Exception as e:
         return False, f"Order exception: {e}"
  
