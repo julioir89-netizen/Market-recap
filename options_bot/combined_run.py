@@ -127,11 +127,15 @@ def get_session_token():
     return r.json()["data"]["session-token"]
 
 def get_live_session_token():
+    print(f"  Attempting live login with username: '{TT_LIVE_USER}'")
+    print(f"  Password length: {len(TT_LIVE_PASS)} characters")
     r = requests.post(
         f"{LIVE_URL}/sessions",
         json={"login": TT_LIVE_USER, "password": TT_LIVE_PASS},
         headers={"Content-Type": "application/json"}
     )
+    print(f"  Response status: {r.status_code}")
+    print(f"  Response body: {r.text[:300]}")
     r.raise_for_status()
     return r.json()["data"]["session-token"]
 
