@@ -550,12 +550,12 @@ def score_to_grade(score):
  
  
 def build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color):
-    exp_group, dte = find_best_expiration(chain, 35, 75)
+    exp_group, dte = find_best_expiration(chain, 25, 75)
     if not exp_group:
         return None
     strikes   = exp_group.get("strikes", [])
     long_leg  = find_strike_by_delta(strikes, 0.40, 0.65, "C")
-    short_leg = find_strike_by_delta(strikes, 0.20, 0.35, "C")
+    short_leg = find_strike_by_delta(strikes, 0.15, 0.40, "C")
     if not long_leg or not short_leg:
         return None
     if short_leg["strike"] <= long_leg["strike"]:
@@ -595,7 +595,7 @@ def build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color):
         return None
     strikes   = exp_group.get("strikes", [])
     short_leg = find_strike_by_delta(strikes, 0.15, 0.30, "P")
-    long_leg  = find_strike_by_delta(strikes, 0.05, 0.14, "P")
+    long_leg  = find_strike_by_delta(strikes, 0.03, 0.14, "P")
     if not long_leg or not short_leg:
         return None
     if long_leg["strike"] >= short_leg["strike"]:
