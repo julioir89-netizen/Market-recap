@@ -91,7 +91,6 @@ python    print("\n=== PHASE 3: SCANNER ===")
     setups      = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
 And find this in process_setups_with_confirmation:
 python    success, result_msg = place_spread_order(token, setup)
-Make sure that line still uses token not live_token — orders go to sandbox, Greeks come from live. That separation is the entire point.
 
 Commit both files. Then run the workflow manually and check the logs. You should see the scanner finding actual strikes with real delta values this time.Sonnet 4.6Adaptive
 TT_ACCOUNT   = os.environ["TT_SANDBOX_ACCOUNT"]
