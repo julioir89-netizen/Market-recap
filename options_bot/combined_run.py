@@ -10,8 +10,8 @@ import smtplib
 from datetime import datetime, date, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-# ─── CONFIG ───────────────────────────────────────────────────────────────────
+ 
+# CONFIG
 SANDBOX_URL      = "https://api.cert.tastyworks.com"
 TT_USERNAME      = os.environ["TT_SANDBOX_USERNAME"]
 TT_PASSWORD      = os.environ["TT_SANDBOX_PASSWORD"]
@@ -21,7 +21,7 @@ EMAIL_FROM       = os.environ["EMAIL_FROM"]
 EMAIL_PASS       = os.environ["EMAIL_PASSWORD"]
 TELEGRAM_TOKEN   = os.environ["TELEGRAM_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
-
+ 
 WATCHLIST = ["SPY","QQQ","SOXX","AAPL","NVDA","MU","XLI","XLV","IAU","KBWB"]
 LOG_FILE  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trade_log.csv")
 LOG_HEADERS = [
@@ -29,31 +29,28 @@ LOG_HEADERS = [
     "delta","gamma","theta","ivr","grade","score",
     "max_risk","max_gain","regime","status","pl_result","notes"
 ]
-
+ 
 TELEGRAM_API = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
-
-# ─── TELEGRAM ─────────────────────────────────────────────────────────────────
+ 
+ 
 def telegram_send(text):
     try:
         requests.post(
             f"{TELEGRAM_API}/sendMessage",
-            json={
-                "chat_id":    TELEGRAM_CHAT_ID,
-                "text":       text,
-                "parse_mode": "HTML"
-            },
+            json={"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "HTML"},
             timeout=10
         )
     except Exception as e:
         print(f"Telegram send error: {e}")
-
+ 
+ 
 def telegram_send_buttons(text, setup_index):
     try:
         r = requests.post(
             f"{TELEGRAM_API}/sendMessage",
             json={
-                "chat_id":    TELEGRAM_CHAT_ID,
-                "text":       text,
+                "chat_id": TELEGRAM_CHAT_ID,
+                "text": text,
                 "parse_mode": "HTML",
                 "reply_markup": {
                     "inline_keyboard": [[
@@ -69,22 +66,20 @@ def telegram_send_buttons(text, setup_index):
     except Exception as e:
         print(f"Telegram button error: {e}")
         return None
-
+ 
+ 
 def telegram_get_updates(offset=None):
     try:
         params = {"timeout": 30, "allowed_updates": ["callback_query"]}
         if offset:
             params["offset"] = offset
-        r = requests.get(
-            f"{TELEGRAM_API}/getUpdates",
-            params=params,
-            timeout=35
-        )
+        r = requests.get(f"{TELEGRAM_API}/getUpdates", params=params, timeout=35)
         return r.json().get("result", [])
     except Exception as e:
         print(f"Telegram updates error: {e}")
         return []
-
+ 
+ 
 def telegram_answer_callback(callback_id, text):
     try:
         requests.post(
@@ -94,7 +89,8 @@ def telegram_answer_callback(callback_id, text):
         )
     except:
         pass
-
+ 
+ 
 def wait_for_response(setup_index, timeout_seconds=300):
     print(f"  Waiting up to {timeout_seconds}s for response on setup {setup_index}...")
     start_time  = time.time()
@@ -117,8 +113,8 @@ def wait_for_response(setup_index, timeout_seconds=300):
                 return "skip"
         time.sleep(3)
     return "timeout"
-
-# ─── TASTYTRADE SANDBOX AUTH ──────────────────────────────────────────────────
+ 
+ 
 def get_session_token():
     r = requests.post(
         f"{SANDBOX_URL}/sessions",
@@ -127,11 +123,12 @@ def get_session_token():
     )
     r.raise_for_status()
     return r.json()["data"]["session-token"]
-
+ 
+ 
 def tt_headers(token):
     return {"Authorization": token, "Content-Type": "application/json"}
-
-# ─── MARKET DATA ──────────────────────────────────────────────────────────────
+ 
+ 
 def get_market_data():
     spy      = yf.Ticker("SPY")
     qqq      = yf.Ticker("QQQ")
@@ -153,16 +150,15 @@ def get_market_data():
     vix_chg     = round(vix_price - vix_prev, 2)
     vix_dir     = "RISING" if vix_chg > 0 else "FALLING"
     return {
-        "spy_price":   spy_price,   "spy_ma20":  spy_ma20,
-        "spy_ma50":    spy_ma50,    "spy_chg_pct": spy_chg_pct,
-        "qqq_chg_pct": qqq_chg_pct,"vix_price":  vix_price,
-        "vix_chg":     vix_chg,    "vix_dir":    vix_dir,
+        "spy_price": spy_price, "spy_ma20": spy_ma20, "spy_ma50": spy_ma50,
+        "spy_chg_pct": spy_chg_pct, "qqq_chg_pct": qqq_chg_pct,
+        "vix_price": vix_price, "vix_chg": vix_chg, "vix_dir": vix_dir,
         "spy_above_20": spy_price > spy_ma20,
         "spy_above_50": spy_price > spy_ma50,
         "qqq_leading":  qqq_chg_pct > spy_chg_pct,
     }
-
-# ─── IVR ─────────────────────────────────────────────────────────────────────
+ 
+ 
 def get_ivr_yahoo(ticker):
     try:
         t    = yf.Ticker(ticker)
@@ -176,16 +172,21 @@ def get_ivr_yahoo(ticker):
         if high_52w == low_52w:
             return 50, "NEUTRAL"
         ivr = round(((current_range - low_52w) / (high_52w - low_52w)) * 100, 1)
-        if ivr < 25:   bias = "BUY (debit spreads)"
-        elif ivr < 50: bias = "BUY-LEAN"
-        elif ivr < 75: bias = "NEUTRAL"
-        elif ivr < 90: bias = "SELL (credit spreads)"
-        else:          bias = "EXTREME - far OTM only"
+        if ivr < 25:
+            bias = "BUY (debit spreads)"
+        elif ivr < 50:
+            bias = "BUY-LEAN"
+        elif ivr < 75:
+            bias = "NEUTRAL"
+        elif ivr < 90:
+            bias = "SELL (credit spreads)"
+        else:
+            bias = "EXTREME - far OTM only"
         return ivr, bias
     except Exception as e:
         return None, f"Error: {e}"
-
-# ─── EVENT CALENDAR ───────────────────────────────────────────────────────────
+ 
+ 
 def check_event_risk():
     fed_dates = [
         date(2026,1,29), date(2026,3,19), date(2026,4,29),
@@ -195,12 +196,16 @@ def check_event_risk():
     today      = date.today()
     days_ahead = [(d - today).days for d in fed_dates if (d - today).days >= 0]
     nearest    = min(days_ahead) if days_ahead else 99
-    if nearest == 0:   return "FED TODAY",               "RED"
-    elif nearest == 1: return "FED TOMORROW",             "RED"
-    elif nearest <= 3: return f"FED IN {nearest} DAYS",   "YELLOW"
-    else:              return f"Next Fed in {nearest} days", "GREEN"
-
-# ─── REGIME ──────────────────────────────────────────────────────────────────
+    if nearest == 0:
+        return "FED TODAY", "RED"
+    elif nearest == 1:
+        return "FED TOMORROW", "RED"
+    elif nearest <= 3:
+        return f"FED IN {nearest} DAYS", "YELLOW"
+    else:
+        return f"Next Fed in {nearest} days", "GREEN"
+ 
+ 
 def classify_regime(data):
     above_20 = data["spy_above_20"]
     above_50 = data["spy_above_50"]
@@ -214,34 +219,55 @@ def classify_regime(data):
     if not above_20 and not above_50 and vix_dir == "RISING":
         return "B", "BEAR TREND / DOWNTREND"
     return "C", "RANGE / CHOP"
-
-# ─── GRADE ───────────────────────────────────────────────────────────────────
+ 
+ 
 def calculate_grade(regime, ivr, vix, event_color, spy_chg):
     score = 0
-    if regime in ["A","B","C"]: score += 20
-    elif regime == "D":         score += 8
-    else:                       score += 5
+    if regime in ["A","B","C"]:
+        score += 20
+    elif regime == "D":
+        score += 8
+    else:
+        score += 5
     if ivr is not None:
-        if ivr < 50:   score += 20
-        elif ivr < 75: score += 12
-        else:          score += 6
-    if vix < 18:          score += 20
-    elif vix < 22:        score += 14
-    elif vix < 28:        score += 8
-    if event_color == "GREEN":    score += 20
-    elif event_color == "YELLOW": score += 10
-    if abs(spy_chg) < 0.8:   score += 20
-    elif abs(spy_chg) < 1.5: score += 12
-    elif abs(spy_chg) < 2.0: score += 6
-    if score >= 90:   return score, "A+", "STRONG RECOMMEND"
-    elif score >= 80: return score, "A",  "RECOMMEND"
-    elif score >= 70: return score, "A-", "RECOMMEND reduced size"
-    elif score >= 60: return score, "B+", "BORDERLINE"
-    elif score >= 50: return score, "B",  "GRAY ZONE"
-    elif score >= 40: return score, "B-", "LEAN SKIP"
-    else:             return score, "F",  "NO EDGE"
-
-# ─── BLACK-SCHOLES GREEKS ─────────────────────────────────────────────────────
+        if ivr < 50:
+            score += 20
+        elif ivr < 75:
+            score += 12
+        else:
+            score += 6
+    if vix < 18:
+        score += 20
+    elif vix < 22:
+        score += 14
+    elif vix < 28:
+        score += 8
+    if event_color == "GREEN":
+        score += 20
+    elif event_color == "YELLOW":
+        score += 10
+    if abs(spy_chg) < 0.8:
+        score += 20
+    elif abs(spy_chg) < 1.5:
+        score += 12
+    elif abs(spy_chg) < 2.0:
+        score += 6
+    if score >= 90:
+        return score, "A+", "STRONG RECOMMEND"
+    elif score >= 80:
+        return score, "A", "RECOMMEND"
+    elif score >= 70:
+        return score, "A-", "RECOMMEND reduced size"
+    elif score >= 60:
+        return score, "B+", "BORDERLINE"
+    elif score >= 50:
+        return score, "B", "GRAY ZONE"
+    elif score >= 40:
+        return score, "B-", "LEAN SKIP"
+    else:
+        return score, "F", "NO EDGE"
+ 
+ 
 def calculate_greeks(option_price, strike, t_years, iv, option_type):
     try:
         if t_years <= 0 or iv <= 0:
@@ -250,66 +276,64 @@ def calculate_greeks(option_price, strike, t_years, iv, option_type):
         K   = strike
         r   = 0.05
         sig = iv
-        d1  = (math.log(S / K) + (r + 0.5 * sig**2) * t_years) / \
-              (sig * math.sqrt(t_years))
-        d2  = d1 - sig * math.sqrt(t_years)
-
+        d1  = (math.log(S / K) + (r + 0.5 * sig**2) * t_years) / (sig * math.sqrt(t_years))
+ 
         def norm_cdf(x):
             return (1.0 + math.erf(x / math.sqrt(2.0))) / 2.0
-
+ 
         def norm_pdf(x):
             return math.exp(-0.5 * x**2) / math.sqrt(2 * math.pi)
-
+ 
         if option_type == "C":
             delta = norm_cdf(d1)
         else:
             delta = norm_cdf(d1) - 1
-
+ 
         gamma = norm_pdf(d1) / (S * sig * math.sqrt(t_years))
         theta = (-(S * norm_pdf(d1) * sig) / (2 * math.sqrt(t_years))) / 365
-
+ 
         return round(abs(delta), 3), round(gamma, 4), round(theta, 4)
     except:
         return 0.5, 0.02, -0.03
-
-# ─── OPTIONS CHAIN FROM YAHOO ─────────────────────────────────────────────────
+ 
+ 
 def get_option_chain_yahoo(ticker):
     try:
         t           = yf.Ticker(ticker)
         expirations = t.options
         if not expirations:
             return None
-
+ 
         today    = date.today()
         best_exp = None
         best_dte = 999
-
+ 
         for exp_str in expirations:
             exp_date = datetime.strptime(exp_str, "%Y-%m-%d").date()
             dte      = (exp_date - today).days
             if 25 <= dte <= 75 and dte < best_dte:
                 best_dte = dte
                 best_exp = exp_str
-
+ 
         if not best_exp:
             return None
-
+ 
         chain = t.option_chain(best_exp)
         calls = chain.calls
         puts  = chain.puts
-
+ 
         all_strikes = sorted(set(
             list(calls["strike"].values) + list(puts["strike"].values)
         ))
-
+ 
         strikes = []
         for strike_price in all_strikes:
             options = []
-
+ 
             call_row = calls[calls["strike"] == strike_price]
             if not call_row.empty:
-                row = call_row.iloc[0]
-                iv  = float(row.get("impliedVolatility", 0))
+                row   = call_row.iloc[0]
+                iv    = float(row.get("impliedVolatility", 0))
                 delta, gamma, theta = calculate_greeks(
                     float(row.get("lastPrice", 0)),
                     strike_price,
@@ -326,11 +350,11 @@ def get_option_chain_yahoo(ticker):
                         "volatility": iv,
                     }
                 })
-
+ 
             put_row = puts[puts["strike"] == strike_price]
             if not put_row.empty:
-                row = put_row.iloc[0]
-                iv  = float(row.get("impliedVolatility", 0))
+                row   = put_row.iloc[0]
+                iv    = float(row.get("impliedVolatility", 0))
                 delta, gamma, theta = calculate_greeks(
                     float(row.get("lastPrice", 0)),
                     strike_price,
@@ -347,22 +371,19 @@ def get_option_chain_yahoo(ticker):
                         "volatility": iv,
                     }
                 })
-
+ 
             strikes.append({
                 "strike-price": strike_price,
                 "options":      options
             })
-
-        return [{
-            "expiration-date": best_exp,
-            "strikes":         strikes
-        }]
-
+ 
+        return [{"expiration-date": best_exp, "strikes": strikes}]
+ 
     except Exception as e:
         print(f"  Yahoo chain error {ticker}: {e}")
         return None
-
-# ─── FIND EXPIRATION AND STRIKES ──────────────────────────────────────────────
+ 
+ 
 def find_best_expiration(chain, min_dte=30, max_dte=60):
     today    = date.today()
     best     = None
@@ -378,7 +399,8 @@ def find_best_expiration(chain, min_dte=30, max_dte=60):
         except:
             continue
     return best, best_dte
-
+ 
+ 
 def find_strike_by_delta(strikes, target_min, target_max, option_type="C"):
     candidates = []
     for strike in strikes:
@@ -404,91 +426,151 @@ def find_strike_by_delta(strikes, target_min, target_max, option_type="C"):
         return None
     target_mid = (target_min + target_max) / 2
     return min(candidates, key=lambda x: abs(x["delta"] - target_mid))
-
-# ─── GREEK FILTER ─────────────────────────────────────────────────────────────
+ 
+ 
 def greek_filter(delta, gamma, theta, dte, stype):
     flags  = []
     passed = True
     if stype == "debit":
-        if not (0.40 <= delta <= 0.65): flags.append(f"Delta {delta}"); passed = False
-        if gamma > 0.06:                flags.append(f"Gamma {gamma}"); passed = False
-        if theta < -0.09:               flags.append(f"Theta {theta}"); passed = False
-        if not (30 <= dte <= 90):       flags.append(f"DTE {dte}");     passed = False
+        if not (0.40 <= delta <= 0.65):
+            flags.append(f"Delta {delta}")
+            passed = False
+        if gamma > 0.06:
+            flags.append(f"Gamma {gamma}")
+            passed = False
+        if theta < -0.09:
+            flags.append(f"Theta {theta}")
+            passed = False
+        if not (30 <= dte <= 90):
+            flags.append(f"DTE {dte}")
+            passed = False
     elif stype == "credit":
-        if not (0.15 <= delta <= 0.30): flags.append(f"Delta {delta}"); passed = False
-        if gamma > 0.05:                flags.append(f"Gamma {gamma}"); passed = False
-        if theta < 0.05:                flags.append(f"Theta {theta}"); passed = False
-        if not (25 <= dte <= 50):       flags.append(f"DTE {dte}");     passed = False
+        if not (0.15 <= delta <= 0.30):
+            flags.append(f"Delta {delta}")
+            passed = False
+        if gamma > 0.05:
+            flags.append(f"Gamma {gamma}")
+            passed = False
+        if theta < 0.05:
+            flags.append(f"Theta {theta}")
+            passed = False
+        if not (25 <= dte <= 50):
+            flags.append(f"DTE {dte}")
+            passed = False
     return passed, flags
-
-# ─── SCORER ───────────────────────────────────────────────────────────────────
+ 
+ 
 def score_setup(regime, ivr, delta, gamma, theta, dte, stype, vix, event_color):
     score = 0
     match = {
         "A": ["debit","credit"], "B": ["debit","credit"],
         "C": ["credit"], "D": ["credit"], "E": []
     }
-    if stype in match.get(regime, []): score += 25
-    else:                              score += 5
+    if stype in match.get(regime, []):
+        score += 25
+    else:
+        score += 5
     if ivr is not None:
-        if stype == "debit"  and ivr < 40:  score += 20
-        elif stype == "debit"  and ivr < 60: score += 12
-        elif stype == "credit" and ivr > 60: score += 20
-        elif stype == "credit" and ivr > 40: score += 12
-        else:                                score += 5
+        if stype == "debit" and ivr < 40:
+            score += 20
+        elif stype == "debit" and ivr < 60:
+            score += 12
+        elif stype == "credit" and ivr > 60:
+            score += 20
+        elif stype == "credit" and ivr > 40:
+            score += 12
+        else:
+            score += 5
     if stype == "debit":
-        if 0.45 <= delta <= 0.60:   score += 10
-        elif 0.40 <= delta <= 0.65: score += 7
-        if gamma <= 0.04:   score += 8
-        elif gamma <= 0.06: score += 5
-        if theta >= -0.05:  score += 7
-        elif theta >= -0.08: score += 4
+        if 0.45 <= delta <= 0.60:
+            score += 10
+        elif 0.40 <= delta <= 0.65:
+            score += 7
+        if gamma <= 0.04:
+            score += 8
+        elif gamma <= 0.06:
+            score += 5
+        if theta >= -0.05:
+            score += 7
+        elif theta >= -0.08:
+            score += 4
     else:
-        if 0.18 <= delta <= 0.25:   score += 10
-        elif 0.15 <= delta <= 0.30: score += 7
-        if gamma <= 0.03:   score += 8
-        elif gamma <= 0.05: score += 5
-        if theta >= 0.08:   score += 7
-        elif theta >= 0.05: score += 4
+        if 0.18 <= delta <= 0.25:
+            score += 10
+        elif 0.15 <= delta <= 0.30:
+            score += 7
+        if gamma <= 0.03:
+            score += 8
+        elif gamma <= 0.05:
+            score += 5
+        if theta >= 0.08:
+            score += 7
+        elif theta >= 0.05:
+            score += 4
     if stype == "debit":
-        if 45 <= dte <= 75:   score += 15
-        elif 35 <= dte <= 90: score += 10
-        else:                 score += 3
+        if 45 <= dte <= 75:
+            score += 15
+        elif 35 <= dte <= 90:
+            score += 10
+        else:
+            score += 3
     else:
-        if 30 <= dte <= 45:   score += 15
-        elif 25 <= dte <= 50: score += 10
-        else:                 score += 3
-    if vix < 18:   score += 10
-    elif vix < 22: score += 7
-    elif vix < 28: score += 4
-    if "GREEN"  in event_color: score += 5
-    elif "YELLOW" in event_color: score += 2
+        if 30 <= dte <= 45:
+            score += 15
+        elif 25 <= dte <= 50:
+            score += 10
+        else:
+            score += 3
+    if vix < 18:
+        score += 10
+    elif vix < 22:
+        score += 7
+    elif vix < 28:
+        score += 4
+    if "GREEN" in event_color:
+        score += 5
+    elif "YELLOW" in event_color:
+        score += 2
     return min(score, 100)
-
+ 
+ 
 def score_to_grade(score):
-    if score >= 90:   return "A+", "STRONG RECOMMEND", "G"
-    elif score >= 80: return "A",  "RECOMMEND", "G"
-    elif score >= 70: return "A-", "RECOMMEND reduced size", "G"
-    elif score >= 60: return "B+", "BORDERLINE", "Y"
-    elif score >= 50: return "B",  "GRAY ZONE", "Y"
-    else:             return "F",  "NO EDGE", "R"
-
-# ─── STRATEGY BUILDERS ────────────────────────────────────────────────────────
+    if score >= 90:
+        return "A+", "STRONG RECOMMEND", "G"
+    elif score >= 80:
+        return "A", "RECOMMEND", "G"
+    elif score >= 70:
+        return "A-", "RECOMMEND reduced size", "G"
+    elif score >= 60:
+        return "B+", "BORDERLINE", "Y"
+    elif score >= 50:
+        return "B", "GRAY ZONE", "Y"
+    else:
+        return "F", "NO EDGE", "R"
+ 
+ 
 def build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color):
     exp_group, dte = find_best_expiration(chain, 35, 75)
-    if not exp_group: return None
+    if not exp_group:
+        return None
     strikes   = exp_group.get("strikes", [])
     long_leg  = find_strike_by_delta(strikes, 0.40, 0.65, "C")
     short_leg = find_strike_by_delta(strikes, 0.20, 0.35, "C")
-    if not long_leg or not short_leg: return None
-    if short_leg["strike"] <= long_leg["strike"]: return None
-    passed, flags = greek_filter(long_leg["delta"], long_leg["gamma"],
-                                 long_leg["theta"], dte, "debit")
+    if not long_leg or not short_leg:
+        return None
+    if short_leg["strike"] <= long_leg["strike"]:
+        return None
+    passed, flags = greek_filter(
+        long_leg["delta"], long_leg["gamma"], long_leg["theta"], dte, "debit"
+    )
     width = short_leg["strike"] - long_leg["strike"]
-    score = score_setup(regime, ivr, long_leg["delta"], long_leg["gamma"],
-                        long_leg["theta"], dte, "debit", vix, event_color)
+    score = score_setup(
+        regime, ivr, long_leg["delta"], long_leg["gamma"],
+        long_leg["theta"], dte, "debit", vix, event_color
+    )
     grade, desc, emoji = score_to_grade(score)
-    if score < 50: return None
+    if score < 50:
+        return None
     return {
         "ticker": ticker, "strategy": "Bull Call Debit Spread",
         "type": "debit", "direction": "BULLISH",
@@ -505,22 +587,30 @@ def build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color):
         "ivr": ivr, "ivr_bias": "",
         "live_ready": round(width * 40, 0) <= 300,
     }
-
+ 
+ 
 def build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color):
     exp_group, dte = find_best_expiration(chain, 25, 50)
-    if not exp_group: return None
+    if not exp_group:
+        return None
     strikes   = exp_group.get("strikes", [])
     short_leg = find_strike_by_delta(strikes, 0.15, 0.30, "P")
     long_leg  = find_strike_by_delta(strikes, 0.05, 0.14, "P")
-    if not long_leg or not short_leg: return None
-    if long_leg["strike"] >= short_leg["strike"]: return None
-    passed, flags = greek_filter(short_leg["delta"], short_leg["gamma"],
-                                 short_leg["theta"], dte, "credit")
+    if not long_leg or not short_leg:
+        return None
+    if long_leg["strike"] >= short_leg["strike"]:
+        return None
+    passed, flags = greek_filter(
+        short_leg["delta"], short_leg["gamma"], short_leg["theta"], dte, "credit"
+    )
     width = short_leg["strike"] - long_leg["strike"]
-    score = score_setup(regime, ivr, short_leg["delta"], short_leg["gamma"],
-                        short_leg["theta"], dte, "credit", vix, event_color)
+    score = score_setup(
+        regime, ivr, short_leg["delta"], short_leg["gamma"],
+        short_leg["theta"], dte, "credit", vix, event_color
+    )
     grade, desc, emoji = score_to_grade(score)
-    if score < 50: return None
+    if score < 50:
+        return None
     return {
         "ticker": ticker, "strategy": "Put Credit Spread",
         "type": "credit", "direction": "BULLISH-NEUTRAL",
@@ -537,8 +627,8 @@ def build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color):
         "ivr": ivr, "ivr_bias": "",
         "live_ready": round(width * 70, 0) <= 300,
     }
-
-# ─── SCANNER ─────────────────────────────────────────────────────────────────
+ 
+ 
 def scan_all_tickers(regime, vix, event_color):
     setups = []
     for ticker in WATCHLIST:
@@ -547,17 +637,16 @@ def scan_all_tickers(regime, vix, event_color):
         if not chain:
             print(f"    No chain for {ticker}")
             continue
-            ivr, ivr_bias = get_ivr_yahoo(ticker)
-            if regime in ["A","B"]:
+        ivr, ivr_bias = get_ivr_yahoo(ticker)
+        if regime in ["A","B"]:
             s = build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color)
             if s:
                 s["ivr_bias"] = ivr_bias
                 setups.append(s)
             else:
-                # Debug — show why it failed
                 exp_group, dte = find_best_expiration(chain, 35, 75)
                 if not exp_group:
-                    print(f"    {ticker} CALL: no expiration found in 35-75 DTE range")
+                    print(f"    {ticker} CALL: no expiration in 35-75 DTE")
                 else:
                     strikes   = exp_group.get("strikes", [])
                     long_leg  = find_strike_by_delta(strikes, 0.40, 0.65, "C")
@@ -565,7 +654,6 @@ def scan_all_tickers(regime, vix, event_color):
                     print(f"    {ticker} CALL: exp={exp_group.get('expiration-date')} dte={dte}")
                     print(f"    {ticker} CALL: long_leg={long_leg}")
                     print(f"    {ticker} CALL: short_leg={short_leg}")
-
         s = build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color)
         if s:
             s["ivr_bias"] = ivr_bias
@@ -573,7 +661,7 @@ def scan_all_tickers(regime, vix, event_color):
         else:
             exp_group, dte = find_best_expiration(chain, 25, 50)
             if not exp_group:
-                print(f"    {ticker} PUT: no expiration found in 25-50 DTE range")
+                print(f"    {ticker} PUT: no expiration in 25-50 DTE")
             else:
                 strikes   = exp_group.get("strikes", [])
                 short_leg = find_strike_by_delta(strikes, 0.15, 0.30, "P")
@@ -586,8 +674,8 @@ def scan_all_tickers(regime, vix, event_color):
         print(f"    {s['ticker']} {s['strategy']} score={s['score']}")
     setups.sort(key=lambda x: x["score"], reverse=True)
     return [s for s in setups if s["score"] >= 60]
-
-# ─── ORDER EXECUTION ─────────────────────────────────────────────────────────
+ 
+ 
 def place_spread_order(token, setup):
     try:
         order_payload = {
@@ -622,21 +710,23 @@ def place_spread_order(token, setup):
             return False, f"Order failed: {r.status_code} - {r.text[:200]}"
     except Exception as e:
         return False, f"Order exception: {e}"
-
-# ─── TRADE LOG ────────────────────────────────────────────────────────────────
+ 
+ 
 def load_trade_log():
     if not os.path.exists(LOG_FILE):
         return []
     with open(LOG_FILE, "r") as f:
         return list(csv.DictReader(f))
-
+ 
+ 
 def save_trade_log(trades):
     os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
     with open(LOG_FILE, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=LOG_HEADERS)
         writer.writeheader()
         writer.writerows(trades)
-
+ 
+ 
 def log_new_setups(setups, regime):
     trades    = load_trade_log()
     today_str = date.today().isoformat()
@@ -667,18 +757,22 @@ def log_new_setups(setups, regime):
             existing.add(key)
     save_trade_log(trades)
     return trades
-
+ 
+ 
 def get_performance_summary(trades):
     closed = [t for t in trades if t["status"] in ["WIN","LOSS","SCRATCH"]]
-    if not closed: return None
+    if not closed:
+        return None
     total    = len(closed)
     wins     = len([t for t in closed if t["status"] == "WIN"])
     losses   = len([t for t in closed if t["status"] == "LOSS"])
     win_rate = round((wins / total) * 100, 1) if total > 0 else 0
     pl_vals  = []
     for t in closed:
-        try: pl_vals.append(float(t["pl_result"]))
-        except: pass
+        try:
+            pl_vals.append(float(t["pl_result"]))
+        except:
+            pass
     a_plus      = [t for t in closed if t["grade"] == "A+"]
     a_plus_wins = len([t for t in a_plus if t["status"] == "WIN"])
     return {
@@ -691,11 +785,10 @@ def get_performance_summary(trades):
         "a_plus_rate":  round((a_plus_wins/len(a_plus))*100,1) if a_plus else 0,
         "open_trades":  len([t for t in trades if t["status"] == "OPEN"]),
     }
-
-# ─── TELEGRAM ALERT ──────────────────────────────────────────────────────────
+ 
+ 
 def build_telegram_message(i, total, s, regime, regime_label, vix, event_label):
-    greek_ok = "Greeks passed" if s["greek_passed"] \
-               else f"Flags: {', '.join(s['greek_flags'])}"
+    greek_ok = "Greeks passed" if s["greek_passed"] else f"Flags: {', '.join(s['greek_flags'])}"
     live_tag = "Live ready ($2k)" if s["live_ready"] else "Paper only"
     return (
         f"<b>OPTIONS BOT - SETUP {i}/{total}</b>\n"
@@ -712,9 +805,9 @@ def build_telegram_message(i, total, s, regime, regime_label, vix, event_label):
         f"Regime {regime} - {regime_label} | VIX: {vix}\n"
         f"Tap your choice below"
     )
-
-def process_setups_with_confirmation(token, setups, regime, regime_label,
-                                     vix, event_label):
+ 
+ 
+def process_setups_with_confirmation(token, setups, regime, regime_label, vix, event_label):
     executed = []
     skipped  = []
     if not setups:
@@ -756,11 +849,7 @@ def process_setups_with_confirmation(token, setups, regime, regime_label,
                 )
                 executed.append(setup)
             else:
-                telegram_send(
-                    f"ORDER FAILED\n"
-                    f"{setup['ticker']}\n"
-                    f"{result_msg}"
-                )
+                telegram_send(f"ORDER FAILED\n{setup['ticker']}\n{result_msg}")
         elif response == "skip":
             print(f"  Skipped {setup['ticker']}")
             telegram_send(f"Skipped <b>{setup['ticker']}</b>.")
@@ -771,8 +860,8 @@ def process_setups_with_confirmation(token, setups, regime, regime_label,
             skipped.append(setup)
         time.sleep(2)
     return executed, skipped
-
-# ─── EMAIL ────────────────────────────────────────────────────────────────────
+ 
+ 
 def send_summary_email(regime, regime_label, data, event_label,
                        setups, executed, skipped, perf,
                        today_str, day_grade, day_score):
@@ -785,37 +874,35 @@ def send_summary_email(regime, regime_label, data, event_label,
     if perf:
         pl_e = "+" if perf["total_pl"] >= 0 else ""
         perf_sec = (
-            f"Record:      {perf['wins']}W / {perf['losses']}L "
-            f"({perf['win_rate']}% win rate)\n"
+            f"Record:      {perf['wins']}W / {perf['losses']}L ({perf['win_rate']}% win rate)\n"
             f"Total P/L:   {pl_e}${perf['total_pl']:.2f}\n"
             f"Open trades: {perf['open_trades']}\n"
             f"A+ accuracy: {perf['a_plus_rate']}%"
         )
     else:
         perf_sec = "No closed trades yet - tracking starts today."
-    body = f"""
-OPTIONS BOT - DAILY SUMMARY
+    body = f"""OPTIONS BOT - DAILY SUMMARY
 {today_str}
-
+ 
 REGIME {regime} - {regime_label}
 SPY: ${data['spy_price']} ({data['spy_chg_pct']:+.2f}%)
 VIX: {data['vix_price']} {data['vix_dir']}
 Day Grade: {day_grade} ({day_score}/100)
 Event: {event_label}
-
+ 
 SETUPS FOUND:  {len(setups)}
 EXECUTED:      {len(executed)}
 {exec_lines if exec_lines else '  None executed today.'}
 SKIPPED:       {len(skipped)}
 {skip_lines if skip_lines else '  None skipped.'}
-
+ 
 P/L TRACKER (Paper)
 {perf_sec}
-
+ 
 RULES
 1. Regime first         2. Greeks must pass
 3. Grade B+ minimum     4. Paper until 20+ trades
-
+ 
 Options Bot v1.0 | Phase 5 Active
 """
     msg            = MIMEMultipart()
@@ -830,11 +917,11 @@ Options Bot v1.0 | Phase 5 Active
         server.login(EMAIL_FROM, EMAIL_PASS)
         server.send_message(msg)
     print("Summary email sent.")
-
-# ─── MAIN ─────────────────────────────────────────────────────────────────────
+ 
+ 
 def main():
     today_str = datetime.now().strftime("%A, %B %d %Y - %I:%M %p PT")
-
+ 
     print("=== PHASE 1: REGIME ===")
     data                     = get_market_data()
     ivr_spy, _               = get_ivr_yahoo("SPY")
@@ -846,29 +933,30 @@ def main():
     )
     print(f"Regime: {regime} - {regime_label}")
     print(f"Grade:  {day_grade} ({day_score}/100)")
-
+ 
     print("\n=== PHASE 3: SCANNER ===")
     token  = get_session_token()
     setups = scan_all_tickers(regime, data["vix_price"], event_color)
     print(f"Valid setups after filter: {len(setups)}")
-
+ 
     print("\n=== PHASE 5: TELEGRAM CONFIRMATION ===")
     executed, skipped = process_setups_with_confirmation(
         token, setups, regime, regime_label,
         data["vix_price"], event_label
     )
     print(f"Executed: {len(executed)} | Skipped: {len(skipped)}")
-
+ 
     all_trades = log_new_setups(setups, regime)
     perf       = get_performance_summary(all_trades)
-
+ 
     send_summary_email(
         regime, regime_label, data, event_label,
         setups, executed, skipped, perf,
         today_str, day_grade, day_score
     )
-
+ 
     print("Done.")
-
+ 
+ 
 if __name__ == "__main__":
     main()
