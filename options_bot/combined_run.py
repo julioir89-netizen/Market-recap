@@ -3,6 +3,7 @@ import csv
 import sys
 import json
 import time
+import math
 import requests
 import yfinance as yf
 import smtplib
@@ -12,12 +13,9 @@ from email.mime.multipart import MIMEMultipart
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 SANDBOX_URL      = "https://api.cert.tastyworks.com"
-LIVE_URL         = "https://api.tastyworks.com"
 TT_USERNAME      = os.environ["TT_SANDBOX_USERNAME"]
 TT_PASSWORD      = os.environ["TT_SANDBOX_PASSWORD"]
 TT_ACCOUNT       = os.environ["TT_SANDBOX_ACCOUNT"]
-TT_LIVE_USER     = os.environ["TT_LIVE_USERNAME"]
-TT_LIVE_PASS     = os.environ["TT_LIVE_PASSWORD"]
 EMAIL_TO         = os.environ["EMAIL_TO"]
 EMAIL_FROM       = os.environ["EMAIL_FROM"]
 EMAIL_PASS       = os.environ["EMAIL_PASSWORD"]
@@ -40,8 +38,8 @@ def telegram_send(text):
         requests.post(
             f"{TELEGRAM_API}/sendMessage",
             json={
-                "chat_id": TELEGRAM_CHAT_ID,
-                "text": text,
+                "chat_id":    TELEGRAM_CHAT_ID,
+                "text":       text,
                 "parse_mode": "HTML"
             },
             timeout=10
@@ -54,13 +52,13 @@ def telegram_send_buttons(text, setup_index):
         r = requests.post(
             f"{TELEGRAM_API}/sendMessage",
             json={
-                "chat_id": TELEGRAM_CHAT_ID,
-                "text": text,
+                "chat_id":    TELEGRAM_CHAT_ID,
+                "text":       text,
                 "parse_mode": "HTML",
                 "reply_markup": {
                     "inline_keyboard": [[
-                        {"text": "✅ EXECUTE TRADE", "callback_data": f"execute_{setup_index}"},
-                        {"text": "❌ SKIP",          "callback_data": f"skip_{setup_index}"}
+                        {"text": "EXECUTE TRADE", "callback_data": f"execute_{setup_index}"},
+                        {"text": "SKIP",          "callback_data": f"skip_{setup_index}"}
                     ]]
                 }
             },
@@ -77,7 +75,11 @@ def telegram_get_updates(offset=None):
         params = {"timeout": 30, "allowed_updates": ["callback_query"]}
         if offset:
             params["offset"] = offset
-        r = requests.get(f"{TELEGRAM_API}/getUpdates", params=params, timeout=35)
+        r = requests.get(
+            f"{TELEGRAM_API}/getUpdates",
+            params=params,
+            timeout=35
+        )
         return r.json().get("result", [])
     except Exception as e:
         print(f"Telegram updates error: {e}")
@@ -95,8 +97,8 @@ def telegram_answer_callback(callback_id, text):
 
 def wait_for_response(setup_index, timeout_seconds=300):
     print(f"  Waiting up to {timeout_seconds}s for response on setup {setup_index}...")
-    start_time = time.time()
-    offset     = None
+    start_time  = time.time()
+    offset      = None
     old_updates = telegram_get_updates()
     if old_updates:
         offset = old_updates[-1]["update_id"] + 1
@@ -116,7 +118,7 @@ def wait_for_response(setup_index, timeout_seconds=300):
         time.sleep(3)
     return "timeout"
 
-# ─── TASTYTRADE AUTH ──────────────────────────────────────────────────────────
+# ─── TASTYTRADE SANDBOX AUTH ──────────────────────────────────────────────────
 def get_session_token():
     r = requests.post(
         f"{SANDBOX_URL}/sessions",
@@ -126,23 +128,7 @@ def get_session_token():
     r.raise_for_status()
     return r.json()["data"]["session-token"]
 
-def get_live_session_token():
-    print(f"  Attempting live login with username: '{TT_LIVE_USER}'")
-    print(f"  Password length: {len(TT_LIVE_PASS)} characters")
-    r = requests.post(
-        f"{LIVE_URL}/sessions",
-        json={"login": TT_LIVE_USER, "password": TT_LIVE_PASS},
-        headers={"Content-Type": "application/json"}
-    )
-    print(f"  Response status: {r.status_code}")
-    print(f"  Response body: {r.text[:300]}")
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-
 def tt_headers(token):
-    return {"Authorization": token, "Content-Type": "application/json"}
-
-def live_headers(token):
     return {"Authorization": token, "Content-Type": "application/json"}
 
 # ─── MARKET DATA ──────────────────────────────────────────────────────────────
@@ -167,9 +153,10 @@ def get_market_data():
     vix_chg     = round(vix_price - vix_prev, 2)
     vix_dir     = "RISING" if vix_chg > 0 else "FALLING"
     return {
-        "spy_price": spy_price, "spy_ma20": spy_ma20, "spy_ma50": spy_ma50,
-        "spy_chg_pct": spy_chg_pct, "qqq_chg_pct": qqq_chg_pct,
-        "vix_price": vix_price, "vix_chg": vix_chg, "vix_dir": vix_dir,
+        "spy_price":   spy_price,   "spy_ma20":  spy_ma20,
+        "spy_ma50":    spy_ma50,    "spy_chg_pct": spy_chg_pct,
+        "qqq_chg_pct": qqq_chg_pct,"vix_price":  vix_price,
+        "vix_chg":     vix_chg,    "vix_dir":    vix_dir,
         "spy_above_20": spy_price > spy_ma20,
         "spy_above_50": spy_price > spy_ma50,
         "qqq_leading":  qqq_chg_pct > spy_chg_pct,
@@ -193,7 +180,7 @@ def get_ivr_yahoo(ticker):
         elif ivr < 50: bias = "BUY-LEAN"
         elif ivr < 75: bias = "NEUTRAL"
         elif ivr < 90: bias = "SELL (credit spreads)"
-        else:          bias = "EXTREME — far OTM only"
+        else:          bias = "EXTREME - far OTM only"
         return ivr, bias
     except Exception as e:
         return None, f"Error: {e}"
@@ -208,9 +195,9 @@ def check_event_risk():
     today      = date.today()
     days_ahead = [(d - today).days for d in fed_dates if (d - today).days >= 0]
     nearest    = min(days_ahead) if days_ahead else 99
-    if nearest == 0:   return "FED TODAY",              "RED"
-    elif nearest == 1: return "FED TOMORROW",            "RED"
-    elif nearest <= 3: return f"FED IN {nearest} DAYS",  "YELLOW"
+    if nearest == 0:   return "FED TODAY",               "RED"
+    elif nearest == 1: return "FED TOMORROW",             "RED"
+    elif nearest <= 3: return f"FED IN {nearest} DAYS",   "YELLOW"
     else:              return f"Next Fed in {nearest} days", "GREEN"
 
 # ─── REGIME ──────────────────────────────────────────────────────────────────
@@ -238,9 +225,9 @@ def calculate_grade(regime, ivr, vix, event_color, spy_chg):
         if ivr < 50:   score += 20
         elif ivr < 75: score += 12
         else:          score += 6
-    if vix < 18:         score += 20
-    elif vix < 22:       score += 14
-    elif vix < 28:       score += 8
+    if vix < 18:          score += 20
+    elif vix < 22:        score += 14
+    elif vix < 28:        score += 8
     if event_color == "GREEN":    score += 20
     elif event_color == "YELLOW": score += 10
     if abs(spy_chg) < 0.8:   score += 20
@@ -252,22 +239,130 @@ def calculate_grade(regime, ivr, vix, event_color, spy_chg):
     elif score >= 60: return score, "B+", "BORDERLINE"
     elif score >= 50: return score, "B",  "GRAY ZONE"
     elif score >= 40: return score, "B-", "LEAN SKIP"
-    else:             return score, "--", "NO EDGE"
+    else:             return score, "F",  "NO EDGE"
 
-# ─── OPTIONS CHAIN ────────────────────────────────────────────────────────────
-def get_option_chain(live_token, ticker):
+# ─── BLACK-SCHOLES GREEKS ─────────────────────────────────────────────────────
+def calculate_greeks(option_price, strike, t_years, iv, option_type):
     try:
-        r = requests.get(
-            f"{LIVE_URL}/option-chains/{ticker}/nested",
-            headers=live_headers(live_token)
-        )
-        if r.status_code != 200:
+        if t_years <= 0 or iv <= 0:
+            return 0.5, 0.02, -0.03
+        S   = strike * 1.01
+        K   = strike
+        r   = 0.05
+        sig = iv
+        d1  = (math.log(S / K) + (r + 0.5 * sig**2) * t_years) / \
+              (sig * math.sqrt(t_years))
+        d2  = d1 - sig * math.sqrt(t_years)
+
+        def norm_cdf(x):
+            return (1.0 + math.erf(x / math.sqrt(2.0))) / 2.0
+
+        def norm_pdf(x):
+            return math.exp(-0.5 * x**2) / math.sqrt(2 * math.pi)
+
+        if option_type == "C":
+            delta = norm_cdf(d1)
+        else:
+            delta = norm_cdf(d1) - 1
+
+        gamma = norm_pdf(d1) / (S * sig * math.sqrt(t_years))
+        theta = (-(S * norm_pdf(d1) * sig) / (2 * math.sqrt(t_years))) / 365
+
+        return round(abs(delta), 3), round(gamma, 4), round(theta, 4)
+    except:
+        return 0.5, 0.02, -0.03
+
+# ─── OPTIONS CHAIN FROM YAHOO ─────────────────────────────────────────────────
+def get_option_chain_yahoo(ticker):
+    try:
+        t           = yf.Ticker(ticker)
+        expirations = t.options
+        if not expirations:
             return None
-        return r.json().get("data", {}).get("items", [])
+
+        today    = date.today()
+        best_exp = None
+        best_dte = 999
+
+        for exp_str in expirations:
+            exp_date = datetime.strptime(exp_str, "%Y-%m-%d").date()
+            dte      = (exp_date - today).days
+            if 25 <= dte <= 75 and dte < best_dte:
+                best_dte = dte
+                best_exp = exp_str
+
+        if not best_exp:
+            return None
+
+        chain = t.option_chain(best_exp)
+        calls = chain.calls
+        puts  = chain.puts
+
+        all_strikes = sorted(set(
+            list(calls["strike"].values) + list(puts["strike"].values)
+        ))
+
+        strikes = []
+        for strike_price in all_strikes:
+            options = []
+
+            call_row = calls[calls["strike"] == strike_price]
+            if not call_row.empty:
+                row = call_row.iloc[0]
+                iv  = float(row.get("impliedVolatility", 0))
+                delta, gamma, theta = calculate_greeks(
+                    float(row.get("lastPrice", 0)),
+                    strike_price,
+                    best_dte / 365,
+                    iv, "C"
+                )
+                options.append({
+                    "option-type": "C",
+                    "symbol":      str(row.get("contractSymbol", "")),
+                    "greeks": {
+                        "delta":      delta,
+                        "gamma":      gamma,
+                        "theta":      theta,
+                        "volatility": iv,
+                    }
+                })
+
+            put_row = puts[puts["strike"] == strike_price]
+            if not put_row.empty:
+                row = put_row.iloc[0]
+                iv  = float(row.get("impliedVolatility", 0))
+                delta, gamma, theta = calculate_greeks(
+                    float(row.get("lastPrice", 0)),
+                    strike_price,
+                    best_dte / 365,
+                    iv, "P"
+                )
+                options.append({
+                    "option-type": "P",
+                    "symbol":      str(row.get("contractSymbol", "")),
+                    "greeks": {
+                        "delta":      delta,
+                        "gamma":      gamma,
+                        "theta":      theta,
+                        "volatility": iv,
+                    }
+                })
+
+            strikes.append({
+                "strike-price": strike_price,
+                "options":      options
+            })
+
+        return [{
+            "expiration-date": best_exp,
+            "strikes":         strikes
+        }]
+
     except Exception as e:
-        print(f"  Chain error {ticker}: {e}")
+        print(f"  Yahoo chain error {ticker}: {e}")
         return None
 
+# ─── FIND EXPIRATION AND STRIKES ──────────────────────────────────────────────
 def find_best_expiration(chain, min_dte=30, max_dte=60):
     today    = date.today()
     best     = None
@@ -371,15 +466,15 @@ def score_setup(regime, ivr, delta, gamma, theta, dte, stype, vix, event_color):
     return min(score, 100)
 
 def score_to_grade(score):
-    if score >= 90:   return "A+", "STRONG RECOMMEND", "🟢"
-    elif score >= 80: return "A",  "RECOMMEND", "🟢"
-    elif score >= 70: return "A-", "RECOMMEND reduced size", "🟢"
-    elif score >= 60: return "B+", "BORDERLINE", "🟡"
-    elif score >= 50: return "B",  "GRAY ZONE", "🟡"
-    else:             return "--", "NO EDGE", "🔴"
+    if score >= 90:   return "A+", "STRONG RECOMMEND", "G"
+    elif score >= 80: return "A",  "RECOMMEND", "G"
+    elif score >= 70: return "A-", "RECOMMEND reduced size", "G"
+    elif score >= 60: return "B+", "BORDERLINE", "Y"
+    elif score >= 50: return "B",  "GRAY ZONE", "Y"
+    else:             return "F",  "NO EDGE", "R"
 
 # ─── STRATEGY BUILDERS ────────────────────────────────────────────────────────
-def build_bull_call_spread(live_token, ticker, chain, regime, ivr, vix, event_color):
+def build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color):
     exp_group, dte = find_best_expiration(chain, 35, 75)
     if not exp_group: return None
     strikes   = exp_group.get("strikes", [])
@@ -401,17 +496,17 @@ def build_bull_call_spread(live_token, ticker, chain, regime, ivr, vix, event_co
         "short_strike": short_leg["strike"],
         "long_symbol":  long_leg.get("symbol",""),
         "short_symbol": short_leg.get("symbol",""),
-        "long_type": "C", "short_type": "C",
-        "expiration": exp_group.get("expiration-date"), "dte": dte,
+        "expiration":   exp_group.get("expiration-date"), "dte": dte,
         "delta": long_leg["delta"], "gamma": long_leg["gamma"],
-        "theta": long_leg["theta"], "iv": long_leg["iv"],
+        "theta": long_leg["theta"], "iv":    long_leg["iv"],
         "max_risk": round(width * 40, 0), "max_gain": round(width * 60, 0),
         "score": score, "grade": grade, "grade_desc": desc, "emoji": emoji,
         "greek_passed": passed, "greek_flags": flags,
-        "ivr": ivr, "ivr_bias": "", "live_ready": round(width * 40, 0) <= 300,
+        "ivr": ivr, "ivr_bias": "",
+        "live_ready": round(width * 40, 0) <= 300,
     }
 
-def build_put_credit_spread(live_token, ticker, chain, regime, ivr, vix, event_color):
+def build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color):
     exp_group, dte = find_best_expiration(chain, 25, 50)
     if not exp_group: return None
     strikes   = exp_group.get("strikes", [])
@@ -433,34 +528,32 @@ def build_put_credit_spread(live_token, ticker, chain, regime, ivr, vix, event_c
         "short_strike": short_leg["strike"],
         "long_symbol":  long_leg.get("symbol",""),
         "short_symbol": short_leg.get("symbol",""),
-        "long_type": "P", "short_type": "P",
-        "expiration": exp_group.get("expiration-date"), "dte": dte,
+        "expiration":   exp_group.get("expiration-date"), "dte": dte,
         "delta": short_leg["delta"], "gamma": short_leg["gamma"],
-        "theta": short_leg["theta"], "iv": short_leg["iv"],
+        "theta": short_leg["theta"], "iv":    short_leg["iv"],
         "max_risk": round(width * 70, 0), "max_gain": round(width * 30, 0),
         "score": score, "grade": grade, "grade_desc": desc, "emoji": emoji,
         "greek_passed": passed, "greek_flags": flags,
-        "ivr": ivr, "ivr_bias": "", "live_ready": round(width * 70, 0) <= 300,
+        "ivr": ivr, "ivr_bias": "",
+        "live_ready": round(width * 70, 0) <= 300,
     }
 
 # ─── SCANNER ─────────────────────────────────────────────────────────────────
-def scan_all_tickers(live_token, regime, vix, event_color):
+def scan_all_tickers(regime, vix, event_color):
     setups = []
     for ticker in WATCHLIST:
         print(f"  Scanning {ticker}...")
-        chain = get_option_chain(live_token, ticker)
+        chain = get_option_chain_yahoo(ticker)
         if not chain:
             print(f"    No chain for {ticker}")
             continue
         ivr, ivr_bias = get_ivr_yahoo(ticker)
         if regime in ["A","B"]:
-            s = build_bull_call_spread(live_token, ticker, chain,
-                                       regime, ivr, vix, event_color)
+            s = build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color)
             if s:
                 s["ivr_bias"] = ivr_bias
                 setups.append(s)
-        s = build_put_credit_spread(live_token, ticker, chain,
-                                    regime, ivr, vix, event_color)
+        s = build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color)
         if s:
             s["ivr_bias"] = ivr_bias
             setups.append(s)
@@ -499,10 +592,10 @@ def place_spread_order(token, setup):
             json=order_payload
         )
         if r.status_code in [200, 201]:
-            order_id = r.json().get("data", {}).get("order", {}).get("id", "N/A")
-            return True, f"Order placed — ID: {order_id}"
+            order_id = r.json().get("data",{}).get("order",{}).get("id","N/A")
+            return True, f"Order placed - ID: {order_id}"
         else:
-            return False, f"Order failed: {r.status_code} — {r.text[:200]}"
+            return False, f"Order failed: {r.status_code} - {r.text[:200]}"
     except Exception as e:
         return False, f"Order exception: {e}"
 
@@ -565,11 +658,14 @@ def get_performance_summary(trades):
     a_plus      = [t for t in closed if t["grade"] == "A+"]
     a_plus_wins = len([t for t in a_plus if t["status"] == "WIN"])
     return {
-        "total": total, "wins": wins, "losses": losses,
-        "win_rate": win_rate, "total_pl": round(sum(pl_vals), 2),
+        "total":        total,
+        "wins":         wins,
+        "losses":       losses,
+        "win_rate":     win_rate,
+        "total_pl":     round(sum(pl_vals), 2),
         "a_plus_count": len(a_plus),
-        "a_plus_rate": round((a_plus_wins/len(a_plus))*100,1) if a_plus else 0,
-        "open_trades": len([t for t in trades if t["status"] == "OPEN"]),
+        "a_plus_rate":  round((a_plus_wins/len(a_plus))*100,1) if a_plus else 0,
+        "open_trades":  len([t for t in trades if t["status"] == "OPEN"]),
     }
 
 # ─── TELEGRAM ALERT ──────────────────────────────────────────────────────────
@@ -578,18 +674,18 @@ def build_telegram_message(i, total, s, regime, regime_label, vix, event_label):
                else f"Flags: {', '.join(s['greek_flags'])}"
     live_tag = "Live ready ($2k)" if s["live_ready"] else "Paper only"
     return (
-        f"<b>OPTIONS BOT — SETUP {i}/{total}</b>\n"
-        f"<b>{s['ticker']}</b>  {s['emoji']} <b>GRADE: {s['grade']} ({s['score']}/100)</b>\n"
+        f"<b>OPTIONS BOT - SETUP {i}/{total}</b>\n"
+        f"<b>{s['ticker']}</b>  GRADE: {s['grade']} ({s['score']}/100)\n"
         f"Strategy:  {s['strategy']}\n"
         f"Direction: {s['direction']}\n"
         f"Strikes:   {s['long_strike']} / {s['short_strike']}\n"
         f"Expiry:    {s['expiration']} ({s['dte']} DTE)\n"
         f"Delta: {s['delta']}  Gamma: {s['gamma']}\n"
         f"Theta: {s['theta']}  IV: {s['iv']}%\n"
-        f"IVR: {s.get('ivr','N/A')} — {s.get('ivr_bias','N/A')}\n"
+        f"IVR: {s.get('ivr','N/A')} - {s.get('ivr_bias','N/A')}\n"
         f"Max Risk: ${s['max_risk']}  Max Gain: ${s['max_gain']}\n"
         f"{greek_ok} | {live_tag}\n"
-        f"Regime {regime} — {regime_label} | VIX: {vix}\n"
+        f"Regime {regime} - {regime_label} | VIX: {vix}\n"
         f"Tap your choice below"
     )
 
@@ -599,16 +695,16 @@ def process_setups_with_confirmation(token, setups, regime, regime_label,
     skipped  = []
     if not setups:
         telegram_send(
-            f"<b>OPTIONS BOT — DAILY SCAN</b>\n\n"
-            f"Regime {regime} — {regime_label}\n"
+            f"<b>OPTIONS BOT - DAILY SCAN</b>\n\n"
+            f"Regime {regime} - {regime_label}\n"
             f"VIX: {vix}  |  {event_label}\n\n"
             f"No setups passed filters today.\n"
             f"Framework says: NO-GO"
         )
         return executed, skipped
     telegram_send(
-        f"<b>OPTIONS BOT — DAILY SCAN</b>\n\n"
-        f"Regime {regime} — {regime_label}\n"
+        f"<b>OPTIONS BOT - DAILY SCAN</b>\n\n"
+        f"Regime {regime} - {regime_label}\n"
         f"VIX: {vix}  |  {event_label}\n\n"
         f"<b>{len(setups)} setup(s) found</b>\n"
         f"Sending each one now...\n"
@@ -617,7 +713,7 @@ def process_setups_with_confirmation(token, setups, regime, regime_label,
     time.sleep(2)
     for i, setup in enumerate(setups[:5], 1):
         msg_text = build_telegram_message(
-            i, min(len(setups), 5), setup,
+            i, min(len(setups),5), setup,
             regime, regime_label, vix, event_label
         )
         print(f"  Sending setup {i} to Telegram...")
@@ -630,7 +726,7 @@ def process_setups_with_confirmation(token, setups, regime, regime_label,
             if success:
                 telegram_send(
                     f"ORDER EXECUTED\n"
-                    f"{setup['ticker']} — {setup['strategy']}\n"
+                    f"{setup['ticker']} - {setup['strategy']}\n"
                     f"Strikes: {setup['long_strike']} / {setup['short_strike']}\n"
                     f"{result_msg}"
                 )
@@ -647,7 +743,7 @@ def process_setups_with_confirmation(token, setups, regime, regime_label,
             skipped.append(setup)
         else:
             print(f"  Timeout on {setup['ticker']}")
-            telegram_send(f"Timeout on {setup['ticker']} — skipped.")
+            telegram_send(f"Timeout on {setup['ticker']} - skipped.")
             skipped.append(setup)
         time.sleep(2)
     return executed, skipped
@@ -658,10 +754,10 @@ def send_summary_email(regime, regime_label, data, event_label,
                        today_str, day_grade, day_score):
     exec_lines = ""
     for s in executed:
-        exec_lines += f"  {s['ticker']} — {s['strategy']} | Grade {s['grade']}\n"
+        exec_lines += f"  {s['ticker']} - {s['strategy']} | Grade {s['grade']}\n"
     skip_lines = ""
     for s in skipped:
-        skip_lines += f"  {s['ticker']} — {s['strategy']} | Grade {s['grade']}\n"
+        skip_lines += f"  {s['ticker']} - {s['strategy']} | Grade {s['grade']}\n"
     if perf:
         pl_e = "+" if perf["total_pl"] >= 0 else ""
         perf_sec = (
@@ -672,14 +768,12 @@ def send_summary_email(regime, regime_label, data, event_label,
             f"A+ accuracy: {perf['a_plus_rate']}%"
         )
     else:
-        perf_sec = "No closed trades yet — tracking starts today."
+        perf_sec = "No closed trades yet - tracking starts today."
     body = f"""
-╔══════════════════════════════════════════╗
-   OPTIONS BOT — DAILY SUMMARY
-   {today_str}
-╚══════════════════════════════════════════╝
+OPTIONS BOT - DAILY SUMMARY
+{today_str}
 
-REGIME {regime} — {regime_label}
+REGIME {regime} - {regime_label}
 SPY: ${data['spy_price']} ({data['spy_chg_pct']:+.2f}%)
 VIX: {data['vix_price']} {data['vix_dir']}
 Day Grade: {day_grade} ({day_score}/100)
@@ -715,7 +809,7 @@ Options Bot v1.0 | Phase 5 Active
 
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 def main():
-    today_str = datetime.now().strftime("%A, %B %d %Y — %I:%M %p PT")
+    today_str = datetime.now().strftime("%A, %B %d %Y - %I:%M %p PT")
 
     print("=== PHASE 1: REGIME ===")
     data                     = get_market_data()
@@ -726,13 +820,12 @@ def main():
         regime, ivr_spy, data["vix_price"],
         event_color, data["spy_chg_pct"]
     )
-    print(f"Regime: {regime} — {regime_label}")
+    print(f"Regime: {regime} - {regime_label}")
     print(f"Grade:  {day_grade} ({day_score}/100)")
 
     print("\n=== PHASE 3: SCANNER ===")
-    token      = get_session_token()
-    live_token = get_live_session_token()
-    setups     = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
+    token  = get_session_token()
+    setups = scan_all_tickers(regime, data["vix_price"], event_color)
     print(f"Valid setups after filter: {len(setups)}")
 
     print("\n=== PHASE 5: TELEGRAM CONFIRMATION ===")
@@ -755,3 +848,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+Also update options_regime.yml env block — remove the live credentials since they are no longer needed:
+yaml      - name: Run Options Bot
+        env:
+          PYTHONPATH: ${{ github.workspace }}/options_bot
+          TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
+          TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
+          TT_SANDBOX_ACCOUNT: ${{ secrets.TT_SANDBOX_ACCOUNT }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python options_bot/combined_run.py
