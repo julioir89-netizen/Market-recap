@@ -27,6 +27,8 @@ jobs:
           TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
           TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
           TT_SANDBOX_ACCOUNT: ${{ secrets.TT_SANDBOX_ACCOUNT }}
+          TT_LIVE_USERNAME: ${{ secrets.TT_LIVE_USERNAME }}
+          TT_LIVE_PASSWORD: ${{ secrets.TT_LIVE_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
