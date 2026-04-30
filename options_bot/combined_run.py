@@ -548,7 +548,7 @@ def scan_all_tickers(regime, vix, event_color):
             print(f"    No chain for {ticker}")
             continue
             ivr, ivr_bias = get_ivr_yahoo(ticker)
-        if regime in ["A","B"]:
+            if regime in ["A","B"]:
             s = build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color)
             if s:
                 s["ivr_bias"] = ivr_bias
