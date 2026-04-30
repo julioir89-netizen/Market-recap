@@ -548,15 +548,39 @@ def scan_all_tickers(regime, vix, event_color):
             print(f"    No chain for {ticker}")
             continue
         ivr, ivr_bias = get_ivr_yahoo(ticker)
-        if regime in ["A","B"]:
+if regime in ["A","B"]:
             s = build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color)
             if s:
                 s["ivr_bias"] = ivr_bias
                 setups.append(s)
+            else:
+                # Debug — show why it failed
+                exp_group, dte = find_best_expiration(chain, 35, 75)
+                if not exp_group:
+                    print(f"    {ticker} CALL: no expiration found in 35-75 DTE range")
+                else:
+                    strikes   = exp_group.get("strikes", [])
+                    long_leg  = find_strike_by_delta(strikes, 0.40, 0.65, "C")
+                    short_leg = find_strike_by_delta(strikes, 0.20, 0.35, "C")
+                    print(f"    {ticker} CALL: exp={exp_group.get('expiration-date')} dte={dte}")
+                    print(f"    {ticker} CALL: long_leg={long_leg}")
+                    print(f"    {ticker} CALL: short_leg={short_leg}")
+
         s = build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color)
         if s:
             s["ivr_bias"] = ivr_bias
             setups.append(s)
+        else:
+            exp_group, dte = find_best_expiration(chain, 25, 50)
+            if not exp_group:
+                print(f"    {ticker} PUT: no expiration found in 25-50 DTE range")
+            else:
+                strikes   = exp_group.get("strikes", [])
+                short_leg = find_strike_by_delta(strikes, 0.15, 0.30, "P")
+                long_leg  = find_strike_by_delta(strikes, 0.05, 0.14, "P")
+                print(f"    {ticker} PUT: exp={exp_group.get('expiration-date')} dte={dte}")
+                print(f"    {ticker} PUT: short_leg={short_leg}")
+                print(f"    {ticker} PUT: long_leg={long_leg}")
     print(f"  Total raw setups before grade filter: {len(setups)}")
     for s in setups:
         print(f"    {s['ticker']} {s['strategy']} score={s['score']}")
