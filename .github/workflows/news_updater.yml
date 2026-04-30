@@ -1,0 +1,30 @@
+name: Daily News Updater
+ 
+on:
+  # Every day at 6:00 AM PT = 13:00 UTC
+  schedule:
+    - cron: '0 13 * * 1-5'
+ 
+  # Also run manually anytime
+  workflow_dispatch:
+ 
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+ 
+      - name: Install dependencies
+        run: pip install yfinance feedparser pytz numpy pandas requests
+ 
+      - name: Run News Updater
+        run: python news_updater.py
+        env:
+          GISTTOKEN: ${{ secrets.GISTTOKEN }}
