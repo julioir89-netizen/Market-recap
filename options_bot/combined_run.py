@@ -11,152 +11,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
-SANDBOX_URL  = "https://api.cert.tastyworks.com"
-LIVE_URL     = "https://api.tastyworks.com"
-TT_USERNAME  = os.environ["TT_SANDBOX_USERNAME"]
-TT_PASSWORD  = os.environ["TT_SANDBOX_PASSWORD"]
-TT_ACCOUNT   = os.environ["TT_SANDBOX_ACCOUNT"]
-TT_LIVE_USER = os.environ["TT_LIVE_USERNAME"]
-TT_LIVE_PASS = os.environ["TT_LIVE_PASSWORD"]
-Then find the get_session_token function:
-def get_session_token():
-    """Sandbox session — used for paper order execution only."""
-    r = requests.post(
-        f"{SANDBOX_URL}/sessions",
-        json={"login": TT_USERNAME, "password": TT_PASSWORD},
-        headers={"Content-Type": "application/json"}
-    )
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-
-def get_live_session_token():
-    """Live session — used for Greeks and options chain data only."""
-    r = requests.post(
-        f"{LIVE_URL}/sessions",
-        json={"login": TT_LIVE_USER, "password": TT_LIVE_PASS},
-        headers={"Content-Type": "application/json"}
-    )
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-
-def live_headers(token):
-    return {"Authorization": token, "Content-Type": "application/json"}
-Replace it with two functions:
-pythondef get_session_token():
-    """Sandbox session — used for paper order execution only."""
-    r = requests.post(
-        f"{SANDBOX_URL}/sessions",
-        json={"login": TT_USERNAME, "password": TT_PASSWORD},
-        headers={"Content-Type": "application/json"}
-    )
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-
-def get_live_session_token():
-    """Live session — used for Greeks and options chain data only."""
-    r = requests.post(
-        f"{LIVE_URL}/sessions",
-        json={"login": TT_LIVE_USER, "password": TT_LIVE_PASS},
-        headers={"Content-Type": "application/json"}
-    )
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-
-def live_headers(token):
-    return {"Authorization": token, "Content-Type": "application/json"}
-Then find the get_option_chain function:
-pythonddef get_option_chain(live_token, ticker):
-    try:
-        r = requests.get(
-            f"{LIVE_URL}/option-chains/{ticker}/nested",
-            headers=live_headers(live_token)
-        )
-Replace just the URL and headers line:
-pythondef get_option_chain(live_token, ticker):
-    try:
-        r = requests.get(
-            f"{LIVE_URL}/option-chains/{ticker}/nested",
-            headers=live_headers(live_token)
-        )
-Finally find the main() function and update the scanner section:
-Find this:
-print("\n=== PHASE 3: SCANNER ===")
-    token       = get_session_token()
-    live_token  = get_live_session_token()
-    setups      = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
-Replace with:
-python    print("\n=== PHASE 3: SCANNER ===")
-    token       = get_session_token()
-    live_token  = get_live_session_token()
-    setups      = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
-And find this in process_setups_with_confirmation:
-python    success, result_msg = place_spread_order(token, setup)
-
-Commit both files. Then run the workflow manually and check the logs. You should see the scanner finding actual strikes with real delta values this time.Sonnet 4.6Adaptive
-TT_ACCOUNT   = os.environ["TT_SANDBOX_ACCOUNT"]
-TT_LIVE_USER = os.environ["TT_LIVE_USERNAME"]
-TT_LIVE_PASS = os.environ["TT_LIVE_PASSWORD"]
-Then find the get_session_token function:
-pythondef get_session_token():
-    r = requests.post(
-        f"{SANDBOX_URL}/sessions",
-        json={"login": TT_USERNAME, "password": TT_PASSWORD},
-        headers={"Content-Type": "application/json"}
-    )
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-Replace it with two functions:
-pythondef get_session_token():
-    """Sandbox session — used for paper order execution only."""
-    r = requests.post(
-        f"{SANDBOX_URL}/sessions",
-        json={"login": TT_USERNAME, "password": TT_PASSWORD},
-        headers={"Content-Type": "application/json"}
-    )
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-
-def get_live_session_token():
-    """Live session — used for Greeks and options chain data only."""
-    r = requests.post(
-        f"{LIVE_URL}/sessions",
-        json={"login": TT_LIVE_USER, "password": TT_LIVE_PASS},
-        headers={"Content-Type": "application/json"}
-    )
-    r.raise_for_status()
-    return r.json()["data"]["session-token"]
-
-def live_headers(token):
-    return {"Authorization": token, "Content-Type": "application/json"}
-Then find the get_option_chain function:
-pythondef get_option_chain(token, ticker):
-    try:
-        r = requests.get(
-            f"{SANDBOX_URL}/option-chains/{ticker}/nested",
-            headers=tt_headers(token)
-        )
-Replace just the URL and headers line:
-pythondef get_option_chain(live_token, ticker):
-    try:
-        r = requests.get(
-            f"{LIVE_URL}/option-chains/{ticker}/nested",
-            headers=live_headers(live_token)
-        )
-Finally find the main() function and update the scanner section:
-Find this:
-python    print("\n=== PHASE 3: SCANNER ===")
-    token  = get_session_token()
-    setups = scan_all_tickers(token, regime, data["vix_price"], event_color)
-Replace with:
-python    print("\n=== PHASE 3: SCANNER ===")
-    token       = get_session_token()
-    live_token  = get_live_session_token()
-    setups      = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
-And find this in process_setups_with_confirmation:
-python    success, result_msg = place_spread_order(token, setup)
-Make sure that line still uses token not live_token — orders go to sandbox, Greeks come from live. That separation is the entire point.
-
-Commit both files. Then run the workflow manually and check the logs. You should see the scanner finding actual strikes with real delta values this time.Sonnet 4.6Adaptive
+SANDBOX_URL      = "https://api.cert.tastyworks.com"
+TT_USERNAME      = os.environ["TT_SANDBOX_USERNAME"]
+TT_PASSWORD      = os.environ["TT_SANDBOX_PASSWORD"]
+TT_ACCOUNT       = os.environ["TT_SANDBOX_ACCOUNT"]
 EMAIL_TO         = os.environ["EMAIL_TO"]
 EMAIL_FROM       = os.environ["EMAIL_FROM"]
 EMAIL_PASS       = os.environ["EMAIL_PASSWORD"]
@@ -602,9 +460,6 @@ def scan_all_tickers(token, regime, vix, event_color):
         if s:
             s["ivr_bias"] = ivr_bias
             setups.append(s)
-    print(f"  Total raw setups before grade filter: {len(setups)}")
-    for s in setups:
-        print(f"    {s['ticker']} {s['strategy']} score={s['score']}")
     setups.sort(key=lambda x: x["score"], reverse=True)
     return [s for s in setups if s["score"] >= 60]
 
@@ -912,9 +767,8 @@ def main():
     print(f"Grade:  {day_grade} ({day_score}/100)")
 
     print("\n=== PHASE 3: SCANNER ===")
-    token      = get_session_token()
-    live_token = get_live_session_token()
-    setups = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
+    token  = get_session_token()
+    setups = scan_all_tickers(token, regime, data["vix_price"], event_color)
     print(f"Valid setups: {len(setups)}")
 
     print("\n=== PHASE 5: TELEGRAM CONFIRMATION ===")
