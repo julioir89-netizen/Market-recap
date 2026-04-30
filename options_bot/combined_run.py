@@ -914,7 +914,7 @@ def main():
 
     print("\n=== PHASE 3: SCANNER ===")
     token  = get_session_token()
-    setups = scan_all_tickers(token, regime, data["vix_price"], event_color)
+    setups = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
     print(f"Valid setups: {len(setups)}")
 
     print("\n=== PHASE 5: TELEGRAM CONFIRMATION ===")
