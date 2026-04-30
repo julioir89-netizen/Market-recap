@@ -2,8 +2,8 @@ import requests
 import os
 
 SANDBOX_URL = "https://api.cert.tastyworks.com"
-USERNAME    = "your_sandbox_username"
-PASSWORD    = "your_sandbox_password"
+USERNAME    = "julioir89@gmail.com"
+PASSWORD    = "Mompirri89!!"
 ACCOUNT     = "5WK83147"
 
 r = requests.post(
