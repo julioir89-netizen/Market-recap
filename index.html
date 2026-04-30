@@ -29,7 +29,7 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; overflow: hidden; }
-
+ 
 /* LAYOUT */
 .app { display: flex; flex-direction: column; height: 100vh; }
 .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 10px 14px; padding-top: max(10px, var(--safe-top)); flex-shrink: 0; }
@@ -37,7 +37,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .inner-tabs::-webkit-scrollbar { display: none; }
 .content { flex: 1; overflow-y: auto; padding: 12px 14px; padding-bottom: max(12px, var(--safe-bot)); }
 .bottom-nav { background: var(--bg2); border-top: 1px solid var(--border); display: flex; flex-shrink: 0; padding-bottom: max(0px, var(--safe-bot)); }
-
+ 
 /* HEADER */
 .hdr-row { display: flex; justify-content: space-between; align-items: center; }
 .hdr-title { font-size: 9px; color: var(--gold); letter-spacing: 3px; margin-bottom: 2px; }
@@ -48,27 +48,27 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .score-badge { text-align: center; border-radius: 8px; padding: 5px 12px; min-width: 58px; }
 .score-num { font-size: 22px; font-weight: bold; }
 .score-lbl { font-size: 8px; letter-spacing: 1px; }
-
+ 
 /* MINI STATS */
 .mini-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; margin-top: 8px; }
 .mini-stat { background: var(--bg3); border-radius: 5px; padding: 5px; text-align: center; }
 .mini-val { font-size: 10px; font-weight: bold; }
 .mini-lbl { font-size: 7px; color: var(--dim); margin-top: 1px; }
-
+ 
 /* INNER TABS */
 .itab { flex-shrink: 0; padding: 8px 12px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); font-size: 8px; letter-spacing: 1px; cursor: pointer; font-family: inherit; text-transform: uppercase; white-space: nowrap; }
 .itab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
+ 
 /* BOTTOM NAV */
 .bnav-btn { flex: 1; padding: 10px 4px 8px; background: none; border: none; cursor: pointer; font-family: inherit; display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .bnav-icon { font-size: 18px; }
 .bnav-lbl { font-size: 8px; letter-spacing: 0.5px; }
-
+ 
 /* CARDS */
 .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
 .card-lbl { font-size: 8px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
 .card-accent { border-left: 3px solid; }
-
+ 
 /* GRIDS */
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 8px; }
@@ -76,14 +76,14 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; }
 .stat-v { font-size: 15px; font-weight: bold; }
 .stat-l { font-size: 8px; color: var(--muted); margin-top: 2px; letter-spacing: 1px; }
-
+ 
 /* ALERT */
 .alert { border-left: 4px solid; border-radius: 8px; padding: 11px 12px; margin-bottom: 8px; }
 .alert-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
 .badge { font-size: 9px; font-weight: bold; padding: 2px 7px; border-radius: 3px; }
 .alert-title { font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 4px; }
 .alert-body { font-size: 10px; line-height: 1.4; }
-
+ 
 /* HOLDING */
 .holding { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid; border-radius: 8px; padding: 11px 12px; margin-bottom: 7px; }
 .holding-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
@@ -92,46 +92,46 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .detail-cell { background: #0a0d12; border-radius: 4px; padding: 5px; text-align: center; }
 .detail-lbl { font-size: 8px; color: var(--muted); }
 .detail-val { font-size: 11px; margin-top: 1px; }
-
+ 
 /* SCAN */
 .scan-bar-row { display: flex; gap: 3px; margin-bottom: 8px; }
 .scan-bar { height: 4px; flex: 1; border-radius: 2px; }
 .scan-sig { display: flex; gap: 8px; padding: 4px 0; border-top: 1px solid var(--border); align-items: center; }
 .scan-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-
+ 
 /* LEVELS */
 .level-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; margin-bottom: 5px; }
 .lvl-cell { background: #0a0d12; border-radius: 4px; padding: 5px; text-align: center; }
 .lvl-lbl { font-size: 8px; }
 .lvl-val { font-size: 9px; color: #fff; margin-top: 1px; }
-
+ 
 /* CHECKLIST */
 .check-item { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid; border-radius: 8px; padding: 11px 12px; margin-bottom: 6px; cursor: pointer; }
 .check-box { width: 18px; height: 18px; border-radius: 4px; border: 1px solid; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-
+ 
 /* TRACKER */
 .entry-item { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
-
+ 
 /* ANALYSIS */
 .step-nav { display: flex; gap: 4px; margin-bottom: 14px; overflow-x: auto; }
 .step-btn { flex-shrink: 0; min-width: 38px; padding: 7px 4px; border-radius: 6px; border: 1px solid; cursor: pointer; font-family: inherit; font-size: 8px; text-align: center; }
-
+ 
 /* BUTTONS */
 .btn { padding: 11px; font-size: 11px; cursor: pointer; border-radius: 6px; font-family: inherit; width: 100%; letter-spacing: 0.5px; }
 .btn-gold { background: rgba(201,168,76,0.15); border: 1px solid var(--gold); color: var(--gold); }
 .btn-muted { background: transparent; border: 1px solid var(--border); color: var(--muted); }
 .btn-row { display: flex; gap: 8px; margin-top: 10px; }
-
+ 
 /* FORMS */
 input, select { width: 100%; font-size: 11px; padding: 7px 8px; background: #0a0d12; border: 1px solid var(--border); color: #fff; border-radius: 5px; font-family: inherit; margin-bottom: 0; }
 .field { margin-bottom: 10px; }
 .field-lbl { font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-bottom: 5px; }
-
+ 
 /* PLAYBOOK */
 .playbook-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 10px; }
 .pb-title { font-size: 12px; font-weight: bold; margin-bottom: 8px; }
 .pb-rule { display: flex; gap: 8px; padding: 5px 0; border-top: 1px solid var(--border); font-size: 10px; color: #64748b; }
-
+ 
 /* MISC */
 .sep { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
 .green { color: var(--green); }
@@ -157,13 +157,13 @@ input, select { width: 100%; font-size: 11px; padding: 7px 8px; background: #0a0
   <div class="content" id="content"></div>
   <div class="bottom-nav" id="bottomNav"></div>
 </div>
-
+ 
 <script>
 // ═══════════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════════
 const GIST_URL = "https://gist.githubusercontent.com/julioir89-netizen/011eb6e485727c90a1e0634861ff4357/raw/prices.json";
-
+ 
 const HB = [
   {t:"SPY", n:"S&P 500 ETF",       avg:673.15,sh:0.22775,role:"anchor",   color:"#6b7280",tgt:20},
   {t:"QQQ", n:"Invesco QQQ",        avg:597.57,sh:0.14075,role:"growth",   color:"#3b82f6",tgt:12},
@@ -177,10 +177,10 @@ const HB = [
   {t:"KBWB",n:"KBW Bank ETF",       avg:80.14, sh:0.56149,role:"cyclical", color:"#f97316",tgt:4 },
   {t:"BTC", n:"Bitcoin",            avg:71896, sh:0.00085,role:"risk",     color:"#ef4444",tgt:4 },
 ];
-
+ 
 const FB_P = {SPY:710.14,QQQ:648.85,SOXX:415.71,AAPL:270.23,NVDA:201.68,MU:455.07,XLI:173.51,XLV:148.80,IAU:91.34,KBWB:86.89,BTC:77533};
 const FB_L = {SPY:{s1:675,s2:665,r1:735,r2:775},QQQ:{s1:600,s2:555,r1:670,r2:705},SOXX:{s1:355,s2:305,r1:425,r2:450},AAPL:{s1:260,s2:250,r1:275,r2:290},NVDA:{s1:185,s2:165,r1:210,r2:220},MU:{s1:405,s2:310,r1:465,r2:490},XLI:{s1:165,s2:155,r1:175,r2:180},XLV:{s1:145,s2:135,r1:150,r2:160},IAU:{s1:87,s2:82,r1:98,r2:103},KBWB:{s1:82,s2:79,r1:90,r2:94},BTC:{s1:70000,s2:65000,r1:79000,r2:83000}};
-
+ 
 // ═══════════════════════════════════════════════════════════
 // HISTORICAL BACKTEST DATA (3-Year backtest, Apr 2026)
 // Entry rule: price within 3% above MA50, above MA200
@@ -242,7 +242,7 @@ const HIST = {
          avoid:"Never buy BTC at MA50. The signal is historically unreliable for crypto.",
          plan:"SKIP MA50. At S2: initiate 50% position. Only add second 50% if score ≥55 AND BTC holds S2 for 5+ days."},
 };
-
+ 
 // Tier definitions
 const TIERS = {
   ELITE:    {label:"🏆 ELITE",    color:"#22c55e", desc:"≥80% historical win rate at MA50"},
@@ -250,7 +250,7 @@ const TIERS = {
   MODERATE: {label:"⚠️ MODERATE", color:"#c9a84c", desc:"50-64% — half size only"},
   WEAK:     {label:"🔴 WEAK",     color:"#ef4444", desc:"<50% — skip MA50, wait for S2"},
 };
-
+ 
 function getHistRec(ticker, h) {
   const hist = HIST[ticker];
   if(!hist) return null;
@@ -261,7 +261,7 @@ function getHistRec(ticker, h) {
   const distMa50 = ((price-ma50)/ma50)*100;
   const distS1   = ((price-h.s1)/price)*100;
   const distS2   = h.s2?((price-h.s2)/price)*100:999;
-
+ 
   // Determine current zone
   if(price < h.s2)           return {zone:"BELOW_S2",  urgency:"CRITICAL", rec:hist.s2_rec,  color:"#ef4444"};
   if(distS2 <= 3)            return {zone:"NEAR_S2",   urgency:"HIGH",     rec:hist.s2_rec,  color:"#22c55e"};
@@ -270,7 +270,7 @@ function getHistRec(ticker, h) {
   if(distS1 <= 3.5)          return {zone:"NEAR_S1",   urgency:"MEDIUM",   rec:hist.ma50_rec,color:hist.tierC};
   return {zone:"ABOVE",      urgency:"LOW",      rec:`${ticker} is ${distMa50.toFixed(0)}% above MA50. ${hist.tier==="WEAK"?"No action until S2.":"Wait for pullback to MA50 zone."}`, color:"#475569"};
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
@@ -297,13 +297,16 @@ let S = {
   playbookTab: "identity",
   pbSection: null,
   holdingsOverride: {},  // user-edited avg costs and shares
-  editingHolding: null, // ticker currently being edited
-  customHoldings: [],   // user-added stocks outside the 11
-  editingCustom: null,  // index of custom holding being edited
+  editingHolding: null,
+  customHoldings: [],
+  editingCustom: null,
   newCustom: {ticker:"",name:"",avg:"",shares:"",date:"",notes:""},
-  trimHistory: [],      // log of trim decisions made
+  trimHistory: [],
+  macroTab: "news",
+  macroNewsLoading: false,
+  macroNewsData: null,
 };
-
+ 
 // ═══════════════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════════════
@@ -312,7 +315,7 @@ const sc = score => score>=70?"#22c55e":score>=55?"#c9a84c":score>=35?"#f97316":
 const dial = score => score>=70?"AGGRESSIVE":score>=55?"NEUTRAL":score>=35?"DEFENSIVE":"PROTECT";
 const pctFmt = v => (v>=0?"+":"")+v.toFixed(1)+"%";
 const getWeek = () => Math.min(Math.ceil(new Date().getDate()/7),4);
-
+ 
 function buildHoldings(liveData) {
   // Build core 11 holdings
   const core = HB.map(h => {
@@ -337,7 +340,7 @@ function buildHoldings(liveData) {
       custom:  false,
     };
   });
-
+ 
   // Merge custom holdings — treat them like any other holding
   const custom = (S.customHoldings||[]).map(ch => {
     const t   = ch.ticker;
@@ -367,10 +370,10 @@ function buildHoldings(liveData) {
       addedDate: ch.date||"",
     };
   });
-
+ 
   return [...core, ...custom];
 }
-
+ 
 function calcScore(H) {
   // Only score using core 11 holdings (not custom)
   const core = H.filter(h=>!h.custom);
@@ -383,7 +386,7 @@ function calcScore(H) {
   s += core[7].price<core[7].avg?10:15;
   return Math.min(100,s);
 }
-
+ 
 function dcaStatus(h) {
   const dist = ((h.price-h.s1)/h.price)*100;
   if(h.price<h.s2) return {label:"DANGER",color:"#ef4444",icon:"🚨"};
@@ -392,14 +395,14 @@ function dcaStatus(h) {
   if(h.price>=h.r1*0.99) return {label:"AT R1",color:"#3b82f6",icon:"🔵"};
   return                  {label:"WAIT",color:"#6b7280",icon:"⏳"};
 }
-
+ 
 function getEntryPnL(e) {
   const cur = e.status==="closed"&&e.exitPrice ? e.exitPrice : (S.holdings.find(h=>h.t===e.ticker)?.price || FB_P[e.ticker] || e.entryPrice);
   const pnl = (cur-e.entryPrice)*e.shares;
   const pct = ((cur-e.entryPrice)/e.entryPrice)*100;
   return {pnl,pct,current:cur};
 }
-
+ 
 function h(tag, attrs, ...children) {
   const el = document.createElement(tag);
   if(attrs) {
@@ -418,10 +421,10 @@ function h(tag, attrs, ...children) {
   });
   return el;
 }
-
+ 
 function div(cls, ...children) { return h("div",{class:cls},...children); }
 function span(cls, txt, style) { const s=h("span",{class:cls||""},txt); if(style)s.style.cssText=style; return s; }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // FETCH
 // ═══════════════════════════════════════════════════════════
@@ -443,7 +446,7 @@ async function fetchData() {
   S.score = calcScore(S.holdings);
   render();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // LOAD/SAVE
 // ═══════════════════════════════════════════════════════════
@@ -455,14 +458,14 @@ function loadState() {
   try { const x=localStorage.getItem("pf_custom");    if(x) S.customHoldings=JSON.parse(x); } catch{}
   try { const r=localStorage.getItem("pf_trimlog");   if(r) S.trimHistory=JSON.parse(r); } catch{}
 }
-
+ 
 function saveEntries()  { try { localStorage.setItem("pf_entries",  JSON.stringify(S.entries));          } catch{} }
 function saveChecks()   { try { localStorage.setItem("pf_checks",   JSON.stringify(S.checks));           } catch{} }
 function saveAnalyses() { try { localStorage.setItem("pf_analyses", JSON.stringify(S.savedAnalyses));    } catch{} }
 function saveHoldings()  { try { localStorage.setItem("pf_holdings", JSON.stringify(S.holdingsOverride)); } catch{} }
 function saveCustom()    { try { localStorage.setItem("pf_custom",   JSON.stringify(S.customHoldings));   } catch{} }
 function saveTrimLog()   { try { localStorage.setItem("pf_trimlog",  JSON.stringify(S.trimHistory));       } catch{} }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // INDICATORS
 // ═══════════════════════════════════════════════════════════
@@ -488,7 +491,7 @@ function getSmart(H) {
   const off=[C[7]?.price>C[7]?.avg,C[8]?.price>C[8]?.avg].filter(Boolean).length;
   return {on,off,label:on>=3&&off<=1?"RISK-ON":off>=2&&on<=1?"RISK-OFF":"MIXED",color:on>=3&&off<=1?"#22c55e":off>=2&&on<=1?"#ef4444":"#c9a84c"};
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // RENDER ENGINE
 // ═══════════════════════════════════════════════════════════
@@ -500,7 +503,7 @@ function render() {
   const crash = getCrash(H);
   const smart = getSmart(H);
   const totalValue = H.reduce((s,h)=>s+h.price*h.sh,0);
-
+ 
   // HEADER
   const hdrEl = document.getElementById("header");
   hdrEl.innerHTML = `
@@ -525,7 +528,7 @@ function render() {
       <div class="mini-stat"><div class="mini-val" style="color:${crash.color}">${crash.pct}%</div><div class="mini-lbl">CRASH</div></div>
       <div class="mini-stat"><div class="mini-val" style="color:${smart.color}">${smart.label}</div><div class="mini-lbl">SMART$</div></div>
     </div>`;
-
+ 
   // BOTTOM NAV
   const navEl = document.getElementById("bottomNav");
   navEl.innerHTML = SECTIONS.map(s => `
@@ -533,7 +536,7 @@ function render() {
       <div class="bnav-icon">${s.icon}</div>
       <div class="bnav-lbl">${s.label}</div>
     </button>`).join("");
-
+ 
   // INNER TABS + CONTENT
   const section = S.section;
   if(section==="dashboard")  renderDashboard(H, score, inst, crash, smart);
@@ -542,9 +545,10 @@ function render() {
   if(section==="analysis")   renderAnalysis(H);
   if(section==="playbook")   renderPlaybook();
   if(section==="editor")     renderEditor();
+  if(section==="macro")      renderMacro();
 }
-
-const SECTION_NAMES = {dashboard:"Portfolio Command",rebalance:"Monthly Rebalance",tracker:"Performance Tracker",analysis:"Stock Analysis",playbook:"Portfolio Playbook",editor:"Holdings Editor"};
+ 
+const SECTION_NAMES = {dashboard:"Portfolio Command",rebalance:"Monthly Rebalance",tracker:"Performance Tracker",analysis:"Stock Analysis",playbook:"Portfolio Playbook",editor:"Holdings Editor",macro:"Macro Intelligence"};
 const SECTIONS = [
   {id:"dashboard", icon:"🚨", label:"Command"},
   {id:"rebalance", icon:"🔄", label:"Rebalance"},
@@ -552,16 +556,17 @@ const SECTIONS = [
   {id:"analysis",  icon:"🔍", label:"Analysis"},
   {id:"playbook",  icon:"📋", label:"Playbook"},
   {id:"editor",    icon:"⚙️",  label:"Holdings"},
+  {id:"macro",     icon:"🌍",  label:"Macro"},
 ];
-
-function setSection(id) { S.section=id; const tabs={dashboard:"alerts",rebalance:"overview",tracker:"dashboard",analysis:"analyze",playbook:"identity",editor:"edit"}; S.tab=tabs[id]||""; render(); }
+ 
+function setSection(id) { S.section=id; const tabs={dashboard:"alerts",rebalance:"overview",tracker:"dashboard",analysis:"analyze",playbook:"identity",editor:"edit",macro:"news"}; S.tab=tabs[id]||""; render(); }
 function setTab(t) { S.tab=t; render(); }
-
+ 
 function renderInnerTabs(tabs) {
   document.getElementById("innerTabs").innerHTML = tabs.map(t=>
     `<button class="itab${S.tab===t.id?" active":""}" onclick="setTab('${t.id}')">${t.label}</button>`).join("");
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════════════════
@@ -569,7 +574,7 @@ function renderDashboard(H, score, inst, crash, smart) {
   renderInnerTabs([{id:"alerts",label:"🚨 Alerts"},{id:"holdings",label:"📊 Holdings"},{id:"scan",label:"🧠 Scan"},{id:"macro",label:"🌍 Macro"},{id:"checklist",label:"✅ Week"}]);
   const t = S.tab;
   let html = '<button class="refresh-btn" onclick="fetchData()">↻ REFRESH PRICES</button>';
-
+ 
   if(t==="alerts") {
     const alerts = genAlerts(H, score, inst);
     html += `<div class="card-lbl">LIVE ALERTS — ${alerts.length} ACTIVE</div>`;
@@ -598,7 +603,7 @@ function renderDashboard(H, score, inst, crash, smart) {
         }).join("")}
       </div></div>`;
   }
-
+ 
   if(t==="holdings") {
     const coreH = H.filter(h=>!h.custom);
     const customH = H.filter(h=>h.custom);
@@ -646,7 +651,7 @@ function renderDashboard(H, score, inst, crash, smart) {
         ${h.trend?`<div style="font-size:9px;color:#475569;margin-top:3px">${h.trend==="UPTREND"?"▲":h.trend==="DOWNTREND"?"▼":"→"} ${h.trend}${h.rsi?" · RSI "+h.rsi:""}${h.ma50?" · MA50 "+fmt(h.ma50,btc):""}</div>`:""}
       </div>`;
     });
-
+ 
     // Custom holdings section
     if(customH.length>0) {
       html += `<div class="card-lbl" style="margin-top:10px;">CUSTOM HOLDINGS — ${customH.length} ADDED</div>`;
@@ -685,7 +690,7 @@ function renderDashboard(H, score, inst, crash, smart) {
       html += `<div style="font-size:9px;color:#334155;text-align:center;padding:8px;">➕ Add custom stocks in ⚙️ Holdings → Add Stock tab</div>`;
     }
   }
-
+ 
   if(t==="scan") {
     const C=H.filter(h=>!h.custom); // core only for scan signals
     const scans=[
@@ -709,7 +714,7 @@ function renderDashboard(H, score, inst, crash, smart) {
       </div>`;
     });
   }
-
+ 
   if(t==="macro") {
     const m=S.liveData?.macro||{};
     html += `<div class="card-lbl">MACRO DRIVERS</div><div class="card">
@@ -731,7 +736,7 @@ function renderDashboard(H, score, inst, crash, smart) {
       }).join("")}
     </div>`;
   }
-
+ 
   if(t==="checklist") {
     const week=getWeek();
     const tasks={
@@ -756,29 +761,29 @@ function renderDashboard(H, score, inst, crash, smart) {
     const done2=(tasks[week]||[]).filter(t=>S.checks[t.id]).length;
     html += `<div class="card center"><div style="font-size:11px;color:#22c55e">${done2}/${(tasks[week]||[]).length} completed this week</div></div>`;
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 function toggleCheck(id) { S.checks[id]=!S.checks[id]; saveChecks(); render(); }
-
+ 
 function genAlerts(H, score, inst) {
   const alerts = [];
   const totalV = H.reduce((s,h)=>s+h.price*h.sh,0);
-
+ 
   H.forEach(h => {
     const btc=h.t==="BTC";
     const dist=((h.price-h.s1)/h.price)*100;
     const drift=(h.price*h.sh/totalV)*100-h.tgt;
     const hist=HIST[h.t];
     const hrec=getHistRec(h.t, h);
-
+ 
     // DANGER — below S2
     if(h.price<h.s2)
       alerts.push({urgency:"CRITICAL",type:"DANGER",c:"#ef4444",ticker:h.t,
         headline:`${h.t} below S2 — DANGER`,
         action:`Below S2 ${fmt(h.s2,btc)} — no new entries. ${hist?.avoid||""}`});
-
+ 
     // HISTORICAL ZONE ALERT — price at MA50 (best historical entry)
     if(hrec && hrec.zone==="AT_MA50" && h.price>h.s2) {
       const tierLabel = hist?`[${hist.tier} · ${hist.wr90}% WR · Avg +${hist.avg90}%]`:"";
@@ -786,40 +791,40 @@ function genAlerts(H, score, inst) {
         headline:`${h.t} at MA50 — Historical Best Entry Zone ${tierLabel}`,
         action:hrec.rec});
     }
-
+ 
     // NEAR MA50 — approaching the zone
     if(hrec && hrec.zone==="NEAR_MA50" && h.price>h.s2 && hist?.tier!=="WEAK") {
       alerts.push({urgency:"MEDIUM",type:"APPROACHING",c:hist.tierC,ticker:h.t,
         headline:`${h.t} approaching MA50 historical zone`,
         action:`${hrec.rec} Plan: ${hist?.plan||""}`});
     }
-
+ 
     // AT S1 — standard DCA zone
     if(dist<=1.5&&h.price>h.s2&&score>=45&&(!hrec||hrec.zone!=="AT_MA50"))
       alerts.push({urgency:"HIGH",type:"BUY",c:"#22c55e",ticker:h.t,
         headline:`${h.t} at S1 — DCA ready`,
         action:`${fmt(h.price,btc)} within 1.5% of S1 ${fmt(h.s1,btc)}. ${hist?.tier==="WEAK"?"⚠️ Historical win rate weak here — consider waiting for S2.":""}`});
-
+ 
     // NEAR S1
     if(dist>1.5&&dist<=3.5&&h.price>h.s2&&(!hrec||!["AT_MA50","NEAR_MA50"].includes(hrec.zone)))
       alerts.push({urgency:"MEDIUM",type:"PREPARE",c:"#c9a84c",ticker:h.t,
         headline:`${h.t} approaching S1`,
         action:`${dist.toFixed(1)}% from S1 ${fmt(h.s1,btc)}. ${hist?`Historical: ${hist.wr90}% WR at MA50.`:""} Prepare capital.`});
-
+ 
     // AT R1 + overweight
     if(h.price>=h.r1*0.99&&drift>2)
       alerts.push({urgency:"MEDIUM",type:"TRIM",c:"#3b82f6",ticker:h.t,
         headline:`${h.t} at R1 + overweight`,
         action:`At R1 ${fmt(h.r1,btc)} — consider partial trim.`});
   });
-
+ 
   if(inst.sig>=3&&score>=65) alerts.push({urgency:"HIGH",type:"OPPORTUNITY",c:"#22c55e",ticker:"MARKET",
     headline:"Institutions accumulating — go aggressive",
     action:`Score ${score}/100. Scale into historical zones.`});
-
+ 
   return alerts.sort((a,b)=>({CRITICAL:0,HIGH:1,MEDIUM:2}[a.urgency]||3)-({CRITICAL:0,HIGH:1,MEDIUM:2}[b.urgency]||3));
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // REBALANCE
 // ═══════════════════════════════════════════════════════════
@@ -840,7 +845,7 @@ function renderRebalance(H, totalValue) {
   const trims=withDrift.filter(h=>h.action==="TRIM"||h.action==="OVERWEIGHT");
   const month=new Date().toLocaleString("en-US",{month:"long",year:"numeric"});
   let html="";
-
+ 
   if(t==="overview") {
     html += `<div class="g2">
       <div class="stat"><div class="stat-v" style="color:#fff">$${totalValue.toFixed(2)}</div><div class="stat-l">PORTFOLIO VALUE</div></div>
@@ -869,7 +874,7 @@ function renderRebalance(H, totalValue) {
       </div>`;
     });
   }
-
+ 
   if(t==="positions") {
     html += `<div class="card-lbl">POSITION WEIGHTS — TARGET VS ACTUAL</div>`;
     withDrift.forEach(h=>{
@@ -889,7 +894,7 @@ function renderRebalance(H, totalValue) {
       </div>`;
     });
   }
-
+ 
   if(t==="actions") {
     if(adds.length) {
       html += `<div class="card-lbl" style="color:#22c55e">➕ ADD — UNDERWEIGHT</div>`;
@@ -915,7 +920,7 @@ function renderRebalance(H, totalValue) {
     }
     if(!adds.length&&!trims.length) html+=`<div class="empty">✓ Portfolio Balanced — No rebalance needed</div>`;
   }
-
+ 
   if(t==="checklist2") {
     const items=[
       {id:"r1",w:1,l:"Review total portfolio value — is it growing?"},
@@ -945,14 +950,14 @@ function renderRebalance(H, totalValue) {
       });
     }
   }
-
-
+ 
+ 
   // ── TRIM ENGINE TAB ──────────────────────────────────────
   if(t==="trim") {
     const crash=getCrash(H);
     const smart=getSmart(H);
     const score2=calcScore(H);
-
+ 
     // Determine if cash is valid reallocation
     const cashValid = crash.pct>=60 || score2<45;
     const cashReason = crash.pct>=60
@@ -960,7 +965,7 @@ function renderRebalance(H, totalValue) {
       : score2<45
       ? `Market score ${score2}/100 below 45 — no high-conviction entries available`
       : null;
-
+ 
     // Reallocation targets based on macro environment
     const reallocTargets = [];
     if(crash.pct>=30 || smart.label==="RISK-OFF") {
@@ -977,7 +982,7 @@ function renderRebalance(H, totalValue) {
       reallocTargets.push({t:"IAU",reason:"Gold hedge · Always valid as portfolio hedge",priority:3});
     }
     if(cashValid) reallocTargets.unshift({t:"CASH",reason:cashReason,priority:0});
-
+ 
     // Scan for trim triggers on each holding
     const trimCandidates = [];
     H.forEach(h => {
@@ -991,37 +996,37 @@ function renderRebalance(H, totalValue) {
       const hist=HIST[h.t];
       const triggers=[];
       let trimPct=0;
-
+ 
       // Trigger 1: >20% gain from avg cost (rule from playbook)
       if(pctAvg>=20) {
         triggers.push({label:"📈 >20% gain from avg cost",desc:`Up ${pctAvg.toFixed(1)}% — playbook rule triggers partial trim`,urgency:"HIGH"});
         trimPct=Math.max(trimPct,30);
       }
-
+ 
       // Trigger 2: At R1 + overweight
       if(h.price>=h.r1*0.98&&drift>2) {
         triggers.push({label:"🎯 At R1 resistance + overweight",desc:`At R1 ${fmt(h.r1,btc)} and ${drift.toFixed(1)}% above target weight`,urgency:"HIGH"});
         trimPct=Math.max(trimPct,25);
       }
-
+ 
       // Trigger 3: WEAK tier extended (AAPL/BTC >10% from avg)
       if(hist?.tier==="WEAK"&&pctAvg>=10) {
         triggers.push({label:"🔴 WEAK tier extended",desc:`${h.t} has 36-41% historical win rate. Lock gains before reversal.`,urgency:"MEDIUM"});
         trimPct=Math.max(trimPct,20);
       }
-
+ 
       // Trigger 4: MODERATE tier >15% gain during crash risk
       if(hist?.tier==="MODERATE"&&pctAvg>=15&&crash.pct>=30) {
         triggers.push({label:"⚠️ MODERATE tier + macro risk",desc:`${pctAvg.toFixed(1)}% gain + crash prob ${crash.pct}% — reduce exposure`,urgency:"MEDIUM"});
         trimPct=Math.max(trimPct,20);
       }
-
+ 
       // Trigger 5: Risk role during RISK-OFF smart money
       if(h.role==="risk"&&smart.label==="RISK-OFF"&&pctAvg>=5) {
         triggers.push({label:"🧠 Smart money RISK-OFF",desc:`Risk assets (${h.t}) should be reduced when smart money goes defensive`,urgency:"MEDIUM"});
         trimPct=Math.max(trimPct,20);
       }
-
+ 
       if(triggers.length>0) {
         const trimShares=h.sh*(trimPct/100);
         const trimValue=trimShares*h.price;
@@ -1030,7 +1035,7 @@ function renderRebalance(H, totalValue) {
         trimCandidates.push({...h,pctAvg,drift,triggers,trimPct,trimShares,trimValue,conservShares,conservValue,hist,btc});
       }
     });
-
+ 
     html += `<div class="card" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.3);margin-bottom:10px;">
       <div style="font-size:9px;color:#3b82f6;letter-spacing:2px;margin-bottom:4px;">✂️ TRIM ENGINE — LIVE ANALYSIS</div>
       <div style="font-size:10px;color:#94a3b8;line-height:1.6;">
@@ -1038,7 +1043,7 @@ function renderRebalance(H, totalValue) {
         Calculates exact shares, proceeds, and optimal reallocation.
       </div>
     </div>`;
-
+ 
     // Macro context
     html += `<div class="card" style="margin-bottom:10px;">
       <div class="card-lbl">MACRO CONTEXT — REALLOCATION LOGIC</div>
@@ -1054,7 +1059,7 @@ function renderRebalance(H, totalValue) {
           <div style="font-size:8px;color:#475569;">#${i+1}</div>
         </div>`).join("")}
     </div>`;
-
+ 
     if(trimCandidates.length===0) {
       html += `<div class="empty">✓ No trim triggers active. All positions within healthy ranges.<br><br>Triggers activate when: position >20% gain, at R1 + overweight, WEAK tier extended, or macro risk elevated.</div>`;
     } else {
@@ -1073,7 +1078,7 @@ function renderRebalance(H, totalValue) {
               <div style="font-size:9px;color:${c.pctAvg>=0?"#22c55e":"#ef4444"};">${pctFmt(c.pctAvg)} from avg</div>
             </div>
           </div>
-
+ 
           <!-- Triggers -->
           <div style="margin-bottom:8px;">
             ${c.triggers.map(tr=>`
@@ -1082,7 +1087,7 @@ function renderRebalance(H, totalValue) {
                 <div style="font-size:9px;color:#64748b;">${tr.desc}</div>
               </div>`).join("")}
           </div>
-
+ 
           <!-- Calculation -->
           <div style="background:#0a0d12;border-radius:6px;padding:10px;margin-bottom:8px;">
             <div style="font-size:9px;color:#c9a84c;letter-spacing:1px;margin-bottom:6px;">TRIM CALCULATION</div>
@@ -1103,7 +1108,7 @@ function renderRebalance(H, totalValue) {
             <div style="font-size:9px;color:#475569;margin-bottom:4px;">Avg cost stays: ${fmt(c.avg,c.btc)} (trimming does not change your avg cost)</div>
             <div style="font-size:9px;color:#22c55e;">Remaining value after trim: $${((c.sh-c.trimShares)*c.price).toFixed(2)}</div>
           </div>
-
+ 
           <!-- Reallocation -->
           <div style="background:#0a0d12;border-radius:6px;padding:10px;margin-bottom:8px;">
             <div style="font-size:9px;color:#c9a84c;letter-spacing:1px;margin-bottom:6px;">WHERE TO REDEPLOY $${c.trimValue.toFixed(2)}</div>
@@ -1116,7 +1121,7 @@ function renderRebalance(H, totalValue) {
                 <span style="font-size:10px;color:#c9a84c;flex-shrink:0;margin-left:8px;">$${c.trimValue.toFixed(2)}</span>
               </div>`).join("")}
           </div>
-
+ 
           <!-- Log button -->
           <button onclick="logTrimDecision('${c.t}',${c.trimPct},${c.trimShares.toFixed(5)},${c.trimValue.toFixed(2)})"
             style="width:100%;padding:10px;font-size:10px;font-weight:bold;cursor:pointer;font-family:inherit;
@@ -1126,7 +1131,7 @@ function renderRebalance(H, totalValue) {
         </div>`;
       });
     }
-
+ 
     // Trim history
     if(S.trimHistory&&S.trimHistory.length>0) {
       html += `<div class="card-lbl" style="margin-top:10px;">TRIM HISTORY</div>`;
@@ -1142,10 +1147,10 @@ function renderRebalance(H, totalValue) {
       });
     }
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // TRACKER
 // ═══════════════════════════════════════════════════════════
@@ -1157,7 +1162,7 @@ function renderTracker(H) {
   const wr=S.entries.length?(wins/S.entries.length)*100:0;
   const avgRet=S.entries.length?S.entries.reduce((s,e)=>s+getEntryPnL(e).pct,0)/S.entries.length:0;
   let html="";
-
+ 
   if(t==="dashboard") {
     html += `<div class="g2">
       <div class="stat"><div class="stat-v" style="color:${wr>=60?"#22c55e":wr>=45?"#c9a84c":"#ef4444"}">${wr.toFixed(0)}%</div><div class="stat-l">WIN RATE ${wins}W·${S.entries.length-wins}L</div></div>
@@ -1180,7 +1185,7 @@ function renderTracker(H) {
       });
     } else html += `<div class="empty">No entries yet. Tap + Add to log your first DCA.</div>`;
   }
-
+ 
   if(t==="entries") {
     const tickers=["ALL",...HB.map(h=>h.t)];
     html += `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">
@@ -1219,7 +1224,7 @@ function renderTracker(H) {
       </div>`;
     });
   }
-
+ 
   if(t==="by-asset") {
     html += `<div class="card-lbl">PERFORMANCE BY ASSET</div>`;
     let any=false;
@@ -1246,7 +1251,7 @@ function renderTracker(H) {
     });
     if(!any) html+=`<div class="empty">No entries logged yet.</div>`;
   }
-
+ 
   if(t==="add-entry") {
     const ne=S.newEntry;
     const curP=S.holdings.find(h=>h.t===ne.ticker)?.price||FB_P[ne.ticker]||0;
@@ -1268,10 +1273,10 @@ function renderTracker(H) {
       <button class="btn btn-gold" onclick="addEntry()">LOG ENTRY</button>
     </div>`;
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 function setFilter(t) { S.trackerFilter=t; render(); }
 function setNewTicker(t) { S.newEntry.ticker=t; render(); }
 function startClose(id) { S.closingEntry=id; S.exitInput=""; render(); }
@@ -1290,7 +1295,7 @@ function addEntry() {
   S.newEntry={ticker:"SPY",date:"",entryPrice:"",shares:"",type:"DCA",notes:""};
   S.tab="entries"; render();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // ANALYSIS
 // ═══════════════════════════════════════════════════════════
@@ -1298,7 +1303,7 @@ function renderAnalysis(H) {
   renderInnerTabs([{id:"analyze",label:"Analyze"},{id:"history",label:"History"},{id:"rules",label:"Rules"}]);
   const t=S.tab;
   let html="";
-
+ 
   if(t==="analyze") {
     const a=S.analysis,step=S.analysisStep;
     let ascore=0;
@@ -1313,11 +1318,11 @@ function renderAnalysis(H) {
     const verdict=a.aboveMa200===false&&a.higherHighs===false?"AVOID":ascore>=65?"BUY":ascore>=40?"WAIT":"AVOID";
     const vc=verdict==="BUY"?"#22c55e":verdict==="WAIT"?"#c9a84c":"#ef4444";
     const sc2=ascore>=65?"#22c55e":ascore>=40?"#c9a84c":"#ef4444";
-
+ 
     // Step nav
     const steps=[{n:1,l:"Setup",i:"⚙"},{n:2,l:"Trend",i:"📈"},{n:3,l:"Structure",i:"🏗"},{n:4,l:"Momentum",i:"⚡"},{n:5,l:"Cycle",i:"🔄"},{n:6,l:"Strength",i:"💪"},{n:7,l:"Verdict",i:"🎯"}];
     html += `<div class="step-nav">${steps.map(s=>`<button class="step-btn" onclick="S.analysisStep=${s.n};render()" style="border-color:${step===s.n?"#c9a84c":"#1e2a3a"};background:${step===s.n?"rgba(201,168,76,0.15)":"transparent"};color:${step===s.n?"#c9a84c":"#334155"}"><div style="font-size:12px">${s.i}</div><div>${s.l}</div></button>`).join("")}</div>`;
-
+ 
     if(step===1) {
       const isPortfolio=["SPY","QQQ","SOXX","AAPL","NVDA","MU","XLI","XLV","IAU","KBWB","BTC"].includes(a.ticker)&&S.isLive;
       html += `<div class="card">
@@ -1337,7 +1342,7 @@ function renderAnalysis(H) {
         <button class="btn btn-gold" onclick="S.analysisStep=2;render()">Next → Trend</button>
       </div>`;
     }
-
+ 
     if(step===2) {
       html += `<div class="card">
         ${S.isLive&&a.aboveMa50!==null?`<div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:10px;color:#22c55e">✓ Auto-filled from live data — review and confirm</div>`:""}
@@ -1348,7 +1353,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=1;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=3;render()">Next → Structure</button></div>
       </div>`;
     }
-
+ 
     if(step===3) {
       html += `<div class="card">
         ${aField("Making Higher Highs + Higher Lows?","higherHighs","Uptrend = HH and HL")}
@@ -1357,7 +1362,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=2;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=4;render()">Next → Momentum</button></div>
       </div>`;
     }
-
+ 
     if(step===4) {
       html += `<div class="card">
         ${S.isLive&&a.rsiCondition?`<div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:10px;color:#22c55e">✓ RSI auto-filled from live data</div>`:""}
@@ -1368,7 +1373,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=3;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=5;render()">Next → Cycle</button></div>
       </div>`;
     }
-
+ 
     if(step===5) {
       html += `<div class="card">
         <div class="field"><div class="field-lbl">CYCLE PHASE</div>${aOpts("cyclePhase",["Early Uptrend","Late Uptrend","Distribution","Markdown","Accumulation","Unknown"],{"Early Uptrend":"#22c55e","Late Uptrend":"#c9a84c",Distribution:"#f97316",Markdown:"#ef4444",Accumulation:"#3b82f6",Unknown:"#475569"})}</div>
@@ -1376,7 +1381,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=4;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=6;render()">Next → Strength</button></div>
       </div>`;
     }
-
+ 
     if(step===6) {
       html += `<div class="card">
         <div class="field"><div class="field-lbl">VS QQQ PERFORMANCE</div>${aOpts("vsQQQ",["STRONGER","IN LINE","WEAKER"],{STRONGER:"#22c55e","IN LINE":"#c9a84c",WEAKER:"#ef4444"})}</div>
@@ -1386,7 +1391,7 @@ function renderAnalysis(H) {
         <div class="btn-row"><button class="btn btn-muted" style="flex:1" onclick="S.analysisStep=5;render()">← Back</button><button class="btn btn-gold" style="flex:2" onclick="S.analysisStep=7;render()">Next → Verdict</button></div>
       </div>`;
     }
-
+ 
     if(step===7) {
       html += `<div class="card" style="background:${sc2}12;border-color:${sc2}40;margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;color:#fff;font-weight:bold">${a.ticker||"?"} Score</span><span style="font-size:20px;font-weight:bold;color:${sc2}">${ascore}/100</span></div>
@@ -1410,7 +1415,7 @@ function renderAnalysis(H) {
       </div>`;
     }
   }
-
+ 
   if(t==="history") {
     html += `<div class="card-lbl">ANALYSIS HISTORY — ${S.savedAnalyses.length} SAVED</div>`;
     if(!S.savedAnalyses.length) html+=`<div class="empty">No analyses saved yet.</div>`;
@@ -1427,7 +1432,7 @@ function renderAnalysis(H) {
       </div>`;
     });
   }
-
+ 
   if(t==="rules") {
     [
       {step:"1. Trend",color:"#3b82f6",rules:["Must be above MA50 for standard DCA","MA200 above = long-term bullish","Never buy in confirmed downtrend"]},
@@ -1443,10 +1448,10 @@ function renderAnalysis(H) {
       </div>`;
     });
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 function aField(label, field, note) {
   const a=S.analysis,v=a[field];
   return `<div class="field"><div class="field-lbl">${label}</div>${note?`<div style="font-size:9px;color:#334155;margin-bottom:5px">${note}</div>`:""}
@@ -1456,12 +1461,12 @@ function aField(label, field, note) {
     </div>
   </div>`;
 }
-
+ 
 function aOpts(field, options, colorMap) {
   const a=S.analysis,v=a[field];
   return `<div class="opts">${options.map(opt=>{const c=colorMap?.[opt]||"#c9a84c";return`<button class="opt-btn" onclick="S.analysis.${field}='${opt}';render()" style="background:${v===opt?c+"30":"transparent"};border:1px solid ${v===opt?c:"#1e2a3a"};color:${v===opt?c:"#475569"}">${opt}</button>`;}).join("")}</div>`;
 }
-
+ 
 function selectAnalysisTicker(ticker) {
   const h=S.holdings.find(x=>x.t===ticker)||{};
   const tech=S.liveData?.technicals?.[ticker]||{};
@@ -1481,7 +1486,7 @@ function selectAnalysisTicker(ticker) {
   };
   render();
 }
-
+ 
 function saveAnalysis(score, autoVerdict) {
   if(!S.analysis.ticker)return;
   const saved={...S.analysis,score,verdict:S.analysis.verdict||autoVerdict,id:Date.now()};
@@ -1490,7 +1495,7 @@ function saveAnalysis(score, autoVerdict) {
   S.analysis={ticker:"",name:"",date:new Date().toISOString().split("T")[0],currentPrice:"",sector:"",aboveMa50:null,aboveMa200:null,trendDirection:null,higherHighs:null,aboveKeySupport:null,rsiLevel:"",rsiCondition:null,volumeConfirm:null,macdSignal:null,cyclePhase:null,relativeToQQQ:null,vsQQQ:null,vsSector:null,macroSupport:null,institutionalBias:null,s1:"",s2:"",r1:"",r2:"",verdict:null,dcaPrice:"",notes:""};
   S.analysisStep=1; S.tab="history"; render();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // PLAYBOOK
 // ═══════════════════════════════════════════════════════════
@@ -1498,7 +1503,7 @@ function renderPlaybook() {
   renderInnerTabs([{id:"identity",label:"Identity"},{id:"portfolio",label:"Portfolio"},{id:"rules",label:"Rules"},{id:"backtest",label:"📊 Historical"},{id:"systems",label:"Systems"},{id:"roadmap",label:"Roadmap"}]);
   const t=S.tab;
   let html="";
-
+ 
   if(t==="identity") {
     html += `<div class="card" style="background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.3)">
       <div style="font-size:9px;color:#c9a84c;letter-spacing:3px;margin-bottom:8px">WHO YOU ARE</div>
@@ -1511,7 +1516,7 @@ function renderPlaybook() {
       ${[["Rules over emotions","Every decision is governed by a predefined rule. When you feel the urge to deviate, the rule wins.","#3b82f6"],["Levels over news","News explains why markets move. Levels tell you when to act.","#22c55e"],["Patience is an edge","Waiting for S1 is a systematic advantage over retail impulsiveness.","#c9a84c"],["Risk first, returns second","A 50% loss requires 100% gain to recover. Protect capital first.","#ef4444"],["Process over outcomes","A correct process with a bad short-term result is still correct. Trust the system.","#8b5cf6"]].map(([p,d,c])=>`<div style="padding:8px 0;border-bottom:1px solid #1e2a3a"><div style="font-size:11px;font-weight:bold;color:${c};margin-bottom:2px">${p}</div><div style="font-size:10px;color:#64748b;line-height:1.4">${d}</div></div>`).join("")}
     </div>`;
   }
-
+ 
   if(t==="portfolio") {
     html += `<div class="card">
       <div class="card-lbl">11-HOLDING STRUCTURE</div>
@@ -1537,7 +1542,7 @@ function renderPlaybook() {
       </div>`;
     });
   }
-
+ 
   if(t==="rules") {
     const ruleSets=[
       {cat:"Entry Rules",c:"#22c55e",rules:["Never buy above S1 — wait for levels","Market score must be ≥45 before any new entry","Never add to a position that broke below S2","MU requires SOXX confirmation before entry","No entries during crash probability >60%"]},
@@ -1569,7 +1574,7 @@ function renderPlaybook() {
       </div>`;
     });
   }
-
+ 
   if(t==="backtest") {
     // Summary banner
     html += `<div class="card" style="background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.3);text-align:center;margin-bottom:10px">
@@ -1578,7 +1583,7 @@ function renderPlaybook() {
       <div style="font-size:10px;color:#475569;">Overall win rate · 188 entries · Jan 2023 – Apr 2026</div>
       <div style="font-size:10px;color:#475569;margin-top:2px;">Entry rule: price within 3% above MA50 · above MA200</div>
     </div>`;
-
+ 
     // Tier legend
     html += `<div class="card" style="margin-bottom:10px">
       <div class="card-lbl">TIER SYSTEM — CONVICTION BY HISTORICAL WIN RATE</div>
@@ -1588,7 +1593,7 @@ function renderPlaybook() {
           <span style="font-size:9px;color:#475569">${v.desc}</span>
         </div>`).join("")}
     </div>`;
-
+ 
     // Per-ticker backtest card
     const ranked=[...Object.entries(HIST)].sort((a,b)=>b[1].wr90-a[1].wr90);
     ranked.forEach(([ticker,hist])=>{
@@ -1621,7 +1626,7 @@ function renderPlaybook() {
       </div>`;
     });
   }
-
+ 
   if(t==="systems") {
     html += `<div class="card" style="background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.3);text-align:center;margin-bottom:12px">
       <div style="font-size:9px;color:#22c55e;letter-spacing:2px;margin-bottom:4px">TOTAL MONTHLY COST</div>
@@ -1644,7 +1649,7 @@ function renderPlaybook() {
       </div>`;
     });
   }
-
+ 
   if(t==="roadmap") {
     [
       {stage:"NOW — Systematic Retail PM",status:"ACTIVE",c:"#22c55e",items:["11-holding diversified portfolio with role per asset","Rule-based DCA entries at S1/MA50 levels","6 automated daily systems running free","3-year backtest validated at 72.3% win rate","Historical tier system — ELITE/SOLID/MODERATE/WEAK","Unified PWA on phone home screen — this app"]},
@@ -1663,11 +1668,11 @@ function renderPlaybook() {
       <div style="font-size:10px;color:#94a3b8;line-height:1.8;font-style:italic">"Most people buy randomly and react emotionally.<br>You operate with rules, levels, and systems.<br><strong style="color:#c9a84c">That is your edge.</strong>"</div>
     </div>`;
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
-
+ 
+ 
 // ═══════════════════════════════════════════════════════════
 // HOLDINGS EDITOR
 // ═══════════════════════════════════════════════════════════
@@ -1675,10 +1680,10 @@ function renderEditor() {
   renderInnerTabs([{id:"edit",label:"✏️ Edit Holdings"},{id:"custom",label:"➕ Add Stock"},{id:"log",label:"📋 Change Log"}]);
   const t = S.tab;
   let html = "";
-
+ 
   if(t==="edit") {
     const totalValue = S.holdings.reduce((s,h)=>s+h.price*h.sh, 0);
-
+ 
     html += `<div class="card" style="background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.3);margin-bottom:10px;">
       <div style="font-size:9px;color:#c9a84c;letter-spacing:2px;margin-bottom:4px;">⚙️ HOLDINGS EDITOR</div>
       <div style="font-size:10px;color:#94a3b8;line-height:1.6;">
@@ -1686,14 +1691,14 @@ function renderEditor() {
         Changes save instantly to your phone and update all calculations — alerts, P&L, rebalance drift — everywhere.
       </div>
     </div>`;
-
+ 
     // Summary
     const editedCount = Object.keys(S.holdingsOverride).length;
     html += `<div class="g2" style="margin-bottom:10px;">
       <div class="stat"><div class="stat-v" style="color:#fff;">$${totalValue.toFixed(2)}</div><div class="stat-l">TOTAL VALUE</div></div>
       <div class="stat"><div class="stat-v" style="color:${editedCount>0?"#22c55e":"#475569"};">${editedCount}</div><div class="stat-l">EDITED HOLDINGS</div></div>
     </div>`;
-
+ 
     // Each holding
     S.holdings.forEach(h => {
       const btc = h.t === "BTC";
@@ -1701,7 +1706,7 @@ function renderEditor() {
       const ov = S.holdingsOverride?.[h.t] || {};
       const pctAvg = ((h.price - h.avg) / h.avg) * 100;
       const value = h.price * h.sh;
-
+ 
       html += `<div class="card card-accent" style="border-left-color:${h.color};margin-bottom:8px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:${isEditing?"10px":"0"}">
           <div>
@@ -1717,7 +1722,7 @@ function renderEditor() {
             ${isEditing?"Cancel":"Edit"}
           </button>
         </div>
-
+ 
         ${!isEditing ? `
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:6px;">
           <div class="detail-cell"><div class="detail-lbl">Avg Cost</div><div class="detail-val">${fmt(h.avg,btc)}</div></div>
@@ -1728,11 +1733,11 @@ function renderEditor() {
         ` : `
         <div style="background:#0a0d12;border-radius:6px;padding:12px;border:1px solid #1e2a3a;">
           <div style="font-size:9px;color:#c9a84c;letter-spacing:1px;margin-bottom:10px;">UPDATE ${h.t} POSITION</div>
-
+ 
           <div style="font-size:9px;color:#475569;margin-bottom:8px;line-height:1.6;">
             Current: ${fmt(h.avg,btc)} avg · ${btc?h.sh.toFixed(5):h.sh.toFixed(4)} shares · $${value.toFixed(2)} value
           </div>
-
+ 
           <div class="g2" style="margin-bottom:8px;">
             <div class="field">
               <div class="field-lbl">NEW AVG COST ($)</div>
@@ -1745,13 +1750,13 @@ function renderEditor() {
                 style="font-size:12px;" placeholder="${h.sh}">
             </div>
           </div>
-
+ 
           <div style="background:#070a0f;border-radius:5px;padding:8px;margin-bottom:10px;font-size:9px;color:#94a3b8;line-height:1.8;">
             💡 <strong style="color:#c9a84c;">How to calculate new avg cost:</strong><br>
             (Old shares × Old avg + New shares × Buy price) ÷ Total shares<br>
             <span style="color:#475569;">Example: (${btc?h.sh.toFixed(5):h.sh.toFixed(4)} × ${fmt(h.avg,btc)} + new shares × buy price) ÷ new total</span>
           </div>
-
+ 
           <div style="display:flex;gap:8px;">
             <button onclick="saveHoldingEdit('${h.t}')"
               style="flex:2;padding:10px;font-size:11px;font-weight:bold;cursor:pointer;font-family:inherit;
@@ -1768,7 +1773,7 @@ function renderEditor() {
         `}
       </div>`;
     });
-
+ 
     if(Object.keys(S.holdingsOverride).length > 0) {
       html += `<button onclick="resetAllHoldings()"
         style="width:100%;padding:11px;font-size:10px;cursor:pointer;font-family:inherit;
@@ -1777,13 +1782,13 @@ function renderEditor() {
       </button>`;
     }
   }
-
+ 
   if(t==="custom") {
     html += `<div class="card" style="background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.3);margin-bottom:10px;">
       <div style="font-size:9px;color:#8b5cf6;letter-spacing:2px;margin-bottom:4px;">➕ ADD NEW STOCK</div>
       <div style="font-size:10px;color:#94a3b8;line-height:1.6;">Track any stock, ETF, or crypto outside your core 11 holdings. Full P&L tracking with live prices.</div>
     </div>`;
-
+ 
     // Add new stock form
     const nc = S.newCustom;
     html += `<div class="card" style="margin-bottom:12px;">
@@ -1829,7 +1834,7 @@ function renderEditor() {
         ➕ ADD TO PORTFOLIO
       </button>
     </div>`;
-
+ 
     // Show existing custom holdings
     if(S.customHoldings&&S.customHoldings.length>0) {
       html += `<div class="card-lbl">YOUR CUSTOM HOLDINGS (${S.customHoldings.length})</div>`;
@@ -1841,7 +1846,7 @@ function renderEditor() {
         const pct = ((currentPrice - parseFloat(ch.avg)) / parseFloat(ch.avg)) * 100;
         const value = currentPrice * parseFloat(ch.shares);
         const isEditing = S.editingCustom === idx;
-
+ 
         html += `<div class="card card-accent" style="border-left-color:#8b5cf6;margin-bottom:8px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <div>
@@ -1869,16 +1874,17 @@ function renderEditor() {
             <div class="field"><div class="field-lbl">NEW SHARES</div><input type="number" id="ec_sh_${idx}" value="${ch.shares}" style="font-size:11px;"></div>
           </div>
           <div style="display:flex;gap:6px;margin-top:6px;">
-            <button onclick="updateCustomHolding(${idx})" style="flex:2;padding:8px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(34,197,94,0.2);border:1px solid #22c55e;color:#22c55e;border-radius:5px;">Save</button>
-            <button onclick="deleteCustomHolding(${idx})" style="flex:1;padding:8px;font-size:10px;cursor:pointer;font-family:inherit;background:transparent;border:1px solid #ef4444;color:#ef4444;border-radius:5px;">Delete</button>
-          </div>`:""}
+            <button onclick="updateCustomHolding(${idx})" style="flex:2;padding:8px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(34,197,94,0.2);border:1px solid #22c55e;color:#22c55e;border-radius:5px;">✓ Save</button>
+            <button onclick="deleteCustomHolding(${idx})" style="flex:1;padding:8px;font-size:10px;cursor:pointer;font-family:inherit;background:rgba(239,68,68,0.15);border:1px solid #ef4444;color:#ef4444;border-radius:5px;">🗑 Delete</button>
+          </div>`
+          :`<button onclick="deleteCustomHolding(${idx})" style="width:100%;margin-top:6px;padding:7px;font-size:9px;cursor:pointer;font-family:inherit;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:5px;">🗑 Remove ${ch.ticker} from portfolio</button>`}
         </div>`;
       });
     } else {
       html += `<div class="empty" style="margin-top:4px;">No custom holdings yet. Add your first stock above.</div>`;
     }
   }
-
+ 
   if(t==="log") {
     html += `<div class="card-lbl">HOLDINGS CHANGE LOG</div>`;
     const overrides = S.holdingsOverride || {};
@@ -1921,10 +1927,10 @@ function renderEditor() {
       });
     }
   }
-
+ 
   document.getElementById("content").innerHTML = html;
 }
-
+ 
 function saveHoldingEdit(ticker) {
   const avgEl = document.getElementById("edit_avg_"+ticker);
   const shEl  = document.getElementById("edit_sh_"+ticker);
@@ -1948,7 +1954,7 @@ function saveHoldingEdit(ticker) {
   S.score = calcScore(S.holdings);
   render();
 }
-
+ 
 function resetHolding(ticker) {
   if(!confirm("Reset "+ticker+" to original values?")) return;
   if(S.holdingsOverride) delete S.holdingsOverride[ticker];
@@ -1957,7 +1963,7 @@ function resetHolding(ticker) {
   S.score = calcScore(S.holdings);
   render();
 }
-
+ 
 function logTrimDecision(ticker, pct, shares, proceeds) {
   const entry = {
     id: Date.now(),
@@ -1972,7 +1978,7 @@ function logTrimDecision(ticker, pct, shares, proceeds) {
   alert("Trim decision logged for " + ticker + "\n\nRemember to:\n1. Execute the trim in your broker\n2. Update your shares in Holdings Editor\n3. Log proceeds as new entry in Tracker");
   render();
 }
-
+ 
 function resetAllHoldings() {
   if(!confirm("Reset ALL holdings to original hardcoded values?")) return;
   S.holdingsOverride = {};
@@ -1981,7 +1987,396 @@ function resetAllHoldings() {
   S.score = calcScore(S.holdings);
   render();
 }
-
+ 
+ 
+// ═══════════════════════════════════════════════════════════
+// MACRO INTELLIGENCE ENGINE
+// ═══════════════════════════════════════════════════════════
+ 
+function calcMacroSignals(H) {
+  const m = S.liveData?.macro || {};
+  const vix     = m.VIX?.current   || 20;
+  const oil     = m.Oil?.current   || 85;
+  const gold    = m.Gold?.current  || 3000;
+  const y10     = m['10Y Yield']?.current || 4.3;
+  const oilChg  = m.Oil?.week_chg  || 0;
+  const yldChg  = m['10Y Yield']?.week_chg || 0;
+  const C = H.filter(h=>!h.custom);
+  const spyD  = C[0] ? ((C[0].price-C[0].avg)/C[0].avg)*100 : 0;
+  const qqqD  = C[1] ? ((C[1].price-C[1].avg)/C[1].avg)*100 : 0;
+  const xlvUp = C[7] && C[7].price>C[7].avg;
+  const iauUp = C[8] && C[8].price>C[8].avg;
+ 
+  // ── Recession Risk ──────────────────────────────────────
+  let rr = 0;
+  if(vix>30)rr+=25; else if(vix>25)rr+=15; else if(vix>20)rr+=5;
+  if(spyD<-10)rr+=25; else if(spyD<-5)rr+=15; else if(spyD<-2)rr+=5;
+  if(y10>5)rr+=15; else if(y10>4.5)rr+=5;
+  if(xlvUp)rr+=10; if(iauUp)rr+=10;
+  if(oilChg>15)rr+=10;
+  rr=Math.min(rr,95);
+ 
+  // ── Stagflation Risk ────────────────────────────────────
+  let sf = 0;
+  if(oil>110)sf+=35; else if(oil>95)sf+=20; else if(oil>85)sf+=10;
+  if(y10>4.8)sf+=15; else if(y10>4.3)sf+=8;
+  if(oilChg>10)sf+=20; else if(oilChg>5)sf+=10;
+  if(spyD<0&&oil>90)sf+=15;
+  sf=Math.min(sf,95);
+ 
+  // ── Crash Probability ───────────────────────────────────
+  let cp=0;
+  if(spyD<-5)cp+=25; else if(spyD<-2)cp+=10;
+  if(qqqD<-8)cp+=20; else if(qqqD<-4)cp+=10;
+  if(xlvUp)cp+=15; if(iauUp)cp+=15;
+  if(vix>25)cp+=15; if(C[0]&&C[0].price<C[0].s1)cp+=15;
+  cp=Math.min(cp,95);
+ 
+  // ── Fed Stance ──────────────────────────────────────────
+  let fedStance="NEUTRAL", fedColor="#c9a84c";
+  if(yldChg>8){fedStance="VERY HAWKISH";fedColor="#ef4444";}
+  else if(yldChg>3){fedStance="HAWKISH";fedColor="#f97316";}
+  else if(yldChg<-8){fedStance="VERY DOVISH";fedColor="#22c55e";}
+  else if(yldChg<-3){fedStance="DOVISH";fedColor="#22c55e";}
+ 
+  // ── Market Phase ────────────────────────────────────────
+  const score=calcScore(H);
+  let phase="MARKUP",phaseC="#22c55e",phaseDesc="";
+  if(score>=70&&spyD>0){
+    phase="MARKUP";phaseC="#22c55e";
+    phaseDesc="Institutions accumulating. Growth leading. Full DCA at S1 zones.";
+  } else if(score>=55){
+    phase="ACCUMULATION";phaseC="#3b82f6";
+    phaseDesc="Smart money building positions. Selective DCA on weakness only.";
+  } else if(score>=35){
+    phase="DISTRIBUTION";phaseC="#f97316";
+    phaseDesc="Risk-off signals increasing. Rotate from growth to defensive.";
+  } else {
+    phase="MARKDOWN";phaseC="#ef4444";
+    phaseDesc="Market in confirmed downtrend. Capital preservation mode.";
+  }
+ 
+  // ── Geopolitical Risk ───────────────────────────────────
+  const geoRisk = oil>100?"HIGH":oil>85?"ELEVATED":"MODERATE";
+  const geoColor= oil>100?"#ef4444":oil>85?"#f97316":"#c9a84c";
+ 
+  return {rr,sf,cp,fedStance,fedColor,phase,phaseC,phaseDesc,
+    geoRisk,geoColor,vix,oil,gold,y10,oilChg,yldChg,score};
+}
+ 
+function getPhaseStrategy(signals, H) {
+  const {phase} = signals;
+  const strats = {
+    MARKUP: {
+      color:"#22c55e",
+      action:"SCALE IN AGGRESSIVELY",
+      buy:["XLI — ELITE 86.4% WR at MA50","QQQ — ELITE 81.8% WR at MA50","KBWB — ELITE 88.9% WR at MA50","URA — Nuclear AI power play","DTCR — Data center infrastructure"],
+      hold:["SPY","NVDA above MA50","SOXX above MA50","MU above MA50"],
+      trim:["Any position >20% gain from avg cost","AAPL if at R1 (WEAK tier)","BTC if at R1 (WEAK tier)"],
+      avoid:["Buying AAPL at MA50 (41.7% WR — skip)","Adding BTC at MA50 (36.8% WR — skip)","Chasing breakouts above R1"],
+      o30:"Continue systematic DCA. Score 70+ confirms aggressive posture. Watch RSI extremes as trim signals.",
+      o90:"Maintain growth exposure. Weekly DCA into URA/DTCR/COPX builds the AI infrastructure layer."
+    },
+    ACCUMULATION: {
+      color:"#3b82f6",
+      action:"SELECTIVE DCA ON WEAKNESS",
+      buy:["IAU — 100% historical WR at MA50","XLV — Defensive hedge during uncertainty","COPX — Copper supercycle structural play","XLU — AI power demand utility income"],
+      hold:["SPY","QQQ","XLI if near S1"],
+      trim:["Positions >20% gain","BTC (WEAK tier)","AAPL at MA50 (WEAK tier)"],
+      avoid:["Adding to volatile risk positions","Chasing green days","FOMO on breakouts"],
+      o30:"Expect elevated volatility. DCA systematically on weakness into ELITE positions only.",
+      o90:"This phase creates the best long-term entry points. Be patient and systematic."
+    },
+    DISTRIBUTION: {
+      color:"#f97316",
+      action:"DEFENSIVE ROTATION — REDUCE RISK",
+      buy:["IAU macro hedge (100% WR)","XLV defensive healthcare","XLU utility income + AI power"],
+      hold:["SPY only if above MA50","XLI only at S1 zone"],
+      trim:["NVDA >20% gain","MU >20% gain","SOXX >25% gain","BTC WEAK tier","AAPL WEAK tier"],
+      avoid:["Adding new growth positions","Ignoring trim triggers","Holding extended positions"],
+      o30:"Build defensive layer. Trim extended positions. Raise cash for next accumulation phase.",
+      o90:"Distribution often precedes correction. Being defensive now positions you to buy the dip."
+    },
+    MARKDOWN: {
+      color:"#ef4444",
+      action:"CAPITAL PRESERVATION — ZERO NEW ENTRIES",
+      buy:["NOTHING until score recovers above 45"],
+      hold:["IAU","XLV","Cash"],
+      trim:["All remaining extended positions immediately"],
+      avoid:["Buying anything","Trying to catch the falling knife","Adding to losing positions"],
+      o30:"No new entries. Score must recover above 45 before any DCA.",
+      o90:"Bottom forms when IAU/XLV stop outperforming and growth starts recovering. Watch S2 levels."
+    }
+  };
+  return strats[phase] || strats.ACCUMULATION;
+}
+ 
+function renderMacro() {
+  const tabs=[
+    {id:"news",     label:"📰 News"},
+    {id:"phase",    label:"📊 Phase"},
+    {id:"alerts",   label:"🚨 Alerts"},
+    {id:"strategy", label:"🎯 Strategy"},
+  ];
+  renderInnerTabs(tabs);
+  const t=S.tab;
+  const H=S.holdings;
+  const sig=calcMacroSignals(H);
+  const news=S.liveData?.news||{};
+  let html="";
+ 
+  // ── NEWS TAB ─────────────────────────────────────────────
+  if(t==="news") {
+    const headlines=news.headlines||[];
+    const lastUpd=news.updated?new Date(news.updated).toLocaleString("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"})+" PT":"Pending";
+ 
+    html += `<div class="card" style="background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.3);margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:9px;color:#c9a84c;letter-spacing:2px;">MARKET INTELLIGENCE</div>
+        <div style="font-size:9px;color:#475569;">Updated: ${lastUpd}</div>
+      </div>
+      <div style="font-size:10px;color:#94a3b8;">News and macro analysis updated daily at 6 AM PT. Links open full articles.</div>
+    </div>`;
+ 
+    // Macro snapshot
+    html += `<div class="card" style="margin-bottom:10px;">
+      <div class="card-lbl">TODAY'S MACRO SNAPSHOT</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        ${[
+          {l:"Market Phase",v:sig.phase,c:sig.phaseC},
+          {l:"Fed Stance",v:sig.fedStance,c:sig.fedColor},
+          {l:"Recession Risk",v:sig.rr+"%",c:sig.rr>=60?"#ef4444":sig.rr>=30?"#f97316":"#22c55e"},
+          {l:"Energy Crisis",v:sig.geoRisk,c:sig.geoColor},
+          {l:"VIX",v:sig.vix.toFixed(1),c:sig.vix>25?"#ef4444":sig.vix>20?"#c9a84c":"#22c55e"},
+          {l:"Oil WTI",v:"$"+sig.oil.toFixed(0),c:sig.oil>100?"#ef4444":sig.oil>85?"#c9a84c":"#22c55e"},
+        ].map(x=>`<div class="detail-cell"><div class="detail-lbl">${x.l}</div><div class="detail-val" style="color:${x.c};font-size:10px;">${x.v}</div></div>`).join("")}
+      </div>
+    </div>`;
+ 
+    if(headlines.length===0) {
+      html += `<div class="empty" style="margin-bottom:8px;">
+        📰 News updates daily at 6 AM PT via GitHub Actions.<br><br>
+        Deploy the <strong style="color:#c9a84c;">news_updater.py</strong> workflow to activate live news feed.<br><br>
+        Once deployed, headlines will appear here with source links, portfolio impact tags, and sentiment analysis.
+      </div>`;
+      // Show what the news feed will look like with example structure
+      html += `<div class="card" style="border-color:#334155;">
+        <div style="font-size:9px;color:#334155;letter-spacing:1px;margin-bottom:6px;">PREVIEW — HOW NEWS WILL APPEAR</div>
+        ${[
+          {cat:"FED",c:"#3b82f6",title:"Fed holds rates steady at May meeting",src:"Reuters",tickers:["SPY","QQQ"],sentiment:"NEUTRAL",impact:"MEDIUM"},
+          {cat:"ENERGY",c:"#f97316",title:"Hormuz shipping traffic recovering slowly",src:"Bloomberg",tickers:["XLE","IAU"],sentiment:"BULLISH",impact:"HIGH"},
+          {cat:"TECH",c:"#8b5cf6",title:"NVDA data center orders accelerate in Q2",src:"MarketWatch",tickers:["NVDA","SOXX"],sentiment:"BULLISH",impact:"HIGH"},
+        ].map(n=>`<div style="padding:8px 0;border-top:1px solid #1e2a3a;opacity:0.4;">
+          <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;">
+            <span style="font-size:8px;color:${n.c};background:${n.c}20;padding:2px 6px;border-radius:3px;">${n.cat}</span>
+            <span style="font-size:8px;color:#475569;">${n.src}</span>
+            <span style="font-size:8px;color:${n.sentiment==="BULLISH"?"#22c55e":"#c9a84c"};margin-left:auto;">${n.sentiment}</span>
+          </div>
+          <div style="font-size:11px;color:#475569;margin-bottom:3px;">${n.title}</div>
+          <div style="display:flex;gap:4px;">${n.tickers.map(tk=>`<span style="font-size:8px;color:#c9a84c;background:rgba(201,168,76,0.1);padding:1px 5px;border-radius:2px;">${tk}</span>`).join("")}</div>
+        </div>`).join("")}
+      </div>`;
+    } else {
+      const catColors={FED:"#3b82f6",MACRO:"#c9a84c",ENERGY:"#f97316",TECH:"#8b5cf6",GEO:"#ef4444",EARNINGS:"#22c55e",POLICY:"#6b7280"};
+      headlines.forEach(n=>{
+        const cc=catColors[n.category]||"#475569";
+        const sc2=n.sentiment==="BULLISH"?"#22c55e":n.sentiment==="BEARISH"?"#ef4444":"#c9a84c";
+        html += `<div class="card" style="border-left:3px solid ${cc};margin-bottom:8px;padding:11px 12px;">
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:6px;">
+            <span style="font-size:8px;color:${cc};background:${cc}20;padding:2px 7px;border-radius:3px;font-weight:bold;">${n.category||"MARKET"}</span>
+            <span style="font-size:8px;color:#475569;">${n.source||""}</span>
+            <span style="font-size:8px;color:${n.impact==="HIGH"?"#ef4444":n.impact==="MEDIUM"?"#c9a84c":"#475569"};margin-left:auto;">${n.impact||""} IMPACT</span>
+            <span style="font-size:8px;color:${sc2};background:${sc2}15;padding:1px 5px;border-radius:2px;">${n.sentiment||""}</span>
+          </div>
+          ${n.url
+            ? `<a href="${n.url}" target="_blank" style="font-size:12px;font-weight:bold;color:#fff;text-decoration:none;line-height:1.4;display:block;margin-bottom:5px;">${n.title} ↗</a>`
+            : `<div style="font-size:12px;font-weight:bold;color:#fff;line-height:1.4;margin-bottom:5px;">${n.title}</div>`
+          }
+          ${n.summary?`<div style="font-size:10px;color:#64748b;line-height:1.4;margin-bottom:5px;">${n.summary}</div>`:""}
+          ${n.tickers&&n.tickers.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;">${n.tickers.map(tk=>`<span style="font-size:8px;color:#c9a84c;background:rgba(201,168,76,0.1);padding:2px 6px;border-radius:3px;">${tk}</span>`).join("")}</div>`:""}
+        </div>`;
+      });
+      if(news.key_risks&&news.key_risks.length) {
+        html += `<div class="card" style="margin-top:4px;">
+          <div class="card-lbl">KEY RISKS THIS WEEK</div>
+          ${news.key_risks.map(r=>`<div style="display:flex;gap:8px;padding:5px 0;border-top:1px solid #1e2a3a;font-size:10px;color:#64748b;"><span style="color:#ef4444;flex-shrink:0">⚠</span>${r}</div>`).join("")}
+        </div>`;
+      }
+    }
+  }
+ 
+  // ── PHASE TAB ────────────────────────────────────────────
+  if(t==="phase") {
+    html += `<div class="card" style="background:${sig.phaseC}12;border-color:${sig.phaseC}40;text-align:center;margin-bottom:10px;padding:18px;">
+      <div style="font-size:9px;color:${sig.phaseC};letter-spacing:3px;margin-bottom:6px;">CURRENT MARKET CYCLE PHASE</div>
+      <div style="font-size:28px;font-weight:bold;color:${sig.phaseC};margin-bottom:6px;">${sig.phase}</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.5;">${sig.phaseDesc}</div>
+    </div>`;
+ 
+    // Phase definitions
+    html += `<div class="card" style="margin-bottom:10px;">
+      <div class="card-lbl">CYCLE PHASE REFERENCE</div>
+      ${[
+        {p:"MARKUP",c:"#22c55e",d:"Score ≥70 · SPY above avg · Growth leading · Full conviction DCA",cur:sig.phase==="MARKUP"},
+        {p:"ACCUMULATION",c:"#3b82f6",d:"Score 55-69 · Smart money building · Selective DCA on S1 only",cur:sig.phase==="ACCUMULATION"},
+        {p:"DISTRIBUTION",c:"#f97316",d:"Score 35-54 · Risk-off signals · Rotate to defensive",cur:sig.phase==="DISTRIBUTION"},
+        {p:"MARKDOWN",c:"#ef4444",d:"Score <35 · Confirmed downtrend · Zero new entries",cur:sig.phase==="MARKDOWN"},
+      ].map(ph=>`<div style="display:flex;gap:10px;padding:7px 0;border-top:1px solid #1e2a3a;align-items:flex-start;">
+        <div style="width:10px;height:10px;border-radius:50%;background:${ph.cur?ph.c:"#1e2a3a"};border:2px solid ${ph.c};flex-shrink:0;margin-top:3px;"></div>
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:bold;color:${ph.cur?ph.c:"#475569"};">${ph.p}${ph.cur?" ← NOW":""}</div>
+          <div style="font-size:9px;color:#334155;margin-top:1px;">${ph.d}</div>
+        </div>
+      </div>`).join("")}
+    </div>`;
+ 
+    // Phase signals that drove today's determination
+    const signals=[
+      {l:"Market Score",v:sig.score+"/100",c:sig.score>=70?"#22c55e":sig.score>=55?"#c9a84c":"#ef4444"},
+      {l:"SPY vs avg cost",v:((H.filter(h=>!h.custom)[0]?.price-673.15)/673.15*100).toFixed(1)+"%",c:((H.filter(h=>!h.custom)[0]?.price-673.15)/673.15)>0?"#22c55e":"#ef4444"},
+      {l:"Growth leadership",v:H.filter(h=>!h.custom)[1]?.price>H.filter(h=>!h.custom)[1]?.s1&&H.filter(h=>!h.custom)[2]?.price>H.filter(h=>!h.custom)[2]?.s1?"QQQ+SOXX above S1":"Growth lagging",c:H.filter(h=>!h.custom)[1]?.price>H.filter(h=>!h.custom)[1]?.s1?"#22c55e":"#ef4444"},
+      {l:"Defensive signal",v:H.filter(h=>!h.custom)[7]?.price>H.filter(h=>!h.custom)[7]?.avg?"XLV outperforming (caution)":"XLV lagging (healthy)",c:H.filter(h=>!h.custom)[7]?.price>H.filter(h=>!h.custom)[7]?.avg?"#f97316":"#22c55e"},
+      {l:"VIX level",v:sig.vix.toFixed(1),c:sig.vix>25?"#ef4444":sig.vix>20?"#c9a84c":"#22c55e"},
+    ];
+    html += `<div class="card"><div class="card-lbl">SIGNALS DRIVING CURRENT PHASE</div>
+      ${signals.map(s=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid #1e2a3a;">
+        <span style="font-size:11px;color:#94a3b8;">${s.l}</span>
+        <span style="font-size:11px;font-weight:bold;color:${s.c};">${s.v}</span>
+      </div>`).join("")}
+    </div>`;
+ 
+    // Phase change triggers to watch
+    const nextPhase=sig.phase==="MARKUP"?"DISTRIBUTION":sig.phase==="DISTRIBUTION"?"MARKDOWN":sig.phase==="MARKDOWN"?"ACCUMULATION":"MARKUP";
+    html += `<div class="card" style="border-color:#334155;">
+      <div class="card-lbl">WATCH FOR PHASE CHANGE → ${nextPhase}</div>
+      ${sig.phase==="MARKUP"?`<div style="font-size:10px;color:#64748b;line-height:1.8;">→ Score drops below 55<br>→ SPY breaks below MA50<br>→ VIX spikes above 25<br>→ XLV starts outperforming growth</div>`:""}
+      ${sig.phase==="ACCUMULATION"?`<div style="font-size:10px;color:#64748b;line-height:1.8;">→ Score recovers above 70 → MARKUP<br>→ Score drops below 35 → MARKDOWN<br>→ Watch SPY reclaim MA50 as MARKUP signal</div>`:""}
+      ${sig.phase==="DISTRIBUTION"?`<div style="font-size:10px;color:#64748b;line-height:1.8;">→ Score drops below 35 = MARKDOWN<br>→ Crash probability above 60% = danger<br>→ SPY breaks below S2 = serious warning</div>`:""}
+      ${sig.phase==="MARKDOWN"?`<div style="font-size:10px;color:#64748b;line-height:1.8;">→ Score recovers above 45 = start watching<br>→ IAU/XLV stop outperforming = early signal<br>→ Score above 55 = ACCUMULATION confirmed</div>`:""}
+    </div>`;
+  }
+ 
+  // ── ALERTS TAB ───────────────────────────────────────────
+  if(t==="alerts") {
+    // Big alert cards with bars
+    const indicators=[
+      {l:"Recession Risk",v:sig.rr,c:sig.rr>=60?"#ef4444":sig.rr>=30?"#f97316":"#22c55e",
+        status:sig.rr>=60?"HIGH RISK":sig.rr>=30?"ELEVATED":"MINIMAL",
+        desc:sig.rr>=60?"Multiple recession signals active. Increase hedges immediately.":sig.rr>=30?"Some recession indicators present. Monitor closely.":"Economy healthy. Risk signals minimal."},
+      {l:"Stagflation Risk",v:sig.sf,c:sig.sf>=60?"#ef4444":sig.sf>=30?"#f97316":"#22c55e",
+        status:sig.sf>=60?"HIGH":sig.sf>=30?"ELEVATED":"LOW",
+        desc:sig.sf>=60?"High oil + rising yields + slowing growth = stagflation conditions. Favor IAU and XLV.":sig.sf>=30?"Oil elevated. Watch yield direction. Hold energy hedge.":"Inflation and growth in balance."},
+      {l:"Crash Probability",v:sig.cp,c:sig.cp>=60?"#ef4444":sig.cp>=30?"#f97316":"#22c55e",
+        status:sig.cp>=60?"DANGER":sig.cp>=30?"ELEVATED":"MINIMAL",
+        desc:sig.cp>=60?"Crash signals elevated. Capital preservation mode. No new entries.":sig.cp>=30?"Some stress signals. Be selective. Size down.":"Conditions stable. Normal DCA appropriate."},
+    ];
+ 
+    indicators.forEach(ind=>{
+      html += `<div class="card card-accent" style="border-left-color:${ind.c};margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:12px;font-weight:bold;color:${ind.c};">${ind.l}</span>
+          <div style="text-align:right;"><div style="font-size:16px;font-weight:bold;color:${ind.c};">${ind.v}%</div><div style="font-size:9px;color:${ind.c};">${ind.status}</div></div>
+        </div>
+        <div class="bar-wrap" style="height:6px;margin-bottom:8px;"><div class="bar-fill" style="width:${ind.v}%;background:${ind.c};"></div></div>
+        <div style="font-size:10px;color:#64748b;line-height:1.4;">${ind.desc}</div>
+      </div>`;
+    });
+ 
+    // Fed/Rates card
+    html += `<div class="card card-accent" style="border-left-color:${sig.fedColor};">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+        <span style="font-size:12px;font-weight:bold;color:${sig.fedColor};">🏦 Fed / Rates Impact</span>
+        <span style="font-size:11px;color:${sig.fedColor};">${sig.fedStance}</span>
+      </div>
+      <div style="font-size:10px;color:#64748b;line-height:1.6;">
+        10Y Yield: <strong style="color:#fff;">${sig.y10.toFixed(2)}%</strong> (${sig.yldChg>=0?"+":""}${sig.yldChg.toFixed(1)}% WoW)<br>
+        ${sig.fedStance.includes("HAWKISH")?"→ Rising yields pressure QQQ/NVDA/SOXX valuations. Growth stocks face headwind.":
+          sig.fedStance.includes("DOVISH")?"→ Falling yields support growth stocks. Bullish for QQQ/NVDA/SOXX.":
+          "→ Stable yields. Neutral for portfolio. No immediate rate-driven action needed."}
+      </div>
+    </div>`;
+ 
+    // Energy/Geopolitical card
+    html += `<div class="card card-accent" style="border-left-color:${sig.geoColor};">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+        <span style="font-size:12px;font-weight:bold;color:${sig.geoColor};">🛢 Energy / Geopolitical</span>
+        <span style="font-size:11px;color:${sig.geoColor};">${sig.geoRisk}</span>
+      </div>
+      <div style="font-size:10px;color:#64748b;line-height:1.6;">
+        Oil WTI: <strong style="color:#fff;">$${sig.oil.toFixed(0)}</strong> (${sig.oilChg>=0?"+":""}${sig.oilChg.toFixed(1)}% WoW)<br>
+        ${sig.oil>100?"⚠️ Oil above $100 — inflation pressure active. Hormuz disruption ongoing. IAU and XLE are your hedges.":
+          sig.oil>85?"⚠️ Oil elevated. Monitor for further spike. XLE custom position serving hedge role.":
+          "✓ Oil at manageable levels. Inflation from energy not a major concern."}
+      </div>
+    </div>`;
+ 
+    // Trump/Policy card
+    html += `<div class="card" style="border-left:3px solid #6b7280;">
+      <div style="font-size:12px;font-weight:bold;color:#94a3b8;margin-bottom:5px;">🏛 Policy / Regulatory Watch</div>
+      <div style="font-size:10px;color:#64748b;line-height:1.7;">
+        ${sig.fedStance.includes("HAWKISH")?"→ <strong style='color:#fff;'>Tariff impact</strong>: Elevated oil + tariff inflation = Fed constrained. Watch for Treasury volatility.<br>":""}
+        → <strong style="color:#fff;">AI Policy</strong>: Trump AI Action Plan accelerating data center approvals. Bullish DTCR, GRID, XLU.<br>
+        → <strong style="color:#fff;">Energy Policy</strong>: Domestic production push. XLE benefits from deregulation.<br>
+        → <strong style="color:#fff;">Nuclear</strong>: Trump directing Big Tech to build their own power plants. URA/NLR direct beneficiary.
+      </div>
+    </div>`;
+  }
+ 
+  // ── STRATEGY TAB ─────────────────────────────────────────
+  if(t==="strategy") {
+    const strat=getPhaseStrategy(sig,H);
+ 
+    html += `<div class="card" style="background:${strat.color}10;border-color:${strat.color}40;margin-bottom:10px;text-align:center;padding:16px;">
+      <div style="font-size:9px;color:${strat.color};letter-spacing:2px;margin-bottom:4px;">PORTFOLIO STRATEGY — ${sig.phase}</div>
+      <div style="font-size:15px;font-weight:bold;color:${strat.color};">${strat.action}</div>
+    </div>`;
+ 
+    // Buy / Hold / Trim / Avoid
+    [
+      {label:"✅ BUY NOW",items:strat.buy,c:"#22c55e"},
+      {label:"⏳ HOLD",items:strat.hold,c:"#c9a84c"},
+      {label:"✂️ TRIM",items:strat.trim,c:"#3b82f6"},
+      {label:"🚫 AVOID",items:strat.avoid,c:"#ef4444"},
+    ].forEach(section=>{
+      html += `<div class="card card-accent" style="border-left-color:${section.c};margin-bottom:8px;">
+        <div style="font-size:10px;font-weight:bold;color:${section.c};margin-bottom:6px;">${section.label}</div>
+        ${section.items.map(item=>`<div style="display:flex;gap:8px;padding:4px 0;border-top:1px solid #1e2a3a;font-size:10px;color:#64748b;"><span style="color:${section.c};flex-shrink:0;">→</span>${item}</div>`).join("")}
+      </div>`;
+    });
+ 
+    // Outlook
+    html += `<div class="card" style="margin-top:4px;">
+      <div class="card-lbl">OUTLOOK</div>
+      <div style="padding:8px 0;border-bottom:1px solid #1e2a3a;">
+        <div style="font-size:9px;color:#c9a84c;margin-bottom:3px;">30-DAY VIEW</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.5;">${strat.o30}</div>
+      </div>
+      <div style="padding:8px 0;">
+        <div style="font-size:9px;color:#3b82f6;margin-bottom:3px;">90-DAY VIEW</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.5;">${strat.o90}</div>
+      </div>
+    </div>`;
+ 
+    // Weekly DCA reminder
+    html += `<div class="card" style="background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.3);margin-top:4px;">
+      <div class="card-lbl" style="color:#8b5cf6;">💜 WEEKLY $25-50 DCA ROTATION</div>
+      ${[
+        {w:"Week 1",t:"URA",p:"$56.16",r:"Nuclear AI power · 120% 1yr return"},
+        {w:"Week 2",t:"DTCR",p:"$22.56",r:"Data center infra · 28% YTD"},
+        {w:"Week 3",t:"COPX",p:"~$79-82",r:"Copper supercycle · near MA50"},
+        {w:"Week 4",t:"XLU",p:"~$48",r:"AI power utility · 0.08% expense"},
+      ].map(row=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid #1e2a3a;font-size:10px;">
+        <span style="color:#475569;">${row.w}</span>
+        <span style="color:#8b5cf6;font-weight:bold;">${row.t}</span>
+        <span style="color:#fff;">${row.p}</span>
+        <span style="color:#334155;font-size:9px;">${row.r}</span>
+      </div>`).join("")}
+    </div>`;
+  }
+ 
+  document.getElementById("content").innerHTML = html;
+}
+ 
 // ═══════════════════════════════════════════════════════════
 // CUSTOM HOLDINGS FUNCTIONS
 // ═══════════════════════════════════════════════════════════
@@ -2008,7 +2403,7 @@ function addCustomHolding() {
   S.editingCustom=null;
   render();
 }
-
+ 
 function updateCustomHolding(idx) {
   const avgEl=document.getElementById("ec_avg_"+idx);
   const shEl =document.getElementById("ec_sh_"+idx);
@@ -2022,7 +2417,7 @@ function updateCustomHolding(idx) {
   S.editingCustom=null;
   render();
 }
-
+ 
 function deleteCustomHolding(idx) {
   const ticker=S.customHoldings[idx]?.ticker||"this holding";
   if(!confirm("Delete "+ticker+" from custom holdings?"))return;
@@ -2031,7 +2426,7 @@ function deleteCustomHolding(idx) {
   S.editingCustom=null;
   render();
 }
-
+ 
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
@@ -2041,7 +2436,7 @@ S.score = calcScore(S.holdings);
 render();
 fetchData();
 setInterval(fetchData, 15 * 60 * 1000);
-
+ 
 if('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
