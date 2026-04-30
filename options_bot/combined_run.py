@@ -913,7 +913,8 @@ def main():
     print(f"Grade:  {day_grade} ({day_score}/100)")
 
     print("\n=== PHASE 3: SCANNER ===")
-    token  = get_session_token()
+    token      = get_session_token()
+    live_token = get_live_session_token()
     setups = scan_all_tickers(live_token, regime, data["vix_price"], event_color)
     print(f"Valid setups: {len(setups)}")
 
