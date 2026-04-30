@@ -555,7 +555,7 @@ def build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color):
         return None
     strikes   = exp_group.get("strikes", [])
     long_leg  = find_strike_by_delta(strikes, 0.40, 0.65, "C")
-    short_leg = find_strike_by_delta(strikes, 0.10, 0.45, "C")
+    short_leg = find_strike_by_delta(strikes, 0.05, 0.55, "C")
     if not long_leg or not short_leg:
         return None
     if short_leg["strike"] <= long_leg["strike"]:
@@ -595,8 +595,10 @@ def build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color):
         return None
     strikes   = exp_group.get("strikes", [])
     short_leg = find_strike_by_delta(strikes, 0.15, 0.30, "P")
-    long_leg  = find_strike_by_delta(strikes, 0.01, 0.18, "P")
-    if not long_leg or not short_leg:
+    if not short_leg:
+        return None
+    long_leg  = find_strike_by_delta(strikes, 0.001, 0.22, "P")
+    if not long_leg:
         return None
     if long_leg["strike"] >= short_leg["strike"]:
         return None
@@ -644,13 +646,13 @@ def scan_all_tickers(regime, vix, event_color):
                 s["ivr_bias"] = ivr_bias
                 setups.append(s)
             else:
-                exp_group, dte = find_best_expiration(chain, 35, 75)
+                exp_group, dte = find_best_expiration(chain, 25, 75)
                 if not exp_group:
-                    print(f"    {ticker} CALL: no expiration in 35-75 DTE")
+                    print(f"    {ticker} CALL: no expiration in 25-75 DTE")
                 else:
                     strikes   = exp_group.get("strikes", [])
                     long_leg  = find_strike_by_delta(strikes, 0.40, 0.65, "C")
-                    short_leg = find_strike_by_delta(strikes, 0.20, 0.35, "C")
+                    short_leg = find_strike_by_delta(strikes, 0.05, 0.55, "C")
                     print(f"    {ticker} CALL: exp={exp_group.get('expiration-date')} dte={dte}")
                     print(f"    {ticker} CALL: long_leg={long_leg}")
                     print(f"    {ticker} CALL: short_leg={short_leg}")
@@ -665,7 +667,7 @@ def scan_all_tickers(regime, vix, event_color):
             else:
                 strikes   = exp_group.get("strikes", [])
                 short_leg = find_strike_by_delta(strikes, 0.15, 0.30, "P")
-                long_leg  = find_strike_by_delta(strikes, 0.05, 0.14, "P")
+                long_leg  = find_strike_by_delta(strikes, 0.001, 0.22, "P")
                 print(f"    {ticker} PUT: exp={exp_group.get('expiration-date')} dte={dte}")
                 print(f"    {ticker} PUT: short_leg={short_leg}")
                 print(f"    {ticker} PUT: long_leg={long_leg}")
