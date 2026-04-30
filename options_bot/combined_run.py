@@ -730,7 +730,13 @@ def place_spread_order(token, setup):
             order_id = r.json().get("data",{}).get("order",{}).get("id","N/A")
             return True, f"Order placed - ID: {order_id}"
         else:
-            return False, f"Order failed: {r.status_code} - {r.text[:300]}"
+            resp_text = r.text[:300]
+            if "not supported" in resp_text.lower():
+                return False, f"Sandbox limitation - {setup['ticker']} options not available in paper environment. Log manually."
+            elif "invalid_symbol" in resp_text.lower():
+                return False, f"Symbol format error - {long_sym} / {short_sym}. Check ticker on sandbox."
+            else:
+                return False, f"Order failed: {r.status_code} - {resp_text}"
     except Exception as e:
         return False, f"Order exception: {e}"
  
