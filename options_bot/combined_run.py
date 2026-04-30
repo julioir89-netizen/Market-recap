@@ -451,7 +451,7 @@ def greek_filter(delta, gamma, theta, dte, stype):
         if gamma > 0.05:
             flags.append(f"Gamma {gamma}")
             passed = False
-        if theta < 0.05:
+        if theta > -0.01:
             flags.append(f"Theta {theta}")
             passed = False
         if not (25 <= dte <= 50):
@@ -555,7 +555,7 @@ def build_bull_call_spread(ticker, chain, regime, ivr, vix, event_color):
         return None
     strikes   = exp_group.get("strikes", [])
     long_leg  = find_strike_by_delta(strikes, 0.40, 0.65, "C")
-    short_leg = find_strike_by_delta(strikes, 0.15, 0.40, "C")
+    short_leg = find_strike_by_delta(strikes, 0.10, 0.45, "C")
     if not long_leg or not short_leg:
         return None
     if short_leg["strike"] <= long_leg["strike"]:
@@ -595,7 +595,7 @@ def build_put_credit_spread(ticker, chain, regime, ivr, vix, event_color):
         return None
     strikes   = exp_group.get("strikes", [])
     short_leg = find_strike_by_delta(strikes, 0.15, 0.30, "P")
-    long_leg  = find_strike_by_delta(strikes, 0.03, 0.14, "P")
+    long_leg  = find_strike_by_delta(strikes, 0.01, 0.18, "P")
     if not long_leg or not short_leg:
         return None
     if long_leg["strike"] >= short_leg["strike"]:
