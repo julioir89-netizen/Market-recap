@@ -27,7 +27,8 @@ LOG_FILE  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trade_log.
 LOG_HEADERS = [
     "date","ticker","strategy","strikes","expiration","dte",
     "delta","gamma","theta","ivr","grade","score",
-    "max_risk","max_gain","regime","status","pl_result","notes"
+    "max_risk","max_gain","regime","status","pl_result",
+    "sandbox_executed","hypothetical_result","notes"
 ]
  
 TELEGRAM_API = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
@@ -764,24 +765,26 @@ def log_new_setups(setups, regime):
         key = (today_str, s["ticker"], s["strategy"])
         if key not in existing:
             trades.append({
-                "date":       today_str,
-                "ticker":     s["ticker"],
-                "strategy":   s["strategy"],
-                "strikes":    f"{s['long_strike']}/{s['short_strike']}",
-                "expiration": s["expiration"],
-                "dte":        s["dte"],
-                "delta":      s["delta"],
-                "gamma":      s["gamma"],
-                "theta":      s["theta"],
-                "ivr":        s.get("ivr","N/A"),
-                "grade":      s["grade"],
-                "score":      s["score"],
-                "max_risk":   s["max_risk"],
-                "max_gain":   s["max_gain"],
-                "regime":     regime,
-                "status":     "OPEN",
-                "pl_result":  "",
-                "notes":      "",
+                "date":                today_str,
+                "ticker":              s["ticker"],
+                "strategy":            s["strategy"],
+                "strikes":             f"{s['long_strike']}/{s['short_strike']}",
+                "expiration":          s["expiration"],
+                "dte":                 s["dte"],
+                "delta":               s["delta"],
+                "gamma":               s["gamma"],
+                "theta":               s["theta"],
+                "ivr":                 s.get("ivr","N/A"),
+                "grade":               s["grade"],
+                "score":               s["score"],
+                "max_risk":            s["max_risk"],
+                "max_gain":            s["max_gain"],
+                "regime":              regime,
+                "status":              "OPEN",
+                "pl_result":           "",
+                "sandbox_executed":    "NO",
+                "hypothetical_result": "PENDING",
+                "notes":               "",
             })
             existing.add(key)
     save_trade_log(trades)
@@ -836,6 +839,44 @@ def build_telegram_message(i, total, s, regime, regime_label, vix, event_label):
     )
  
  
+def build_manual_instructions(setup):
+    """Build step-by-step manual paper trade instructions."""
+    if setup["type"] == "debit":
+        action = "BUY TO OPEN (Debit Spread)"
+        step3  = f"Buy 1x {setup['long_strike']} Call"
+        step4  = f"Sell 1x {setup['short_strike']} Call"
+        price  = f"Limit Debit: ${round(setup['max_risk']/100, 2)}"
+    else:
+        action = "SELL TO OPEN (Credit Spread)"
+        step3  = f"Sell 1x {setup['short_strike']} Put"
+        step4  = f"Buy 1x {setup['long_strike']} Put"
+        price  = f"Limit Credit: ${round(setup['max_gain']/100, 2)}"
+ 
+    return (
+        f"MANUAL PAPER TRADE INSTRUCTIONS\n"
+        f"{setup['ticker']} - {setup['strategy']}\n\n"
+        f"1. Open Tastytrade paper account\n"
+        f"   go to: trade.tastytrade.com\n"
+        f"   login with sandbox credentials\n\n"
+        f"2. Search ticker: <b>{setup['ticker']}</b>\n\n"
+        f"3. Click 'Trade' then 'Options'\n\n"
+        f"4. Select expiration: {setup['expiration']}\n"
+        f"   ({setup['dte']} DTE)\n\n"
+        f"5. Select strikes:\n"
+        f"   {step3}\n"
+        f"   {step4}\n\n"
+        f"6. Order type: {action}\n"
+        f"   {price}\n\n"
+        f"7. Quantity: 1 contract\n\n"
+        f"8. Review and confirm\n\n"
+        f"Max Risk: ${setup['max_risk']}\n"
+        f"Max Gain: ${setup['max_gain']}\n"
+        f"Grade: {setup['grade']} ({setup['score']}/100)\n\n"
+        f"This trade is being tracked in the\n"
+        f"hypothetical P/L log automatically."
+    )
+ 
+ 
 def process_setups_with_confirmation(token, setups, regime, regime_label, vix, event_label):
     executed = []
     skipped  = []
@@ -853,7 +894,7 @@ def process_setups_with_confirmation(token, setups, regime, regime_label, vix, e
         f"Regime {regime} - {regime_label}\n"
         f"VIX: {vix}  |  {event_label}\n\n"
         f"<b>{len(setups)} setup(s) found</b>\n"
-        f"Sending each one now...\n"
+        f"Sending top 5 now...\n"
         f"You have <b>5 minutes per setup</b> to decide."
     )
     time.sleep(2)
@@ -865,10 +906,12 @@ def process_setups_with_confirmation(token, setups, regime, regime_label, vix, e
         print(f"  Sending setup {i} to Telegram...")
         telegram_send_buttons(msg_text, i)
         response = wait_for_response(i, timeout_seconds=300)
+ 
         if response == "execute":
             print(f"  EXECUTE confirmed for {setup['ticker']}")
             telegram_send(f"Placing order for <b>{setup['ticker']}</b>...")
             success, result_msg = place_spread_order(token, setup)
+ 
             if success:
                 telegram_send(
                     f"ORDER EXECUTED\n"
@@ -876,17 +919,41 @@ def process_setups_with_confirmation(token, setups, regime, regime_label, vix, e
                     f"Strikes: {setup['long_strike']} / {setup['short_strike']}\n"
                     f"{result_msg}"
                 )
+                setup["sandbox_executed"] = "YES"
                 executed.append(setup)
+ 
+            elif "sandbox limitation" in result_msg.lower() or "not supported" in result_msg.lower():
+                telegram_send(
+                    f"PAPER LOGGED - SANDBOX LIMITATION\n"
+                    f"{setup['ticker']} options not supported in paper environment.\n\n"
+                    f"Trade logged for hypothetical tracking.\n"
+                    f"Sending manual instructions..."
+                )
+                time.sleep(1)
+                telegram_send(build_manual_instructions(setup))
+                setup["sandbox_executed"] = "MANUAL"
+                executed.append(setup)
+ 
             else:
-                telegram_send(f"ORDER FAILED\n{setup['ticker']}\n{result_msg}")
+                telegram_send(
+                    f"ORDER FAILED\n"
+                    f"{setup['ticker']}\n"
+                    f"{result_msg}\n\n"
+                    f"Trade still logged for hypothetical tracking."
+                )
+                setup["sandbox_executed"] = "FAILED"
+                executed.append(setup)
+ 
         elif response == "skip":
             print(f"  Skipped {setup['ticker']}")
-            telegram_send(f"Skipped <b>{setup['ticker']}</b>.")
+            telegram_send(f"Skipped <b>{setup['ticker']}</b>. Not logged.")
             skipped.append(setup)
+ 
         else:
             print(f"  Timeout on {setup['ticker']}")
             telegram_send(f"Timeout on {setup['ticker']} - skipped.")
             skipped.append(setup)
+ 
         time.sleep(2)
     return executed, skipped
  
@@ -894,12 +961,23 @@ def process_setups_with_confirmation(token, setups, regime, regime_label, vix, e
 def send_summary_email(regime, regime_label, data, event_label,
                        setups, executed, skipped, perf,
                        today_str, day_grade, day_score):
+ 
+    sandbox_exec  = [s for s in executed if s.get("sandbox_executed") == "YES"]
+    manual_logged = [s for s in executed if s.get("sandbox_executed") == "MANUAL"]
+    failed_logged = [s for s in executed if s.get("sandbox_executed") == "FAILED"]
+ 
     exec_lines = ""
-    for s in executed:
-        exec_lines += f"  {s['ticker']} - {s['strategy']} | Grade {s['grade']}\n"
+    for s in sandbox_exec:
+        exec_lines += f"  SANDBOX: {s['ticker']} - {s['strategy']} | Grade {s['grade']}\n"
+    for s in manual_logged:
+        exec_lines += f"  MANUAL:  {s['ticker']} - {s['strategy']} | Grade {s['grade']} | Hypothetical tracked\n"
+    for s in failed_logged:
+        exec_lines += f"  FAILED:  {s['ticker']} - {s['strategy']} | Grade {s['grade']} | Hypothetical tracked\n"
+ 
     skip_lines = ""
     for s in skipped:
-        skip_lines += f"  {s['ticker']} - {s['strategy']} | Grade {s['grade']}\n"
+        skip_lines += f"  SKIPPED: {s['ticker']} - {s['strategy']} | Grade {s['grade']}\n"
+ 
     if perf:
         pl_e = "+" if perf["total_pl"] >= 0 else ""
         perf_sec = (
@@ -910,6 +988,7 @@ def send_summary_email(regime, regime_label, data, event_label,
         )
     else:
         perf_sec = "No closed trades yet - tracking starts today."
+ 
     body = f"""OPTIONS BOT - DAILY SUMMARY
 {today_str}
  
@@ -919,14 +998,30 @@ VIX: {data['vix_price']} {data['vix_dir']}
 Day Grade: {day_grade} ({day_score}/100)
 Event: {event_label}
  
-SETUPS FOUND:  {len(setups)}
-EXECUTED:      {len(executed)}
-{exec_lines if exec_lines else '  None executed today.'}
-SKIPPED:       {len(skipped)}
-{skip_lines if skip_lines else '  None skipped.'}
+SETUPS FOUND:        {len(setups)}
+SANDBOX EXECUTED:    {len(sandbox_exec)}
+MANUAL/HYPOTHETICAL: {len(manual_logged) + len(failed_logged)}
+SKIPPED:             {len(skipped)}
  
-P/L TRACKER (Paper)
+TRADE LOG:
+{exec_lines if exec_lines else '  None executed today.'}
+{skip_lines if skip_lines else ''}
+P/L TRACKER (Paper Sandbox)
 {perf_sec}
+ 
+HYPOTHETICAL TRACKING
+All trades you tapped EXECUTE on are being tracked
+in trade_log.csv regardless of sandbox support.
+Column: hypothetical_result will update as trades close.
+Use this to measure true system performance.
+ 
+HOW TO PLACE MANUAL PAPER TRADES:
+1. Go to trade.tastytrade.com
+2. Login with your sandbox credentials
+3. Search the ticker
+4. Click Trade then Options
+5. Match the strikes and expiration from the bot message
+6. Place as a spread order with 1 contract
  
 RULES
 1. Regime first         2. Greeks must pass
@@ -939,7 +1034,8 @@ Options Bot v1.0 | Phase 5 Active
     msg["To"]      = EMAIL_TO
     msg["Subject"] = (
         f"OPTIONS BOT | Regime {regime} {day_grade} | "
-        f"{len(executed)} Executed | {date.today().strftime('%b %d')}"
+        f"{len(sandbox_exec)} Sandbox + {len(manual_logged)+len(failed_logged)} Tracked | "
+        f"{date.today().strftime('%b %d')}"
     )
     msg.attach(MIMEText(body, "plain"))
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
@@ -976,7 +1072,20 @@ def main():
     print(f"Executed: {len(executed)} | Skipped: {len(skipped)}")
  
     all_trades = log_new_setups(setups, regime)
-    perf       = get_performance_summary(all_trades)
+ 
+    # Mark sandbox_executed status for executed trades
+    executed_keys = {
+        (s["ticker"], s["strategy"]): s.get("sandbox_executed", "NO")
+        for s in executed
+    }
+    today_str_date = date.today().isoformat()
+    for t in all_trades:
+        key = (t["ticker"], t["strategy"])
+        if t["date"] == today_str_date and key in executed_keys:
+            t["sandbox_executed"] = executed_keys[key]
+    save_trade_log(all_trades)
+ 
+    perf = get_performance_summary(all_trades)
  
     send_summary_email(
         regime, regime_label, data, event_label,
