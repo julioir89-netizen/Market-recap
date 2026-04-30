@@ -1,8 +1,6 @@
 name: Options Bot — Daily Regime Engine
 
 on:
-  schedule:
-    - cron: '0 15 * * 1-5'
   workflow_dispatch:
 
 jobs:
