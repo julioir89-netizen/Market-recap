@@ -268,11 +268,11 @@ def calculate_grade(regime, ivr, vix, event_color, spy_chg):
         return score, "F", "NO EDGE"
  
  
-def calculate_greeks(option_price, strike, t_years, iv, option_type):
+def calculate_greeks(stock_price, strike, t_years, iv, option_type):
     try:
-        if t_years <= 0 or iv <= 0:
+        if t_years <= 0 or iv <= 0 or stock_price <= 0:
             return 0.5, 0.02, -0.03
-        S   = strike * 1.01
+        S   = stock_price
         K   = strike
         r   = 0.05
         sig = iv
@@ -303,6 +303,12 @@ def get_option_chain_yahoo(ticker):
         expirations = t.options
         if not expirations:
             return None
+ 
+        # Get current stock price
+        hist = t.history(period="2d")
+        if hist.empty:
+            return None
+        stock_price = float(hist["Close"].iloc[-1])
  
         today    = date.today()
         best_exp = None
@@ -335,7 +341,7 @@ def get_option_chain_yahoo(ticker):
                 row   = call_row.iloc[0]
                 iv    = float(row.get("impliedVolatility", 0))
                 delta, gamma, theta = calculate_greeks(
-                    float(row.get("lastPrice", 0)),
+                    stock_price,
                     strike_price,
                     best_dte / 365,
                     iv, "C"
@@ -356,7 +362,7 @@ def get_option_chain_yahoo(ticker):
                 row   = put_row.iloc[0]
                 iv    = float(row.get("impliedVolatility", 0))
                 delta, gamma, theta = calculate_greeks(
-                    float(row.get("lastPrice", 0)),
+                    stock_price,
                     strike_price,
                     best_dte / 365,
                     iv, "P"
