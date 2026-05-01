@@ -414,8 +414,8 @@ def run_earnings_scan():
  
         print(f"    {ticker} earnings in {days_away} days ({earnings_date})")
  
-        # Only process earnings within 30 days
-        if days_away > 30:
+        # Only process earnings within 60 days
+        if days_away > 60:
             print(f"    {ticker} earnings too far away ({days_away} days)")
             continue
  
@@ -436,15 +436,19 @@ def run_earnings_scan():
  
         # Check if earnings impacts any open positions
         impacts = analyze_earnings_impact(ticker, earnings_date, open_trades)
+        seen_trades = set()
         for impact in impacts:
-            trade = impact["trade"]
-            warnings.append({
-                "ticker":       ticker,
-                "earnings":     earnings_date,
-                "days_away":    days_away,
-                "trade":        trade,
-                "risk_level":   impact["risk_level"],
-            })
+            trade     = impact["trade"]
+            trade_key = f"{trade['ticker']}_{trade['strategy']}_{trade['date']}"
+            if trade_key not in seen_trades:
+                seen_trades.add(trade_key)
+                warnings.append({
+                    "ticker":     ticker,
+                    "earnings":   earnings_date,
+                    "days_away":  days_away,
+                    "trade":      trade,
+                    "risk_level": impact["risk_level"],
+                })
  
         # Grade the earnings opportunity
         approach, grade, score = grade_earnings_setup(
@@ -478,7 +482,7 @@ def build_earnings_telegram(results, warnings):
             t = w["trade"]
             warn_lines.append(
                 f"{w['ticker']} earnings in {w['days_away']} days "
-                f"({w['earnings_date']}) — {w['risk_level']} RISK\n"
+                f"({w['earnings']}) — {w['risk_level']} RISK\n"
                 f"  Open trade: {t['strikes']} exp {t['expiration']}\n"
                 f"  Earnings falls within your DTE window"
             )
@@ -559,7 +563,7 @@ def build_earnings_email(results, warnings):
         for w in warnings:
             t = w["trade"]
             warning_section += (
-                f"{w['ticker']} - Earnings in {w['days_away']} days ({w['earnings_date']})\n"
+                f"{w['ticker']} - Earnings in {w['days_away']} days ({w['earnings']})\n"
                 f"  Risk Level:   {w['risk_level']}\n"
                 f"  Open Trade:   {t['strategy']}\n"
                 f"  Strikes:      {t['strikes']}\n"
