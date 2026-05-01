@@ -960,7 +960,8 @@ def process_setups_with_confirmation(token, setups, regime, regime_label, vix, e
  
 def send_summary_email(regime, regime_label, data, event_label,
                        setups, executed, skipped, perf,
-                       today_str, day_grade, day_score):
+                       today_str, day_grade, day_score,
+                       sentiment_section=None):
  
     sandbox_exec  = [s for s in executed if s.get("sandbox_executed") == "YES"]
     manual_logged = [s for s in executed if s.get("sandbox_executed") == "MANUAL"]
@@ -998,6 +999,7 @@ VIX: {data['vix_price']} {data['vix_dir']}
 Day Grade: {day_grade} ({day_score}/100)
 Event: {event_label}
  
+{sentiment_section if sentiment_section else ''}
 SETUPS FOUND:        {len(setups)}
 SANDBOX EXECUTED:    {len(sandbox_exec)}
 MANUAL/HYPOTHETICAL: {len(manual_logged) + len(failed_logged)}
@@ -1064,6 +1066,18 @@ def main():
     setups = scan_all_tickers(regime, data["vix_price"], event_color)
     print(f"Valid setups after filter: {len(setups)}")
  
+    print("\n=== PHASE 8: CLAUDE SENTIMENT ===")
+    try:
+        from phase8_sentiment import run_sentiment_analysis
+        sentiment_parsed, sentiment_email = run_sentiment_analysis(
+            regime=regime, vix=data["vix_price"]
+        )
+        print("  Sentiment analysis complete.")
+    except Exception as e:
+        print(f"  Sentiment error: {e}")
+        sentiment_parsed  = None
+        sentiment_email   = None
+ 
     print("\n=== PHASE 5: TELEGRAM CONFIRMATION ===")
     executed, skipped = process_setups_with_confirmation(
         token, setups, regime, regime_label,
@@ -1090,7 +1104,8 @@ def main():
     send_summary_email(
         regime, regime_label, data, event_label,
         setups, executed, skipped, perf,
-        today_str, day_grade, day_score
+        today_str, day_grade, day_score,
+        sentiment_email
     )
  
     print("Done.")
