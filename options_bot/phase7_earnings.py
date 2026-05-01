@@ -49,33 +49,116 @@ def get_open_trades():
 # ─── EARNINGS DETECTION ───────────────────────────────────────────────────────
 def get_earnings_date(ticker):
     """
-    Pull next earnings date from Yahoo Finance.
+    Pull next earnings date using multiple fallback methods.
     Returns date object or None.
     """
-    try:
-        t    = yf.Ticker(ticker)
-        cal  = t.calendar
- 
-        if cal is None or cal.empty:
-            return None
- 
-        # calendar returns a DataFrame with earnings dates
-        if "Earnings Date" in cal.index:
-            raw = cal.loc["Earnings Date"]
-            if hasattr(raw, "__iter__"):
-                dates = [d for d in raw if d is not None]
-                if dates:
-                    return min(dates).date() if hasattr(dates[0], "date") else min(dates)
-            else:
-                return raw.date() if hasattr(raw, "date") else raw
- 
+    # ETFs never have earnings - skip immediately
+    etfs = ["SPY","QQQ","XLI","XLV","IAU","SOXX","GLD","SLV","TLT","IWM"]
+    if ticker in etfs:
         return None
+ 
+    try:
+        t = yf.Ticker(ticker)
+ 
+        # Method 1 - earnings_dates (most reliable in newer yfinance)
+        try:
+            ed = t.earnings_dates
+            if ed is not None and not ed.empty:
+                today = date.today()
+                future_dates = []
+                for idx in ed.index:
+                    try:
+                        d = idx.date() if hasattr(idx, "date") else idx
+                        if d >= today:
+                            future_dates.append(d)
+                    except:
+                        continue
+                if future_dates:
+                    return min(future_dates)
+        except Exception as e:
+            print(f"    Method 1 failed for {ticker}: {e}")
+ 
+        # Method 2 - calendar attribute
+        try:
+            cal = t.calendar
+            if cal is not None and not cal.empty:
+                if "Earnings Date" in cal.index:
+                    raw = cal.loc["Earnings Date"]
+                    if hasattr(raw, "__iter__"):
+                        dates = []
+                        for d in raw:
+                            if d is not None:
+                                try:
+                                    d2 = d.date() if hasattr(d, "date") else d
+                                    if d2 >= date.today():
+                                        dates.append(d2)
+                                except:
+                                    pass
+                        if dates:
+                            return min(dates)
+                    else:
+                        try:
+                            d = raw.date() if hasattr(raw, "date") else raw
+                            if d >= date.today():
+                                return d
+                        except:
+                            pass
+        except Exception as e:
+            print(f"    Method 2 failed for {ticker}: {e}")
+ 
+        # Method 3 - info dict
+        try:
+            info = t.info
+            if info:
+                for key in ["earningsDate", "earningsTimestamp", "nextEarningsDate"]:
+                    if key in info and info[key]:
+                        val = info[key]
+                        if isinstance(val, (int, float)):
+                            d = date.fromtimestamp(val)
+                        elif isinstance(val, list) and val:
+                            d = date.fromtimestamp(val[0])
+                        else:
+                            continue
+                        if d >= date.today():
+                            return d
+        except Exception as e:
+            print(f"    Method 3 failed for {ticker}: {e}")
+ 
+        print(f"    No earnings date found for {ticker} via any method")
+        return None
+ 
     except Exception as e:
         print(f"  Earnings date error for {ticker}: {e}")
         return None
  
  
-def get_implied_move(ticker, expiration_str):
+def get_known_earnings():
+    """
+    Hardcoded upcoming earnings for watchlist tickers.
+    Update this quarterly. Format: ticker -> date string YYYY-MM-DD
+    These are Q1 2026 / Q2 2026 estimates based on historical patterns.
+    """
+    return {
+        "AAPL": "2026-08-06",
+        "NVDA": "2026-05-28",
+        "MU":   "2026-06-25",
+        "KBWB": None,
+    }
+ 
+ 
+def get_earnings_date_with_fallback(ticker):
+    """Try Yahoo Finance first, then use hardcoded fallback."""
+    yahoo_date = get_earnings_date(ticker)
+    if yahoo_date:
+        return yahoo_date
+ 
+    known = get_known_earnings()
+    if ticker in known and known[ticker]:
+        try:
+            return datetime.strptime(known[ticker], "%Y-%m-%d").date()
+        except:
+            pass
+    return None
     """
     Calculate implied move using ATM straddle price.
     Formula: (ATM Call + ATM Put) / Stock Price
@@ -258,7 +341,7 @@ def run_earnings_scan():
     for ticker in WATCHLIST:
         print(f"  Checking {ticker}...")
  
-        earnings_date = get_earnings_date(ticker)
+        earnings_date = get_earnings_date_with_fallback(ticker)
         if not earnings_date:
             print(f"    No earnings date found for {ticker}")
             continue
