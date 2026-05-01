@@ -81,28 +81,39 @@ def get_earnings_date(ticker):
         # Method 2 - calendar attribute
         try:
             cal = t.calendar
-            if cal is not None and not cal.empty:
-                if "Earnings Date" in cal.index:
-                    raw = cal.loc["Earnings Date"]
-                    if hasattr(raw, "__iter__"):
-                        dates = []
-                        for d in raw:
-                            if d is not None:
-                                try:
-                                    d2 = d.date() if hasattr(d, "date") else d
-                                    if d2 >= date.today():
-                                        dates.append(d2)
-                                except:
-                                    pass
-                        if dates:
-                            return min(dates)
-                    else:
-                        try:
-                            d = raw.date() if hasattr(raw, "date") else raw
-                            if d >= date.today():
-                                return d
-                        except:
-                            pass
+            if cal is not None:
+                # Newer yfinance returns dict
+                if isinstance(cal, dict):
+                    for key in ["Earnings Date", "earningsDate"]:
+                        if key in cal and cal[key]:
+                            val = cal[key]
+                            if isinstance(val, list):
+                                dates = []
+                                for d in val:
+                                    try:
+                                        d2 = d.date() if hasattr(d, "date") else d
+                                        if d2 >= date.today():
+                                            dates.append(d2)
+                                    except:
+                                        pass
+                                if dates:
+                                    return min(dates)
+                # Older yfinance returns DataFrame
+                elif hasattr(cal, "empty") and not cal.empty:
+                    if "Earnings Date" in cal.index:
+                        raw = cal.loc["Earnings Date"]
+                        if hasattr(raw, "__iter__"):
+                            dates = []
+                            for d in raw:
+                                if d is not None:
+                                    try:
+                                        d2 = d.date() if hasattr(d, "date") else d
+                                        if d2 >= date.today():
+                                            dates.append(d2)
+                                    except:
+                                        pass
+                            if dates:
+                                return min(dates)
         except Exception as e:
             print(f"    Method 2 failed for {ticker}: {e}")
  
@@ -201,6 +212,55 @@ def get_earnings_date_with_fallback(ticker):
             "call_price":   call_price,
             "put_price":    put_price,
             "expiration":   expiration_str,
+        }, stock_price
+ 
+    except Exception as e:
+        print(f"  Implied move error for {ticker}: {e}")
+        return None, None
+ 
+ 
+def get_implied_move(ticker, expiration_str):
+    """
+    Calculate implied move using ATM straddle price.
+    Formula: (ATM Call + ATM Put) / Stock Price
+    """
+    try:
+        t    = yf.Ticker(ticker)
+        hist = t.history(period="2d")
+        if hist.empty:
+            return None, None
+ 
+        stock_price = float(hist["Close"].iloc[-1])
+        chain       = t.option_chain(expiration_str)
+        calls       = chain.calls
+        puts        = chain.puts
+ 
+        all_strikes = sorted(set(list(calls["strike"].values)))
+        atm_strike  = min(all_strikes, key=lambda x: abs(x - stock_price))
+ 
+        call_row = calls[calls["strike"] == atm_strike]
+        put_row  = puts[puts["strike"] == atm_strike]
+ 
+        if call_row.empty or put_row.empty:
+            return None, stock_price
+ 
+        call_price = float(call_row.iloc[0].get("lastPrice", 0))
+        put_price  = float(put_row.iloc[0].get("lastPrice", 0))
+ 
+        if call_price == 0 and put_price == 0:
+            return None, stock_price
+ 
+        implied_move_pct    = round(((call_price + put_price) / stock_price) * 100, 2)
+        implied_move_dollar = round(call_price + put_price, 2)
+ 
+        return {
+            "pct":         implied_move_pct,
+            "dollar":      implied_move_dollar,
+            "stock_price": round(stock_price, 2),
+            "atm_strike":  atm_strike,
+            "call_price":  call_price,
+            "put_price":   put_price,
+            "expiration":  expiration_str,
         }, stock_price
  
     except Exception as e:
