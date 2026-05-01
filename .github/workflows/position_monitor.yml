@@ -1,0 +1,44 @@
+name: Options Bot — Position Monitor
+
+on:
+  workflow_dispatch:
+
+jobs:
+  monitor-positions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests yfinance
+
+      - name: Run Position Monitor
+        env:
+          PYTHONPATH: ${{ github.workspace }}/options_bot
+          TT_SANDBOX_USERNAME: ${{ secrets.TT_SANDBOX_USERNAME }}
+          TT_SANDBOX_PASSWORD: ${{ secrets.TT_SANDBOX_PASSWORD }}
+          TT_SANDBOX_ACCOUNT: ${{ secrets.TT_SANDBOX_ACCOUNT }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.GMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python options_bot/phase6_monitor.py
+
+      - name: Commit updated trade log
+        run: |
+          git config user.name "options-bot"
+          git config user.email "bot@github.com"
+          git add options_bot/trade_log.csv
+          git diff --staged --quiet || git commit -m "Position monitor update $(date +%Y-%m-%d)"
+          git pull --rebase origin main || true
+          git push
