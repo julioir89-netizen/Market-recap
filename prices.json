@@ -1,51 +1,51 @@
 {
-  "updated": "2026-05-07T14:03:47.638960-07:00",
+  "updated": "2026-05-08T06:23:28.889723-07:00",
   "score": 85,
   "prices": {
     "SPY": {
       "price": 731.58,
-      "prev": 732.98,
-      "change": -0.19
+      "prev": 731.43,
+      "change": 0.02
     },
     "QQQ": {
       "price": 694.94,
-      "prev": 694.51,
-      "change": 0.06
+      "prev": 694.73,
+      "change": 0.03
     },
     "SOXX": {
       "price": 492.36,
-      "prev": 504.0,
-      "change": -2.31
+      "prev": 493.11,
+      "change": -0.15
     },
     "AAPL": {
       "price": 287.44,
-      "prev": 287.4,
-      "change": 0.01
+      "prev": 287.94,
+      "change": -0.17
     },
     "NVDA": {
       "price": 211.5,
-      "prev": 207.26,
-      "change": 2.05
+      "prev": 211.43,
+      "change": 0.03
     },
     "MU": {
       "price": 646.63,
-      "prev": 659.0,
-      "change": -1.88
+      "prev": 643.45,
+      "change": 0.49
     },
     "XLI": {
       "price": 174.0,
-      "prev": 177.21,
-      "change": -1.81
+      "prev": 173.9,
+      "change": 0.06
     },
     "XLV": {
       "price": 144.72,
-      "prev": 145.13,
-      "change": -0.28
+      "prev": 145.05,
+      "change": -0.23
     },
     "IAU": {
       "price": 88.46,
-      "prev": 88.37,
-      "change": 0.1
+      "prev": 88.5,
+      "change": -0.05
     },
     "KBWB": {
       "price": 85.86,
@@ -53,22 +53,22 @@
       "change": -2.29
     },
     "BTC": {
-      "price": 79847.31,
-      "prev": 81438.1,
-      "change": -1.95
+      "price": 79730.09,
+      "prev": 79996.28,
+      "change": -0.33
     }
   },
   "macro": {
-    "VIX": 17.08,
-    "VIX_CHG": -1.78,
-    "GOLD": 4707.7,
-    "GOLD_CHG": 0.55,
-    "OIL": 97.41,
-    "OIL_CHG": 2.45,
-    "YIELD": 4.39,
-    "YIELD_CHG": 0.69,
-    "USD": 98.24,
-    "USD_CHG": 0.22
+    "VIX": 17.12,
+    "VIX_CHG": 0.23,
+    "GOLD": 4726.5,
+    "GOLD_CHG": 0.57,
+    "OIL": 95.05,
+    "OIL_CHG": 0.25,
+    "YIELD": 4.37,
+    "YIELD_CHG": -0.46,
+    "USD": 97.97,
+    "USD_CHG": -0.28
   },
   "levels": {
     "SPY": {
@@ -166,9 +166,9 @@
       "s2": 70500,
       "r1": 81500,
       "r2": 85500,
-      "ma20": 77760.34,
-      "ma50": 73233.41,
-      "ma200": 83143.49
+      "ma20": 77968.67,
+      "ma50": 73433.01,
+      "ma200": 82990.0
     }
   },
   "technicals": {
@@ -233,10 +233,10 @@
       "ma200": 79.79
     },
     "BTC": {
-      "rsi": 56.4,
+      "rsi": 59.7,
       "trend": "SIDEWAYS",
-      "ma50": 73233.41,
-      "ma200": 83143.49
+      "ma50": 73433.01,
+      "ma200": 82990.0
     }
   },
   "avg_costs": {
